@@ -37,6 +37,9 @@ export class NotificationService {
       }
     })
 
+    if(!reservationInfo)
+        return
+
     const receivers = reservationInfo ? [reservationInfo.userId] : []
 
     const title = reservationInfo.store.name ?? 'Reservation'

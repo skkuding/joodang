@@ -30,10 +30,10 @@ export default {
       },
       colors: {
         primary: {
-          DEFAULT: '#3581FA',
-          light: '#619CFB',
-          strong: '#0760EF',
-          heavy: '#0348B2',
+          normal: '#FF5940',
+          light: '#FF9999',
+          demiLight: '#FFD6D0',
+          strong: '#38110C',
         },
         color: {
           common: {
