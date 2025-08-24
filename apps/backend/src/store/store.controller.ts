@@ -7,28 +7,28 @@ import { UpdateStoreDto } from './dto/update-store.dto';
 export class StoreController {
   constructor(private readonly storeService: StoreService) {}
 
-  @Post()
-  create(@Body() createStoreDto: CreateStoreDto) {
-    return this.storeService.create(createStoreDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.storeService.findAll();
+  @Get('')
+  async getStores() {
+    return this.storeService.getStores();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.storeService.findOne(+id);
+  async getStore(@Param('id') id: number) {
+    return this.storeService.getStore(id)
+  }
+  
+  @Post()
+  async createStore(@Body() createStoreDto: CreateStoreDto) {
+    return this.storeService.createStore(createStoreDto)
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStoreDto: UpdateStoreDto) {
-    return this.storeService.update(+id, updateStoreDto);
+  async updateStore(@Param('id') id: number, @Body() updateStoreDto: UpdateStoreDto) {
+    return this.storeService.updateStore(id, updateStoreDto)
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.storeService.remove(+id);
+  async removeStore(@Param('id') id: number) {
+    return this.storeService.removeStore(id)
   }
 }
