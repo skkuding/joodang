@@ -2,6 +2,10 @@ packages:
   - apps/*
   - packages/*
 onlyBuiltDependencies:
+  - '@nestjs/core'
   - '@prisma/client'
   - '@prisma/engines'
+  - '@tailwindcss/oxide'
   - prisma
+  - sharp
+  - unrs-resolver
