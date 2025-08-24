@@ -23,7 +23,6 @@ export class NotificationController {
    */
   @Get()
   async getNotifications(
-    @Req() req,
     @Query('cursor') cursor: number | null,
     @Query('take', new DefaultValuePipe(8))
     take: number,
@@ -31,7 +30,7 @@ export class NotificationController {
     isRead: boolean | null
   ) {
     return await this.notificationService.getNotifications(
-      req.user.id,
+      1,
       cursor,
       take,
       isRead
@@ -42,8 +41,8 @@ export class NotificationController {
    * 모든 알림을 읽음으로 표시합니다.
    */
   @Patch('read-all')
-  async markAllAsRead(@Req() req) {
-    return await this.notificationService.markAllAsRead(req.user.id)
+  async markAllAsRead() {
+    return await this.notificationService.markAllAsRead(1)
   }
 
   /**
@@ -52,11 +51,10 @@ export class NotificationController {
    */
   @Delete('/push-subscription')
   async deletePushSubscription(
-    @Req() req,
     @Query('endpoint') endpoint?: string
   ) {
     return this.notificationService.deletePushSubscription(
-      req.user.id,
+      1,
       endpoint
     )
   }
@@ -66,10 +64,9 @@ export class NotificationController {
    */
   @Post('/push-subscription')
   async createPushSubscription(
-    @Req() req,
     @Body() dto: CreatePushSubscriptionDto
   ) {
-    return this.notificationService.createPushSubscription(req.user.id, dto)
+    return this.notificationService.createPushSubscription(1, dto)
   }
 
   /**
