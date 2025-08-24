@@ -15,6 +15,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "주당",
   description: "대학 축제 주점 예약 플랫폼",
+  icons: {
+    icon: "/icon.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({
