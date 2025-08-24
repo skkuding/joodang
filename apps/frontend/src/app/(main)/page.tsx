@@ -49,7 +49,7 @@ export default async function Home() {
             <CarouselContent className="-ml-2 my-[14px]">
               {stores.map((store) => (
                 <CarouselItem
-                  className="pl-4 basis-auto sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
+                  className="pl-4 shrink-0 basis-[85%] sm:basis-[170px]"
                   key={store.id}
                 >
                   <StoreCard
@@ -99,7 +99,7 @@ export default async function Home() {
             <CarouselContent className="-ml-2 my-[14px]">
               {stores.map((store) => (
                 <CarouselItem
-                  className="pl-4 basis-auto sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
+                  className="pl-4 shrink-0 basis-[85%] sm:basis-[220px]"
                   key={store.id}
                 >
                   <StoreCard

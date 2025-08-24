@@ -6,15 +6,19 @@ import OrangeDot from "@/icons/orange_dot.svg";
 import Image from "next/image";
 import { useState } from "react";
 import BarCard from "./components/BarCard";
+import FilterSetting from "./components/FilterSetting";
 
 export default function BarPage() {
   const arr = [1, 2, 3];
   const [isFilterSet, SetIsFilterSet] = useState(false);
   const [selOrder, SetSelOrder] = useState("popular");
 
+  const [open, setOpen] = useState(true);
+
   return (
     <div className="mt-[30px] ">
       <div className="p-5">
+        <FilterSetting open={open} onClose={() => setOpen(false)} />
         <div>
           <Image src={IconLocation} alt="주황위치" width={24} height={24} />
           <div className="flex flex-row justify-between">
