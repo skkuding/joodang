@@ -13,7 +13,7 @@ export class StoreService {
 
   /**
    * 정렬 필터에 따라 가게 목록을 조회합니다.
-   * @param filter 'popular', 'fee', 'seats'
+   * @param sort 'popular', 'fee', 'seats'
    */
   async getStores(dto: GetStoresDto) {
     const { sort, minFee, maxFee, startTime, endTime } = dto
@@ -74,12 +74,14 @@ export class StoreService {
 
       case 'fee': {
         return await this.prisma.store.findMany({
+          where,
           orderBy: [{ reservationFee: 'asc' }, { id: 'asc' }]
         })
       }
 
       case 'seats': {
         const stores = await this.prisma.store.findMany({
+          where,
           include: {
             timeSlots: {
               where: { startTime: { gte: new Date() } },

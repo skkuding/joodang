@@ -7,6 +7,8 @@ import {
   IsOptional,
   IsPositive,
   IsString,
+  IsLatitude,
+  IsLongitude,
   ValidateNested
 } from 'class-validator';
 
@@ -58,6 +60,17 @@ export class CreateStoreDto {
   @IsString()
   @IsNotEmpty()
   college: string
+
+  @IsString()
+  location: string
+
+  @Type(() => Number)
+  @IsLatitude()
+  latitude: number
+
+  @Type(() => Number)
+  @IsLongitude()
+  longitude: number
 
   @IsArray()
   @ValidateNested({ each: true })
