@@ -11,13 +11,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
-import Script from 'next/script';
 
 import {
   IoIosArrowDown,
   IoIosArrowForward,
   IoIosRefresh,
 } from 'react-icons/io';
+import NaverMap from './components/NaverMap';
 
 export default function Home() {
   function renderHeader() {
@@ -36,7 +36,7 @@ export default function Home() {
           <span className="text-primary-normal text-xs font-normal">
             2025. 01. 01
           </span>
-          <span className="text-lg font-medium text-color-commmon-100">
+          <span className="text-lg font-medium text-color-common-100">
             성균관대학교 대동제
           </span>
           <span className="text-color-neutral-80 text-sm font-normal">
@@ -96,10 +96,7 @@ export default function Home() {
     <div className="flex flex-col px-5 py-10 gap-10">
       {renderHeader()}
       {renderRecommendation()}
-      <Script
-        type="text/javascript"
-        src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.NEXT_PUBLIC_NAVER_ID}`}
-      />
+      <NaverMap />
     </div>
   );
 }
