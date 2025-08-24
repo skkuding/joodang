@@ -1,35 +1,36 @@
-'use client';
-import foodIcon from '@/assets/graphic_food.svg';
-import animalIcon from '@/assets/icon_aninal.svg';
-import heartIcon from '@/assets/icon_heart.svg';
+"use client";
+import foodIcon from "@/assets/graphic_food.svg";
+import animalIcon from "@/assets/icon_aninal.svg";
+import heartIcon from "@/assets/icon_heart.svg";
 
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-} from '@/components/ui/carousel';
+} from "@/components/ui/carousel";
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { FaLocationDot } from 'react-icons/fa6';
-import { IoIosArrowForward, IoIosRefresh } from 'react-icons/io';
-import { dateFormatter } from './libs/utils';
+import Image from "next/image";
+import Link from "next/link";
+import { FaLocationDot } from "react-icons/fa6";
+import { IoIosArrowForward, IoIosRefresh } from "react-icons/io";
+import { dateFormatter } from "./libs/utils";
+import NaverMap from "./components/NaverMap";
 
 export default function Home() {
   function renderHeader() {
     return (
-      <div className='bg-white h-[139px] p-5 mb-[10px] rounded-b-xl '>
+      <div className="bg-white h-[139px] p-5 mb-[10px] rounded-b-xl ">
         <div className="px-5 py-4 flex flex-col bg-color-neutral-20 rounded-md">
-        <span className="text-primary-normal text-xs font-normal">
-          2025. 01. 01
-        </span>
-        <span className="text-lg font-medium text-color-common-100">
-          성균관대학교 대동제
-        </span>
-        <span className="text-color-neutral-80 text-sm font-normal">
-          오늘은 대동제가 열려요! 함께 축제를 즐겨볼까요?
-        </span>
-      </div>
+          <span className="text-primary-normal text-xs font-normal">
+            2025. 01. 01
+          </span>
+          <span className="text-lg font-medium text-color-common-100">
+            성균관대학교 대동제
+          </span>
+          <span className="text-color-neutral-80 text-sm font-normal">
+            오늘은 대동제가 열려요! 함께 축제를 즐겨볼까요?
+          </span>
+        </div>
       </div>
     );
   }
@@ -47,21 +48,21 @@ export default function Home() {
               <CarouselItem className="pl-4">
                 <StoreCard
                   id={0}
-                  clubName={'KUSA'}
-                  storeName={'놀러와요 동물의 숲'}
-                  startTime={new Date('2025-01-01T18:00:00')}
-                  endTime={new Date('2025-01-02T23:00:00')}
-                  size={'large'}
+                  clubName={"KUSA"}
+                  storeName={"놀러와요 동물의 숲"}
+                  startTime={new Date("2025-01-01T18:00:00")}
+                  endTime={new Date("2025-01-02T23:00:00")}
+                  size={"large"}
                 />
               </CarouselItem>
-             <CarouselItem className="pl-4">
+              <CarouselItem className="pl-4">
                 <StoreCard
                   id={1}
-                  clubName={'SKKUDING'}
-                  storeName={'모태솔로지만 연애는 하고싶어'}
-                  startTime={new Date('2025-01-01T18:00:00')}
-                  endTime={new Date('2025-01-02T23:00:00')}
-                  size={'large'}
+                  clubName={"SKKUDING"}
+                  storeName={"모태솔로지만 연애는 하고싶어"}
+                  startTime={new Date("2025-01-01T18:00:00")}
+                  endTime={new Date("2025-01-02T23:00:00")}
+                  size={"large"}
                 />
               </CarouselItem>
             </CarouselContent>
@@ -92,38 +93,40 @@ export default function Home() {
     );
   }
 
-  function renderLocation(){
-    return <Section title="주점 위치를 알아볼까요?" route="/location">
-     <div className=''>
-       {/* <NaverMap /> */}
-         <Carousel>
-           <CarouselContent className="-ml-2 my-[14px]">
+  function renderLocation() {
+    return (
+      <Section title="주점 위치를 알아볼까요?" route="/location">
+        <div className="">
+          {<NaverMap />}
+          <Carousel>
+            <CarouselContent className="-ml-2 my-[14px]">
               <CarouselItem className="pl-4">
                 <StoreCard
-                size='medium'
+                  size="medium"
                   id={0}
-                  clubName={'KUSA'}
-                  storeName={'놀러와요 동물의 숲'}
-                  startTime={new Date('2025-01-01T18:00:00')}
-                  endTime={new Date('2025-01-02T23:00:00')}
-                  location='경영관 테라스'
+                  clubName={"KUSA"}
+                  storeName={"놀러와요 동물의 숲"}
+                  startTime={new Date("2025-01-01T18:00:00")}
+                  endTime={new Date("2025-01-02T23:00:00")}
+                  location="경영관 테라스"
                 />
               </CarouselItem>
-             <CarouselItem className="pl-4">
+              <CarouselItem className="pl-4">
                 <StoreCard
-                 size='medium'
+                  size="medium"
                   id={1}
-                  clubName={'SKKUDING'}
-                  storeName={'모태솔로지만 연애는 하고싶어'}
-                  startTime={new Date('2025-01-01T18:00:00')}
-                  endTime={new Date('2025-01-02T23:00:00')}
-                  location='수선관 잔디밭'
+                  clubName={"SKKUDING"}
+                  storeName={"모태솔로지만 연애는 하고싶어"}
+                  startTime={new Date("2025-01-01T18:00:00")}
+                  endTime={new Date("2025-01-02T23:00:00")}
+                  location="수선관 잔디밭"
                 />
               </CarouselItem>
             </CarouselContent>
           </Carousel>
-     </div>
-    </Section>
+        </div>
+      </Section>
+    );
   }
 
   interface StoreCardProps {
@@ -133,20 +136,20 @@ export default function Home() {
     location?: string;
     startTime: Date;
     endTime: Date;
-    size: 'medium' | 'large';
+    size: "medium" | "large";
   }
 
   function StoreCard({
     id,
     clubName,
     storeName,
-    location ,
+    location,
     startTime,
     endTime,
-    size = 'large'
+    size = "large",
   }: StoreCardProps) {
-    return (
-      size === 'large'  ? <div className="flex justify-between flex-col w-[170px] h-[180px] p-[14px] rounded-md shadow-[0px_0px_20px_0px_rgba(0,0,0,0.12)]">
+    return size === "large" ? (
+      <div className="flex justify-between flex-col w-[170px] h-[180px] p-[14px] rounded-md shadow-[0px_0px_20px_0px_rgba(0,0,0,0.12)]">
         <div className="flex justify-end">
           <Image
             src={id % 2 === 0 ? animalIcon : heartIcon}
@@ -163,12 +166,13 @@ export default function Home() {
             {storeName}
           </h3>
           <p>
-            {dateFormatter(startTime, 'YYYY.MM.DD')} -{' '}
-            {dateFormatter(endTime, 'DD')}
+            {dateFormatter(startTime, "YYYY.MM.DD")} -{" "}
+            {dateFormatter(endTime, "DD")}
           </p>
         </div>
-      </div> : <div className="flex justify-between flex-col w-[220px] h-[103px] p-[14px] rounded-md shadow-[0px_0px_20px_0px_rgba(0,0,0,0.12)]">
-        
+      </div>
+    ) : (
+      <div className="flex justify-between flex-col w-[220px] h-[103px] p-[14px] rounded-md shadow-[0px_0px_20px_0px_rgba(0,0,0,0.12)]">
         <div>
           <h3 className="text-[13px] font-medium text-primary-normal">
             {clubName}
@@ -176,16 +180,14 @@ export default function Home() {
           <h3 className="text-sm font-normal mb-1 text-color-neutral-50 overflow-hidden text-ellipsis whitespace-nowrap">
             {storeName}
           </h3>
-          <div className='flex items-center p-1 text-sm font-normal text-color-neutral-40 bg-color-neutral-99'>
-            <FaLocationDot className='w-4 h-4 text-color-neutral-80'/>
+          <div className="flex items-center p-1 text-sm font-normal text-color-neutral-40 bg-color-neutral-99">
+            <FaLocationDot className="w-4 h-4 text-color-neutral-80" />
             {location}
           </div>
-         
         </div>
       </div>
     );
   }
-  
 
   interface SectionProps {
     title: string;
@@ -194,7 +196,7 @@ export default function Home() {
   }
   function Section({ title, route, children }: SectionProps) {
     return (
-      <div className='bg-white px-5 py-[30px] rounded-xl'>
+      <div className="bg-white px-5 py-[30px] rounded-xl">
         <div className="flex justify-between">
           <h2 className="text-xl font-medium">{title}</h2>
           <Link href={route} className="flex items-center gap-[2px]">
