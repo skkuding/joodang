@@ -109,54 +109,108 @@ export class StoreService {
   }
 
   async getStore(id: number) {
-    return await this.prisma.store.findUniqueOrThrow({ where: { id } });
+    const store = await this.prisma.store.findUniqueOrThrow({
+      where: { id },
+      include: {
+        menus: true,
+        timeSlots: {
+          select: {
+            startTime: true,
+            endTime: true,
+            availableSeats: true,
+          },
+          orderBy: { startTime: 'asc' },
+        },
+      },
+    })
+
+    const now = new Date();
+    const currentTimeSlot =
+      store.timeSlots.find(
+        (timeslot) => timeslot.startTime <= now && timeslot.endTime > now,
+      ) ?? null;
+
+    return {
+      ...store,
+      currentAvailableSeats: currentTimeSlot?.availableSeats ?? null,
+    };
   }
 
   async createStore(createStoreDto: CreateStoreDto) {
-    const { startTime, endTime, ...restData } = createStoreDto
+    const { timeSlots, ...storeData } = createStoreDto
 
-    const newStore = await this.prisma.store.create({
+    return await this.prisma.store.create({
       data: {
-        ...restData,
-        startTime,
-        endTime
-      }
+        ...storeData,
+        timeSlots: {
+          create: timeSlots.map(timeslot => ({
+            ...timeslot,
+            availableSeats: timeslot.totalCapacity,
+          })),
+        },
+      },
     })
-    return newStore
   }
 
   async updateStore(id: number, updateStoreDto: UpdateStoreDto) {
     const existingStore = await this.prisma.store.findUnique({
       where: { id },
     })
-
     if (!existingStore) {
       throw new NotFoundException('해당 가게를 찾을 수 없습니다.');
     }
-    const { startTime, endTime, ...restData } = updateStoreDto;
-    const dataToUpdate: Prisma.StoreUpdateInput = {
-      ...Object.fromEntries(
-        Object.entries(restData).filter(([, v]) => v !== undefined)
-      ),
-      ...(startTime !== undefined ? { startTime } : {}),
-      ...(endTime !== undefined ? { endTime } : {}),
+
+    const { timeSlots, ...rest } = updateStoreDto
+    const partialData = Object.fromEntries(
+      Object.entries(rest).filter(([, v]) => v !== undefined),
+    ) as Prisma.StoreUpdateInput
+    if (!timeSlots) {
+      return await this.prisma.store.update({
+        where: { id },
+        data: partialData,
+        include: { timeSlots: true },
+      })
     }
 
-    if (dataToUpdate.startTime && dataToUpdate.endTime) {
-      const s = dataToUpdate.startTime as Date;
-      const e = dataToUpdate.endTime as Date;
-      if (s > e) {
-        throw new Error('startTime은 endTime보다 이전이어야 합니다.');
-      }
-    }
+    const result = await this.prisma.$transaction(async (tx) => {
+      await tx.timeSlot.deleteMany({ where: { storeId: id } })
 
-    return await this.prisma.store.update({
-      where: { id },
-      data: dataToUpdate,
+      const updated = await tx.store.update({
+        where: { id },
+        data: {
+          ...partialData,
+          timeSlots: {
+            create: timeSlots.map((timeslot) => ({
+              ...timeslot,
+              availableSeats: timeslot.totalCapacity,
+            })),
+          },
+        },
+        include: { timeSlots: true }
+      })
+
+      return updated
     })
+
+    return result
   }
 
   async removeStore(id: number) {
-    return await this.prisma.store.delete({ where: { id } })
+    const existing = await this.prisma.store.findUnique({ where: { id } })
+    if (!existing) {
+      throw new NotFoundException('해당 가게를 찾을 수 없습니다.')
+    }
+
+    const result = await this.prisma.$transaction(async (tx) => {
+      await tx.reservation.deleteMany({ where: { storeId: id } })
+
+      const deleted = await tx.store.delete({
+        where: { id }
+      })
+
+      return deleted
+    })
+
+    return result
   }
 }
