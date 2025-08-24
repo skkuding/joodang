@@ -81,12 +81,12 @@ export default function RootLayout({
                     width={32}
                     height={32}
                   />
-                  <p className="text-black ">홈</p>
+                  <p className="text-black text-xs">홈</p>
                 </>
               ) : (
                 <>
                   <Image src={GrayHouse} alt="회색 집" width={32} height={32} />
-                  <p className="text-[#9B9B9B]">홈</p>
+                  <p className="text-[#9B9B9B] text-xs">홈</p>
                 </>
               )}
             </div>
@@ -102,20 +102,20 @@ export default function RootLayout({
                   <Image
                     src={BlackBeer}
                     alt="검은 맥주"
-                    width={32}
-                    height={32}
+                    width={34}
+                    height={34}
                   />
-                  <p className="text-black ">주점 찾기</p>
+                  <p className="text-black text-xs">주점 찾기</p>
                 </>
               ) : (
                 <>
                   <Image
                     src={GrayBeer}
                     alt="회색 맥주"
-                    width={32}
-                    height={32}
+                    width={34}
+                    height={34}
                   />
-                  <p className="text-[#9B9B9B]">주점 찾기</p>
+                  <p className="text-[#9B9B9B] text-xs">주점 찾기</p>
                 </>
               )}
             </div>
@@ -126,7 +126,7 @@ export default function RootLayout({
               {page === "reservation" ? (
                 <>
                   <Image src={BlackReserv} alt="예약" width={32} height={32} />
-                  <p className="text-black ">예약 내역</p>
+                  <p className="text-black text-xs">예약 내역</p>
                 </>
               ) : (
                 <>
@@ -136,7 +136,7 @@ export default function RootLayout({
                     width={32}
                     height={32}
                   />
-                  <p className="text-[#9B9B9B]">예약 내역</p>
+                  <p className="text-[#9B9B9B] text-xs">예약 내역</p>
                 </>
               )}
             </div>
