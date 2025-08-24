@@ -1,26 +1,112 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { CreateReservationDto } from './dto/create-reservation.dto';
-import { UpdateReservationDto } from './dto/update-reservation.dto';
+import { PrismaService } from 'prisma/prisma.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class ReservationService {
-  create(createReservationDto: CreateReservationDto) {
-    return 'This action adds a new reservation';
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly eventEmitter: EventEmitter2
+  ) {}
+
+  async createReservation(createReservationDto: CreateReservationDto) {
+    const { menuIds, timeSlotId, ...rest } = createReservationDto;
+    
+    const timeSlot = await this.prisma.timeSlot.findUnique({
+      where: { id: timeSlotId },
+    });
+
+    if((timeSlot?.availableSeats ?? 0 < 1) || (timeSlot?.availableSeats ?? 0 < rest.headcount)) {
+      throw new UnprocessableEntityException('No available seats');
+    }
+
+    const processedReservation =  await this.prisma.reservation.create({
+      data: {
+        ...rest,
+        timeSlotId,
+        ...(menuIds?.length
+          ? { menus: { connect: menuIds.map((id) => ({ id })) } }
+          : {}),
+      },
+      include: {
+        menus: true,
+        user: true,
+        store: true,
+        timeSlot: true,
+      },
+    });
+
+    await this.prisma.timeSlot.update({
+      where:{ id: timeSlotId},
+      data:{
+        availableSeats: { increment: -rest.headcount }
+      }
+    })
+
+    return processedReservation
   }
 
-  findAll() {
-    return `This action returns all reservation`;
+  async getReservations(userId: number) {
+    return await this.prisma.reservation.findMany({
+      where: { userId },
+      include: {
+        menus: true,
+        timeSlot: true,
+        store: true
+      },
+      orderBy: { id: 'desc' },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} reservation`;
+  async getStoreReservations(storeId: number){
+    return await this.prisma.reservation.findMany({
+      where: { storeId },
+      include: {
+        menus: true,
+        timeSlot: true,
+      },
+      orderBy: { id: 'desc' },
+    });
   }
 
-  update(id: number, updateReservationDto: UpdateReservationDto) {
-    return `This action updates a #${id} reservation`;
+  async getReservation(id: number) {
+    return await this.prisma.reservation.findUnique({
+      where: { id },
+      include: {
+        menus: true,
+        user: true,
+        store: true,
+        timeSlot: true,
+      },
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} reservation`;
+  async removeReservation(id: number) {
+    const deletedReservation = await this.prisma.reservation.delete({ where: { id } });
+
+    await this.prisma.timeSlot.update({
+      where: { id: deletedReservation.timeSlotId },
+      data: {
+        availableSeats: { increment: deletedReservation.headcount },
+      },
+    });
+
+    return deletedReservation;
+  }
+
+  async callReservation(id: number) {
+    const reservation = await this.prisma.reservation.update({
+      where: { id },
+      data: {
+        isDone: true
+      }
+    })
+
+    this.eventEmitter.emit('come.to.store', {
+      reservationId: reservation.id
+    })
+
+    return reservation
   }
 }
