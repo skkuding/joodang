@@ -126,13 +126,11 @@ export default function BarPage() {
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            {arr.map(() => {
-              return (
-                <div>
-                  <BarCard />
-                </div>
-              );
-            })}
+            {arr.map((item, idx) => (
+              <div key={idx}>
+                <BarCard />
+              </div>
+            ))}
           </div>
         </div>
       </div>
