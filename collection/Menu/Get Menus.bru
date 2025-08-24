@@ -1,0 +1,19 @@
+meta {
+  name: Get Menus
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/menu?storeId=1
+  body: none
+  auth: inherit
+}
+
+params:query {
+  storeId: 1
+}
+
+settings {
+  encodeUrl: true
+}
