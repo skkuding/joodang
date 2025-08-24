@@ -1,0 +1,23 @@
+meta {
+  name: Get Store By Id
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/store/1
+  body: none
+  auth: inherit
+}
+
+docs {
+  ## Get Store by ID
+  
+  하나의 주점 정보를 가져옵니다.
+  
+  ### Path
+  
+  | 이름 | 타입 | 설명 |
+  |-----|-----|-----|
+  |id|Integer|Store(주점) ID|
+}
