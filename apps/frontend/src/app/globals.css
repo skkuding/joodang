@@ -1,7 +1,4 @@
 @import 'tailwindcss';
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 @config './tailwind.config.ts';
 
 @theme inline {
