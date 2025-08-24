@@ -23,19 +23,20 @@ model Store {
   menus       Menu[]
   timeSlots   TimeSlot[]
   Reservation Reservation[]
+  User        User[]
 }
 
-enum MenuCategory{
-  Tang  // 탕/전골
+enum MenuCategory {
+  Tang // 탕/전골
   Tuiguim // 튀김
-  Bap   // 밥/식사
+  Bap // 밥/식사
   Fruit // 과일
   Maroon5 // 마른 안주
-  Beverage  // 음료
+  Beverage // 음료
 }
 
 model Menu {
-  id       Int     @id @default(autoincrement())
+  id       Int          @id @default(autoincrement())
   name     String
   photoUrl String?
   price    Int
@@ -45,7 +46,7 @@ model Menu {
   store   Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
 
   reservations Reservation[]
-  
+
   @@index([storeId])
 }
 
@@ -55,6 +56,9 @@ model User {
   college   String
   major     String
   name      String
+
+  storeId Int?
+  store   Store? @relation(fields: [storeId], references: [id], onDelete: SetNull)
 
   reservations Reservation[]
 
