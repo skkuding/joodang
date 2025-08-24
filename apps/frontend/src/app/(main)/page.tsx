@@ -1,5 +1,3 @@
-"use client";
-import { dateFormatter } from "@/app/libs/utils";
 import foodIcon from "@/assets/graphic_food.svg";
 import animalIcon from "@/assets/icon_aninal.svg";
 import heartIcon from "@/assets/icon_heart.svg";
@@ -9,13 +7,17 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
+import { dateFormatter, safeFetcher } from "@/lib/utils";
 
 import Image from "next/image";
 import Link from "next/link";
 import { FaLocationDot } from "react-icons/fa6";
 import { IoIosArrowForward, IoIosRefresh } from "react-icons/io";
+import { Store } from "../type";
 
-export default function Home() {
+export default async function Home() {
+  const stores: Store[] = await safeFetcher("store").json();
+
   function renderHeader() {
     return (
       <div className="bg-white h-[139px] p-5 mb-[10px] rounded-b-xl ">
@@ -44,26 +46,18 @@ export default function Home() {
           </div>
           <Carousel>
             <CarouselContent className="-ml-2 my-[14px]">
-              <CarouselItem className="pl-4">
-                <StoreCard
-                  id={0}
-                  clubName={"KUSA"}
-                  storeName={"놀러와요 동물의 숲"}
-                  startTime={new Date("2025-01-01T18:00:00")}
-                  endTime={new Date("2025-01-02T23:00:00")}
-                  size={"large"}
-                />
-              </CarouselItem>
-              <CarouselItem className="pl-4">
-                <StoreCard
-                  id={1}
-                  clubName={"SKKUDING"}
-                  storeName={"모태솔로지만 연애는 하고싶어"}
-                  startTime={new Date("2025-01-01T18:00:00")}
-                  endTime={new Date("2025-01-02T23:00:00")}
-                  size={"large"}
-                />
-              </CarouselItem>
+              {stores.map((store) => (
+                <CarouselItem className="pl-4" key={store.id}>
+                  <StoreCard
+                    id={store.id}
+                    clubName={store.organizer}
+                    storeName={store.name}
+                    startTime={new Date(store.startTime)}
+                    endTime={new Date(store.endTime)}
+                    size={"large"}
+                  />
+                </CarouselItem>
+              ))}
             </CarouselContent>
           </Carousel>
         </div>
@@ -99,28 +93,19 @@ export default function Home() {
           {/* <NaverMap /> */}
           <Carousel>
             <CarouselContent className="-ml-2 my-[14px]">
-              <CarouselItem className="pl-4">
-                <StoreCard
-                  size="medium"
-                  id={0}
-                  clubName={"KUSA"}
-                  storeName={"놀러와요 동물의 숲"}
-                  startTime={new Date("2025-01-01T18:00:00")}
-                  endTime={new Date("2025-01-02T23:00:00")}
-                  location="경영관 테라스"
-                />
-              </CarouselItem>
-              <CarouselItem className="pl-4">
-                <StoreCard
-                  size="medium"
-                  id={1}
-                  clubName={"SKKUDING"}
-                  storeName={"모태솔로지만 연애는 하고싶어"}
-                  startTime={new Date("2025-01-01T18:00:00")}
-                  endTime={new Date("2025-01-02T23:00:00")}
-                  location="수선관 잔디밭"
-                />
-              </CarouselItem>
+              {stores.map((store) => (
+                <CarouselItem className="pl-4" key={store.id}>
+                  <StoreCard
+                    id={store.id}
+                    clubName={store.organizer}
+                    storeName={store.name}
+                    startTime={new Date(store.startTime)}
+                    endTime={new Date(store.endTime)}
+                    size="medium"
+                    location={store.name}
+                  />
+                </CarouselItem>
+              ))}
             </CarouselContent>
           </Carousel>
         </div>
