@@ -5,13 +5,13 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/store?filter=fee
+  url: {{baseUrl}}/store?sort=fee
   body: none
   auth: inherit
 }
 
 params:query {
-  filter: fee
+  sort: fee
   ~minFee: 10000
   ~maxFee: 20000
   ~startTime: 2026-01-01T00:00:00.000Z

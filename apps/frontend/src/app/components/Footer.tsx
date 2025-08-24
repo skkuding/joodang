@@ -5,8 +5,19 @@ import GrayBeer from "@/icons/grayBeer.png";
 import GrayHouse from "@/icons/grayHouse.png";
 import Image from "next/image";
 import { useState } from "react";
+import { requestPermissionAndSubscribe } from "@/lib/push-subscription";
+
 export function Footer() {
   const [page, setPage] = useState("home");
+  const onClickBeer = async () => {
+    setPage("beer");
+    try {
+      await requestPermissionAndSubscribe();
+    } catch (e) {
+      console.error("푸시 구독 실패:", e);
+    }
+  };
+
   return (
     <div
       className="fixed left-0 right-0 bottom-0 z-50 w-full bg-white h-20 flex items-center justify-center"
@@ -30,7 +41,7 @@ export function Footer() {
           )}
         </div>
         <div
-          onClick={() => setPage("beer")}
+          onClick={onClickBeer}
           className="w-[60px] h-[54px] flex flex-col items-center"
         >
           {page === "beer" ? (

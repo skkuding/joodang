@@ -12,7 +12,7 @@ export class StoreController {
   async getStores(
     @Query(new ValidationPipe({
       transform: true,
-      forbidNonWhitelisted: true
+      whitelist: true
     })) query: GetStoresDto
   ) {
     return this.storeService.getStores(query);

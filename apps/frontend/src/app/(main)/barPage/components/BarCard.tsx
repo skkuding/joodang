@@ -1,3 +1,6 @@
+"use client";
+
+import Arrow from "@/icons/icon_arrow.svg";
 import Location from "@/icons/icon_location.svg";
 import Clock from "@/icons/orangeClock.svg";
 import Money from "@/icons/orangeMoney.svg";
@@ -5,6 +8,7 @@ import Macju from "@/picture/drinkMacju.png";
 import Image from "next/image";
 
 export default function BarCard() {
+  // const store: Store = await safeFetcher.get("store").json();
   return (
     <div
       className="w-[335px] h-[284px] rounded-[6px] overflow-hidden"
@@ -25,7 +29,7 @@ export default function BarCard() {
         >
           SKKUDING
         </div>
-        <div className="h-[22px] mb-3">
+        <div className="h-[22px] mb-3 flex flex-row justify-between">
           <div
             className="text-color-common-0
             text-base
@@ -36,6 +40,7 @@ export default function BarCard() {
           >
             모태솔로지만 연애는 하고싶어
           </div>
+          <Image src={Arrow} alt="화살표" width={18} height={18} />
         </div>
         <div className="flex flex-col p-2 justify-center items-start gap-1 self-stretch rounded-[6px] bg-color-neutral-99 w-[295px] h-[87px]">
           <div className="flex flex-row  w-full items-center">
