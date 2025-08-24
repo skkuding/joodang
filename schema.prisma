@@ -1,14 +1,10 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
-}
-
-datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
 }
 
 model Store {
@@ -42,9 +38,9 @@ model Menu {
 
 model User {
   id          Int      @id @default(autoincrement())
-  studentId   String   @unique 
   college     String   
-  major       String   
+  department  String   
+  studentId   String   @unique 
   name        String   
 
   reservations Reservation[]
