@@ -78,6 +78,7 @@ export default function Page({ params }: { params: { storeId: string } }) {
   }
 
   function renderReservationForm() {
+    if (!store) return null;
     const dates = getDateRange(store.startTime, store.endTime);
     return (
       <div className="p-5 bg-white mt-[10px]">
