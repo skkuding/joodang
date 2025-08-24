@@ -48,10 +48,7 @@ export default async function Home() {
           <Carousel opts={{ align: "start" }}>
             <CarouselContent className="-ml-2 my-[14px]">
               {stores.map((store) => (
-                <CarouselItem
-                  className="pl-4 shrink-0 basis-[85%] sm:basis-[170px]"
-                  key={store.id}
-                >
+                <CarouselItem className="basis-auto" key={store.id}>
                   <StoreCard
                     id={store.id}
                     clubName={store.organizer}
@@ -98,10 +95,7 @@ export default async function Home() {
           <Carousel opts={{ align: "start" }}>
             <CarouselContent className="-ml-2 my-[14px]">
               {stores.map((store) => (
-                <CarouselItem
-                  className="pl-4 shrink-0 basis-[85%] sm:basis-[220px]"
-                  key={store.id}
-                >
+                <CarouselItem className="basis-auto" key={store.id}>
                   <StoreCard
                     id={store.id}
                     clubName={store.organizer}
