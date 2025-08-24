@@ -11,7 +11,7 @@ export default function BarCard() {
   // const store: Store = await safeFetcher.get("store").json();
   return (
     <div
-      className="w-[335px] h-[284px] rounded-[6px] overflow-hidden"
+      className="w-[335px]  h-[284px] rounded-[6px] overflow-hidden"
       style={{ boxShadow: "0 0 20px 0 rgba(0, 0, 0, 0.12)" }}
     >
       <div

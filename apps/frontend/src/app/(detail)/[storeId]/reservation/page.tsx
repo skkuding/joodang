@@ -1,5 +1,5 @@
 "use client";
-import { MenuData, Store, StoreDetail } from "@/app/type";
+import { MenuData, StoreDetail } from "@/app/type";
 import minusIcon from "@/assets/icon_minus.svg";
 import plusIcon from "@/assets/icon_plus.svg";
 import { Button } from "@/components/ui/button";

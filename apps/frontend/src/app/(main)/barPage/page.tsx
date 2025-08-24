@@ -239,7 +239,7 @@ export default function BarPage() {
               </div>
             )}
           </div>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 items-center ">
             {arr.map((item, idx) => (
               <div key={idx}>
                 <BarCard />
