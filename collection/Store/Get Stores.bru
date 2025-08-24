@@ -1,0 +1,45 @@
+meta {
+  name: Get Stores
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/store?filter=fee
+  body: none
+  auth: inherit
+}
+
+params:query {
+  filter: fee
+}
+
+docs {
+  ## Get Stores
+  
+  전체 주점 정보를 가져옵니다.
+  
+  ### Filter 종류
+  
+  #### popular
+  
+  하루 예약 건수 40개 이상부터 인기 많은으로 분류
+  
+  정렬은 예약건수가 가장 높은 순서대로
+  
+  같은 예약건수라면, ‘등록 일자가 가장 먼저인 순’ 먼저 노출
+  
+  
+  #### fee
+  
+  입장료가 가장 낮은 순서대로 정렬
+  
+  같은 입장료라면 ‘등록 일자가 가장 먼저인 순’ 먼저 노출
+  
+  
+  #### seats
+  
+  남은 자리가 가장 많은 순서대로 노출
+  
+  같은 수만큼 남았다면, ‘등록 일자가 가장 먼저인 순’ 먼저 노출
+}

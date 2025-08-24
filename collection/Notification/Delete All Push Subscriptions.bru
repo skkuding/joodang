@@ -1,0 +1,11 @@
+meta {
+  name: Delete All Push Subscriptions
+  type: http
+  seq: 1
+}
+
+delete {
+  url: {{baseUrl}}/notification/push-subscription
+  body: none
+  auth: none
+}
