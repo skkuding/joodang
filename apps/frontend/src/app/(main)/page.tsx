@@ -109,7 +109,7 @@ export default async function Home() {
                     startTime={new Date(store.startTime)}
                     endTime={new Date(store.endTime)}
                     size="medium"
-                    location={store.name}
+                    location={store.location}
                   />
                 </CarouselItem>
               ))}
@@ -140,43 +140,47 @@ export default async function Home() {
     size = "large",
   }: StoreCardProps) {
     return size === "large" ? (
-      <div className="flex justify-between flex-col w-[170px] h-[180px] p-[14px] rounded-md shadow-[0px_0px_20px_0px_rgba(0,0,0,0.12)]">
-        <div className="flex justify-end">
-          <Image
-            src={id % 2 === 0 ? animalIcon : heartIcon}
-            alt={`index-${id}`}
-            className="w-[48.60px] h-[40.50px]"
-          />
-        </div>
+      <Link href={`/${id}`} className="block">
+        <div className="flex justify-between flex-col w-[170px] h-[180px] p-[14px] rounded-md shadow-[0px_0px_20px_0px_rgba(0,0,0,0.12)]">
+          <div className="flex justify-end">
+            <Image
+              src={id % 2 === 0 ? animalIcon : heartIcon}
+              alt={`index-${id}`}
+              className="w-[48.60px] h-[40.50px]"
+            />
+          </div>
 
-        <div>
-          <h3 className="text-[13px] font-medium text-primary-normal">
-            {clubName}
-          </h3>
-          <h3 className="text-sm font-normal mb-1 text-color-neutral-50 overflow-hidden text-ellipsis whitespace-nowrap">
-            {storeName}
-          </h3>
-          <p>
-            {dateFormatter(startTime, "YYYY.MM.DD")} -{" "}
-            {dateFormatter(endTime, "DD")}
-          </p>
-        </div>
-      </div>
-    ) : (
-      <div className="flex justify-between flex-col w-[220px] h-[103px] p-[14px] rounded-md shadow-[0px_0px_20px_0px_rgba(0,0,0,0.12)]">
-        <div>
-          <h3 className="text-[13px] font-medium text-primary-normal">
-            {clubName}
-          </h3>
-          <h3 className="text-sm font-normal mb-1 text-color-neutral-50 overflow-hidden text-ellipsis whitespace-nowrap">
-            {storeName}
-          </h3>
-          <div className="flex items-center p-1 text-sm font-normal text-color-neutral-40 bg-color-neutral-99">
-            <FaLocationDot className="w-4 h-4 text-color-neutral-80" />
-            {location}
+          <div>
+            <h3 className="text-[13px] font-medium text-primary-normal">
+              {clubName}
+            </h3>
+            <h3 className="text-sm font-normal mb-1 text-color-neutral-50 overflow-hidden text-ellipsis whitespace-nowrap">
+              {storeName}
+            </h3>
+            <p>
+              {dateFormatter(startTime, "YYYY.MM.DD")} -{" "}
+              {dateFormatter(endTime, "DD")}
+            </p>
           </div>
         </div>
-      </div>
+      </Link>
+    ) : (
+      <Link href={`/${id}`} className="block">
+        <div className="flex justify-between flex-col w-[220px] h-[103px] p-[14px] rounded-md shadow-[0px_0px_20px_0px_rgba(0,0,0,0.12)]">
+          <div>
+            <h3 className="text-[13px] font-medium text-primary-normal">
+              {clubName}
+            </h3>
+            <h3 className="text-sm font-normal mb-1 text-color-neutral-50 overflow-hidden text-ellipsis whitespace-nowrap">
+              {storeName}
+            </h3>
+            <div className="flex items-center p-1 text-sm font-normal text-color-neutral-40 bg-color-neutral-99">
+              <FaLocationDot className="w-4 h-4 text-color-neutral-80" />
+              {location}
+            </div>
+          </div>
+        </div>
+      </Link>
     );
   }
 

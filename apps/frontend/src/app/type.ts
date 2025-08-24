@@ -10,6 +10,22 @@ export interface Store {
   isAvailable: boolean;
   reservationFee: number;
   college: string;
+  location: string;
+  latitude: number;
+  longitude: number;
+}
+
+export interface StoreDetail extends Store {
+  menus: Menu[];
+  timeSlots: TimeSlot[];
+  currentAvailableSeats: number | null;
+}
+
+export interface TimeSlot {
+  id: number;
+  startTime: string; // ISO8601 string
+  endTime: string; // ISO8601 string
+  availableSeats: number;
 }
 
 export interface Menu {

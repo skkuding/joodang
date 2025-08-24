@@ -1,4 +1,4 @@
-import { Menu, Store } from "@/app/type";
+import { Menu, StoreDetail } from "@/app/type";
 import cheerImg from "@/assets/cheers.png";
 import bowlIcon from "@/assets/icon_bowl.svg";
 import chipIcon from "@/assets/icon_chip.svg";
@@ -24,7 +24,8 @@ export default async function Page({
   params: { storeId: string };
 }) {
   const storeId = params.storeId;
-  const store: Store = await safeFetcher.get(`store/${storeId}`).json();
+  const store: StoreDetail = await safeFetcher.get(`store/${storeId}`).json();
+
   const menus: Menu[] = [
     {
       id: 1,
@@ -68,21 +69,19 @@ export default async function Page({
         </div>
         <div className="p-5 text-xl font-medium">
           <p>메뉴</p>
-          <div>
-            <Carousel>
-              <CarouselContent className="-ml-2 my-[14px]">
-                {menus.map((menu) => (
-                  <CarouselItem className="pl-4" key={menu.id}>
-                    <MenuCard name={menu.name} id={menu.id} />
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-            </Carousel>
-          </div>
+          <Carousel>
+            <CarouselContent className="-ml-2 my-[14px]">
+              {menus.map((menu) => (
+                <CarouselItem className="basis-auto" key={menu.id}>
+                  <MenuCard name={menu.name} id={menu.id} />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
         </div>
         <div className="p-5">
           <Link href={`/${storeId}/reservation`}>
-            <Button className="w-full  bg-primary-normal h-[50px] px-4 py-[14px]">
+            <Button className="w-full  bg-primary-normal h-[50px] px-4 py-[14px] text-base font-medium">
               예약하기
             </Button>
           </Link>
@@ -98,7 +97,7 @@ export default async function Page({
 
   function MenuCard({ id, name }: MenuCardProps) {
     return (
-      <div className="h-[96px] flex flex-col justify-between w-[88px] bg-color-neutral-99 py-4">
+      <div className="h-[96px] text-base font-normal flex flex-col items-center justify-between w-[88px] bg-color-neutral-99 py-4">
         <Image
           src={
             id % 4 === 0
@@ -110,7 +109,7 @@ export default async function Page({
                   : riceIcon
           }
           alt="Menu Item"
-          className="w-4 h-4"
+          className="w-8 h-8 "
         />
         {name}
       </div>
