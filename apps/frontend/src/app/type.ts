@@ -11,3 +11,12 @@ export interface Store {
   reservationFee: number;
   college: string;
 }
+
+export interface Menu {
+  id: number;
+  name: string;
+  photoUrl: string | null;
+  price: number;
+  category: string;
+  storeId: number;
+}
