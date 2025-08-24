@@ -1,4 +1,4 @@
-import { MenuData, Store } from "@/app/type";
+import { Menu, Store } from "@/app/type";
 import cheerImg from "@/assets/cheers.png";
 import bowlIcon from "@/assets/icon_bowl.svg";
 import chipIcon from "@/assets/icon_chip.svg";
@@ -25,10 +25,40 @@ export default async function Page({
 }) {
   const storeId = params.storeId;
   const store: Store = await safeFetcher.get(`store/${storeId}`).json();
-  const menuData: MenuData = await safeFetcher
-    .get(`menu?storeId=${storeId}`)
-    .json();
-  const menus = menuData.Bap ?? [];
+  const menus: Menu[] = [
+    {
+      id: 1,
+      name: "밥",
+      photoUrl: null,
+      price: 0,
+      category: "",
+      storeId: 0,
+    },
+    {
+      id: 2,
+      name: "김치찌개",
+      photoUrl: null,
+      price: 0,
+      category: "",
+      storeId: 0,
+    },
+    {
+      id: 3,
+      name: "된장찌개",
+      photoUrl: null,
+      price: 0,
+      category: "",
+      storeId: 0,
+    },
+    {
+      id: 4,
+      name: "불고기",
+      photoUrl: null,
+      price: 0,
+      category: "",
+      storeId: 0,
+    },
+  ];
 
   function renderDescription() {
     return (
