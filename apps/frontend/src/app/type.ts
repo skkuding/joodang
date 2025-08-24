@@ -20,3 +20,7 @@ export interface Menu {
   category: string;
   storeId: number;
 }
+
+export interface MenuData {
+  Bap: Menu[];
+}
