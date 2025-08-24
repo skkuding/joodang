@@ -11,7 +11,6 @@ import BlackReserv from "@/icons/blackReserv.svg";
 import GrayBeer from "@/icons/grayBeer.png";
 import GrayHouse from "@/icons/grayHouse.png";
 import GrayReserv from "@/icons/reserv.svg";
-import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -29,15 +28,6 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
-
-export const metadata: Metadata = {
-  title: "judang",
-  description: "university festival platform",
-  icons: {
-    icon: "/icon.png",
-    apple: "/logo.png",
-  },
-};
 
 export default function RootLayout({
   children,
