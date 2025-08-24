@@ -21,7 +21,7 @@ import { renderStoreSummary } from "../../components/store";
 export default function Page() {
   const { storeId } = useParams();
   const { data: store } = useQuery(
-    queryOptions<StoreDetail>({
+    queryOptions<Store>({
       queryKey: ["store", storeId],
       queryFn: () => {
         return safeFetcher.get(`store/${storeId}`).json() as Promise<Store>;
