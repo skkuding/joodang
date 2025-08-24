@@ -1,5 +1,5 @@
 "use client";
-import { MenuData, Store } from "@/app/type";
+import { MenuData, Store, StoreDetail } from "@/app/type";
 import minusIcon from "@/assets/icon_minus.svg";
 import plusIcon from "@/assets/icon_plus.svg";
 import { Button } from "@/components/ui/button";
@@ -21,10 +21,12 @@ import { renderStoreSummary } from "../../components/store";
 export default function Page() {
   const { storeId } = useParams();
   const { data: store } = useQuery(
-    queryOptions<Store>({
+    queryOptions<StoreDetail>({
       queryKey: ["store", storeId],
       queryFn: () => {
-        return safeFetcher.get(`store/${storeId}`).json() as Promise<Store>;
+        return safeFetcher
+          .get(`store/${storeId}`)
+          .json() as Promise<StoreDetail>;
       },
     }),
   );
