@@ -181,7 +181,7 @@ export default async function Home() {
   }
   function Section({ title, route, children }: SectionProps) {
     return (
-      <div className="bg-white px-5 py-[30px] rounded-xl">
+      <div className="bg-white px-5 py-[30px] rounded-xl item-center">
         <div className="flex justify-between">
           <h2 className="text-xl font-medium">{title}</h2>
           <Link href={route} className="flex items-center gap-[2px]">
