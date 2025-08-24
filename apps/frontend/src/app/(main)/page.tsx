@@ -13,6 +13,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { FaLocationDot } from "react-icons/fa6";
 import { IoIosArrowForward, IoIosRefresh } from "react-icons/io";
+import NaverMap from "../components/NaverMap";
 import { Store } from "../type";
 
 export default async function Home() {
@@ -90,7 +91,7 @@ export default async function Home() {
     return (
       <Section title="주점 위치를 알아볼까요?" route="/location">
         <div className="">
-          {/* <NaverMap /> */}
+          {<NaverMap />}
           <Carousel>
             <CarouselContent className="-ml-2 my-[14px]">
               {stores.map((store) => (

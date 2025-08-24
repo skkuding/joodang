@@ -1,12 +1,28 @@
 import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsDate,
   IsInt,
   IsNotEmpty,
   IsOptional,
-  IsString
+  IsPositive,
+  IsString,
+  ValidateNested
 } from 'class-validator';
 
+export class TimeSlotInput {
+  @Type(() => Date)
+  @IsDate()
+  startTime!: Date
+
+  @Type(() => Date)
+  @IsDate()
+  endTime!: Date
+
+  @IsInt()
+  @IsPositive()
+  totalCapacity!: number
+}
 export class CreateStoreDto {
   @IsString()
   @IsNotEmpty()
@@ -42,4 +58,9 @@ export class CreateStoreDto {
   @IsString()
   @IsNotEmpty()
   college: string
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => TimeSlotInput)
+  timeSlots!: TimeSlotInput[]
 }

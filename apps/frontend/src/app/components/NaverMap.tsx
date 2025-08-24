@@ -1,136 +1,48 @@
-'use client';
-import { useEffect, useRef, useState } from 'react';
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import Script from "next/script";
 
 declare global {
   interface Window {
-    naver: typeof naver;
+    naver: naver.maps.Map;
   }
 }
 
-function loadNaverScript(clientId: string, submodules: string[] = []) {
-  // 중복 삽입 방지
-  const exists = document.querySelector('script[data-navermap]');
-  if (exists) return Promise.resolve();
-
-  return new Promise<void>((resolve, reject) => {
-    const s = document.createElement('script');
-    const params = new URLSearchParams({ ncpClientId: clientId });
-    if (submodules.length) params.set('submodules', submodules.join(','));
-    s.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${params.toString()}`;
-    s.async = true;
-    s.defer = true;
-    s.dataset.navermap = 'true';
-    s.onload = () => resolve();
-    s.onerror = () => reject(new Error('Failed to load Naver Maps script'));
-    document.head.appendChild(s);
-  });
-}
-
 export default function NaverMap() {
-  const mapRef = useRef<HTMLDivElement | null>(null);
-  const [ready, setReady] = useState(false);
+  const mapRef = useRef<HTMLDivElement>(null);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    const id = process.env.NEXT_PUBLIC_NAVER_MAPS_CLIENT_ID;
-    if (!id) {
-      console.error('Missing NEXT_PUBLIC_NAVER_MAPS_CLIENT_ID');
-      return;
-    }
-    // 필요 시 ['geocoder', 'drawing', 'visualization', 'panorama'] 등 서브모듈 추가
-    loadNaverScript(id, [])
-      .then(() => setReady(true))
-      .catch(console.error);
-  }, []);
-
-  useEffect(() => {
-    if (!ready || !mapRef.current || !window.naver) return;
+    if (!loaded || !mapRef.current) return;
 
     const { naver } = window;
+    if (!naver?.maps) return;
 
-    // 튜토리얼처럼 기본 옵션으로 생성
-    const center = new naver.maps.LatLng(37.5665, 126.978); // 서울 시청
     const map = new naver.maps.Map(mapRef.current, {
-      center,
-      zoom: 13,
-      mapDataControl: false, // 우측 하단 데이터 컨트롤 숨김 예시
+      center: new naver.maps.LatLng(37.2931959, 126.9745929),
+      zoom: 18,
+      mapDataControl: false,
     });
 
-    // 마커 예시 (튜토리얼의 Marker)
-    const marker = new naver.maps.Marker({
-      position: center,
+    new naver.maps.Marker({
+      //마커는 이런식으로 추가하면 되는듯..
+      position: new naver.maps.LatLng(37.2931959, 126.9745929),
       map,
-      title: 'Seoul City Hall',
     });
+  }, [loaded]);
 
-    // 인포윈도우 예시
-    const info = new naver.maps.InfoWindow({
-      content: `<div style="padding:8px;">안녕, 네이버 지도!</div>`,
-    });
-    naver.maps.Event.addListener(marker, 'click', () => {
-      info.getMap() ? info.close() : info.open(map, marker);
-    });
-
-    // 클린업: DOM만 비워주면 됨
-    return () => {
-      if (mapRef.current) mapRef.current.innerHTML = '';
-    };
-  }, [ready]);
-
-  // 컨테이너는 반드시 크기를 가져야 지도 보임!
   return (
-    <div
-      className='my-3'
-      ref={mapRef}
-      style={{
-        width: '100%',
-        height: 215,
-        borderRadius: 12,
-        overflow: 'hidden',
-      }}
-    />
+    <>
+      <Script
+        src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${process.env.NEXT_PUBLIC_NAVER_ID}`}
+        strategy="afterInteractive"
+        onLoad={() => setLoaded(true)}
+      />
+      <div
+        ref={mapRef}
+        style={{ width: "100%", height: "400px", borderRadius: 8 }}
+      />
+    </>
   );
 }
-
-// ('use client');
-
-// const NaverMap = () => {
-//   const { naver } = window;
-//   const initMap = (x: number, y: number) => {
-//     const map = new naver.maps.Map('그리고 싶은 영역의 id', {
-//       center: new naver.maps.LatLng(x, y),
-//       zoom: 15,
-//     });
-
-//     const mapMarker = new naver.maps.Marker({
-//       position: new naver.maps.LatLng(x, y),
-//       map: map,
-//     });
-//   };
-
-//   useEffect(() => {
-//     naver.maps.Service.geocode(
-//       {
-//         query: '여러분이 찾고 싶은 주소',
-//       },
-//       function (status, response) {
-//         if (status === naver.maps.Service.Status.ERROR) {
-//           return alert('Someting Wrong!');
-//         }
-
-//         const result = response.v2.addresses[0];
-//         const x = Number(result.x);
-//         const y = Number(result.y);
-
-//         initMap(y, x);
-//       },
-//     );
-//   }, []);
-
-//   return (
-//     <>
-//       <div id="그리고 싶은 영역의 id" style={{ height: '200px' }}></div>
-//     </>
-//   );
-// };
-
-// export default NaverMap;
