@@ -94,6 +94,7 @@ async function main() {
     data: {
       headcount: 2,
       userId: user1.id,
+      storeId: store1.id,
       timeSlotId: timeSlot1.id,
     },
   })
