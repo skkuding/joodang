@@ -217,17 +217,41 @@ async function main() {
     prisma.reservation.create({
       data: { headcount: 2, userId: user1.id, storeId: store1.id, timeSlotId: store1Slots[0].id },
     }),
+    prisma.timeSlot.update({
+      where: { id: store1Slots[0].id },
+      data: { availableSeats: { decrement: 2 } },
+    }),
+
     prisma.reservation.create({
       data: { headcount: 3, userId: user2.id, storeId: store1.id, timeSlotId: store1Slots[0].id },
     }),
+    prisma.timeSlot.update({
+      where: { id: store1Slots[0].id },
+      data: { availableSeats: { decrement: 3 } },
+    }),
+
     prisma.reservation.create({
       data: { headcount: 2, userId: user3.id, storeId: store1.id, timeSlotId: store1Slots[0].id },
     }),
+    prisma.timeSlot.update({
+      where: { id: store1Slots[0].id },
+      data: { availableSeats: { decrement: 2 } },
+    }),
+
     prisma.reservation.create({
       data: { headcount: 3, userId: user4.id, storeId: store1.id, timeSlotId: store1Slots[0].id },
     }),
+    prisma.timeSlot.update({
+      where: { id: store1Slots[0].id },
+      data: { availableSeats: { decrement: 3 } },
+    }),
+
     prisma.reservation.create({
       data: { headcount: 2, userId: user5.id, storeId: store1.id, timeSlotId: store1Slots[0].id },
+    }),
+    prisma.timeSlot.update({
+      where: { id: store1Slots[0].id },
+      data: { availableSeats: { decrement: 2 } },
     }),
   ]);
 
@@ -235,17 +259,41 @@ async function main() {
     prisma.reservation.create({
       data: { headcount: 2, userId: user1.id, storeId: store2.id, timeSlotId: store2Slots[0].id },
     }),
+    prisma.timeSlot.update({
+      where: { id: store2Slots[0].id },
+      data: { availableSeats: { decrement: 2 } },
+    }),
+
     prisma.reservation.create({
       data: { headcount: 4, userId: user2.id, storeId: store2.id, timeSlotId: store2Slots[0].id },
     }),
+    prisma.timeSlot.update({
+      where: { id: store2Slots[0].id },
+      data: { availableSeats: { decrement: 4 } },
+    }),
+
     prisma.reservation.create({
       data: { headcount: 2, userId: user3.id, storeId: store2.id, timeSlotId: store2Slots[0].id },
     }),
+    prisma.timeSlot.update({
+      where: { id: store2Slots[0].id },
+      data: { availableSeats: { decrement: 2 } },
+    }),
+    
     prisma.reservation.create({
       data: { headcount: 4, userId: user4.id, storeId: store2.id, timeSlotId: store2Slots[0].id },
     }),
+    prisma.timeSlot.update({
+      where: { id: store2Slots[0].id },
+      data: { availableSeats: { decrement: 4 } },
+    }),
+
     prisma.reservation.create({
       data: { headcount: 2, userId: user5.id, storeId: store2.id, timeSlotId: store2Slots[0].id },
+    }),
+    prisma.timeSlot.update({
+      where: { id: store2Slots[0].id },
+      data: { availableSeats: { decrement: 2 } },
     }),
   ]);
 }
