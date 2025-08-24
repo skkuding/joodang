@@ -171,15 +171,69 @@ export default function BarPage() {
       <div>
         <div className="bg-color-common-100 rounded-[12px] px-5 py-[30px]">
           <div className="flex flex-row gap-1 mb-4">
-            <div className="flex px-[14px] py-[8px] justify-center items-center gap-[10px] text-color-common-100 bg-color-common-0 rounded-full">
-              인기 많은
-            </div>
-            <div className="flex px-[14px] py-[8px] justify-center items-center gap-[10px] text-color-neutral-70 bg-color-common-100 rounded-full border border-[var(--Line-Normal,#D8D8D8)] bg-[var(--Common-100,#FFF)]">
-              입장료 낮은
-            </div>
-            <div className="flex px-[14px] py-[8px] justify-center items-center gap-[10px] text-color-neutral-70 bg-color-common-100 rounded-full border border-[var(--Line-Normal,#D8D8D8)] bg-[var(--Common-100,#FFF)]">
-              자리 많은
-            </div>
+            {selOrder === "popular" ? (
+              <div
+                className="flex px-[14px] py-[8px] justify-center items-center gap-[10px] text-color-common-100 bg-color-common-0 rounded-full"
+                onClick={() => {
+                  SetSelOrder("popular");
+                  return;
+                }}
+              >
+                인기 많은
+              </div>
+            ) : (
+              <div
+                className="flex px-[14px] py-[8px] justify-center items-center gap-[10px] text-color-neutral-70 bg-color-common-100 rounded-full border border-[var(--Line-Normal,#D8D8D8)] bg-[var(--Common-100,#FFF)]"
+                onClick={() => {
+                  SetSelOrder("popular");
+                  return;
+                }}
+              >
+                인기 많은
+              </div>
+            )}
+            {selOrder === "fee" ? (
+              <div
+                className="flex px-[14px] py-[8px] justify-center items-center gap-[10px] text-color-common-100 bg-color-common-0 rounded-full"
+                onClick={() => {
+                  SetSelOrder("fee");
+                  return;
+                }}
+              >
+                입장료 낮은
+              </div>
+            ) : (
+              <div
+                className="flex px-[14px] py-[8px] justify-center items-center gap-[10px] text-color-neutral-70 bg-color-common-100 rounded-full border border-[var(--Line-Normal,#D8D8D8)] bg-[var(--Common-100,#FFF)]"
+                onClick={() => {
+                  SetSelOrder("fee");
+                  return;
+                }}
+              >
+                입장료 낮은
+              </div>
+            )}
+            {selOrder === "seats" ? (
+              <div
+                className="flex px-[14px] py-[8px] justify-center items-center gap-[10px] text-color-common-100 bg-color-common-0 rounded-full"
+                onClick={() => {
+                  SetSelOrder("seats");
+                  return;
+                }}
+              >
+                자리 많은
+              </div>
+            ) : (
+              <div
+                className="flex px-[14px] py-[8px] justify-center items-center gap-[10px] text-color-neutral-70 bg-color-common-100 rounded-full border border-[var(--Line-Normal,#D8D8D8)] bg-[var(--Common-100,#FFF)]"
+                onClick={() => {
+                  SetSelOrder("seats");
+                  return;
+                }}
+              >
+                자리 많은
+              </div>
+            )}
           </div>
           <div className="flex flex-col gap-2">
             {arr.map((item, idx) => (
