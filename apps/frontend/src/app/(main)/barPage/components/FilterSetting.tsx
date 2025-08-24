@@ -1,8 +1,10 @@
+"use client";
 // FilterSheet.tsx
 import OrangeDot from "@/icons/orange_dot.svg";
 import { X } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useId } from "react";
+import { useEffect, useId, useState } from "react";
+import PriceSlider from "./Slider";
 
 type Props = {
   open: boolean;
@@ -34,6 +36,7 @@ export default function FilterSheet({
   children,
 }: Props) {
   const titleId = useId();
+  const [price, setPrice] = useState(15000);
 
   // ESC로 닫기 + body 스크롤 잠금
   useEffect(() => {
@@ -103,39 +106,47 @@ export default function FilterSheet({
               {/* 예시 섹션: 최대 입장료 */}
 
               <section className="mb-5">
-                <div></div>
-                <Image
-                  src={OrangeDot}
-                  alt="주황닷"
-                  width={6}
-                  height={6}
-                  className="mr-2"
-                />
                 <div className="flex items-center">
+                  <Image
+                    src={OrangeDot}
+                    alt="주황닷"
+                    width={6}
+                    height={6}
+                    className="mr-2"
+                  />
                   <span className="text-sm text-[var(--Neutral-30,#474747)]">
                     최대 입장료
                   </span>
-                  <span className="ml-auto text-[#FF5940] text-sm font-medium">
+                  <span className="ml-auto text-color-common-0 text-sm font-medium">
                     16,000원
                   </span>
                 </div>
                 <div className="mt-3 h-10 rounded-lg bg-[var(--Neutral-99,#f6f6f6)] grid place-items-center text-xs text-[var(--Neutral-40,#5c5c5c)]">
-                  (range UI 자리)
+                  <PriceSlider
+                    options={[10000, 15000, 20000]}
+                    value={price}
+                    onChange={setPrice}
+                  />
                 </div>
               </section>
 
-              {/* 예시 섹션: 시간대 */}
               <section className="mb-5">
-                <div className="text-sm text-[var(--Neutral-30,#474747)] mb-2">
-                  시간대
-                </div>
-                <div className="rounded-lg border border-[var(--Line-Normal,#D8D8D8)]">
-                  <div className="px-4 py-3 flex items-center justify-between">
-                    <span className="text-sm">타임 1</span>
-                    <span className="text-sm text-[#FF5940]">
-                      13:00 ~ 15:00
-                    </span>
+                <div className="flex items-center">
+                  <Image
+                    src={OrangeDot}
+                    alt="주황닷"
+                    width={6}
+                    height={6}
+                    className="mr-2"
+                  />
+                  <div className="text-sm text-[var(--Neutral-30,#474747)]">
+                    시간대
                   </div>
+                  <select id="price" name="price">
+                    <option value="10000">1시간</option>
+                    <option value="15000">2시간</option>
+                    <option value="20000">3시간</option>
+                  </select>
                 </div>
               </section>
             </>

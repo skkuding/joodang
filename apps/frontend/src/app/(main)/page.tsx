@@ -46,7 +46,7 @@ export default async function Home() {
             <IoIosRefresh className="w-3.5 h-3.5" />
           </div>
           <Carousel opts={{ align: "start" }}>
-            <CarouselContent className="-ml-2 my-[14px]">
+            <CarouselContent className="-ml-2 sm:-ml-4 my-[14px]">
               {stores.map((store) => (
                 <CarouselItem className="basis-auto" key={store.id}>
                   <StoreCard
@@ -93,7 +93,7 @@ export default async function Home() {
         <div className="">
           {<NaverMap />}
           <Carousel opts={{ align: "start" }}>
-            <CarouselContent className="-ml-2 my-[14px]">
+            <CarouselContent className="-ml-2 sm:-ml-4 my-[14px]">
               {stores.map((store) => (
                 <CarouselItem className="basis-auto" key={store.id}>
                   <StoreCard
