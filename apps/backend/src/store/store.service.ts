@@ -1,8 +1,9 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 import { PrismaService } from 'prisma/prisma.service';
-import { Prisma } from 'generated/prisma';
+// Remove the following line to avoid type conflicts
+// import { Prisma } from 'generated/prisma';
 
 @Injectable()
 export class StoreService {
@@ -37,15 +38,14 @@ export class StoreService {
     if (!existingStore) {
       throw new NotFoundException('해당 가게를 찾을 수 없습니다.');
     }
-
     const { startTime, endTime, ...restData } = updateStoreDto;
-    const dataToUpdate: Prisma.StoreUpdateInput = { ...restData };
+    const dataToUpdate = { ...restData };
 
     if (startTime) {
-      dataToUpdate.startTime = new Date(startTime);
+      (dataToUpdate as any).startTime = new Date(startTime);
     }
     if (endTime) {
-      dataToUpdate.endTime = new Date(endTime);
+      (dataToUpdate as any).endTime = new Date(endTime);
     }
 
     return await this.prisma.store.update({
