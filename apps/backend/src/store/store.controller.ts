@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query, ValidationPipe } from '@nestjs/common';
 import { StoreService } from './store.service';
 import { GetStoresDto } from './dto/get-stores.dto';
 import { CreateStoreDto } from './dto/create-store.dto';
@@ -9,10 +9,13 @@ export class StoreController {
   constructor(private readonly storeService: StoreService) {}
 
   @Get()
-  @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
-  async getStores(@Query() getStoresDto: GetStoresDto) {
-    const { filter } = getStoresDto;
-    return this.storeService.getStores(filter);
+  async getStores(
+    @Query(new ValidationPipe({
+      transform: true,
+      forbidNonWhitelisted: true
+    })) query: GetStoresDto
+  ) {
+    return this.storeService.getStores(query);
   }
 
   @Get(':id')
