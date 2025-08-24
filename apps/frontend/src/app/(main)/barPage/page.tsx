@@ -13,7 +13,7 @@ export default function BarPage() {
   const [isFilterSet, SetIsFilterSet] = useState(false);
   const [selOrder, SetSelOrder] = useState("popular");
 
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="mt-[30px] ">
@@ -163,7 +163,7 @@ export default function BarPage() {
                 leading-[140%]
                 tracking-[-0.42px]"
               onClick={() => {
-                alert("필터 띄우기");
+                setOpen(true);
                 return;
               }}
             >
