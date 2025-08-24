@@ -5,62 +5,87 @@ const prisma = new PrismaClient();
 async function main() {
   const store1 = await prisma.store.create({
     data: {
-      name: 'SoJoodang',
-      description: '소주당',
+      name: '소주당',
+      description: '소주와 안주',
       phone: '010-1234-5678',
       organizer: '스꾸딩',
       instagramId: 'skkuding',
-      startTime: new Date('2026-01-01T00:00:00.000Z'),
-      endTime: new Date('2026-01-01T12:00:00.000Z'),
+      startTime: new Date('2026-01-01T18:00:00.000Z'),
+      endTime: new Date('2026-01-04T23:00:00.000Z'),
       reservationFee: 10000,
       college: '성균관대학교',
     },
-  })
+  });
 
   const store2 = await prisma.store.create({
     data: {
-      name: 'MaekJoodang',
-      description: '맥주당',
-      phone: '010-1234-5678',
+      name: '맥주당',
+      description: '시원한 맥주',
+      phone: '010-2222-3333',
       organizer: '소프트웨어학과',
       instagramId: 'skku_software',
-      startTime: new Date('2026-01-02T00:00:00.000Z'),
-      endTime: new Date('2026-01-02T12:00:00.000Z'),
+      startTime: new Date('2026-01-02T18:00:00.000Z'),
+      endTime: new Date('2026-01-03T23:00:00.000Z'),
       reservationFee: 20000,
       college: '성균관대학교',
     },
-  })
+  });
 
-  await prisma.menu.createMany({
-    data: [
-      {
-        name: '떡볶이',
-        price: 8000,
-        storeId: store1.id,
-  category: MenuCategory.Bap,
-      },
-      {
-        name: '치킨',
-        price: 12000,
-        storeId: store1.id,
-  category: MenuCategory.Tuiguim,
-      },
-    ],
-  })
+  const store3 = await prisma.store.create({
+    data: {
+      name: '와인당',
+      description: '분위기 있는 와인바',
+      phone: '010-3333-4444',
+      organizer: '신소재공학부',
+      instagramId: 'skku_amse',
+      startTime: new Date('2026-01-03T17:00:00.000Z'),
+      endTime: new Date('2026-01-03T22:00:00.000Z'),
+      reservationFee: 15000,
+      college: '성균관대학교',
+    },
+  });
+
+  const store4 = await prisma.store.create({
+    data: {
+      name: '치킨이당',
+      description: '바삭한 치킨과 맥주',
+      phone: '010-4444-5555',
+      organizer: '전자전기공학부',
+      instagramId: 'skku_electrical',
+      startTime: new Date('2026-01-04T18:00:00.000Z'),
+      endTime: new Date('2026-01-04T23:00:00.000Z'),
+      reservationFee: 12000,
+      college: '성균관대학교',
+    },
+  });
+
+  const store5 = await prisma.store.create({
+    data: {
+      name: 'SnackBar',
+      description: '과자와 음료가 가득한 스낵바',
+      phone: '010-5555-6666',
+      organizer: '화학과',
+      instagramId: 'skku_chem',
+      startTime: new Date('2026-01-05T18:00:00.000Z'),
+      endTime: new Date('2026-01-05T23:00:00.000Z'),
+      reservationFee: 5000,
+      college: '성균관대학교',
+    },
+  });
 
   await prisma.menu.createMany({
     data: [
       {
         name: '젤리',
         price: 3000,
-        storeId: store2.id,
-  category: MenuCategory.Fruit,
+        storeId: store1.id,
+        category: MenuCategory.Fruit,
       },
       {
         name: '과자',
         price: 3000,
-        storeId: store2.id,
-  category: MenuCategory.Maroon5,
+        storeId: store1.id,
+        category: MenuCategory.Maroon5,
       },
     ],
   })
@@ -74,34 +99,155 @@ async function main() {
     },
   })
 
-  const timeSlot1 = await prisma.timeSlot.create({
+  const user2 = await prisma.user.create({
     data: {
-      startTime: new Date('2026-01-01T00:00:00.000Z'),
-      endTime: new Date('2026-01-01T02:00:00.000Z'),
-      totalCapacity: 30,
-      availableSeats: 30,
-      storeId: store1.id,
+      studentId: '2020456789',
+      college: '성균관대학교',
+      major: '문헌정보학과',
+      name: '방승현',
     },
   })
 
-  const timeSlot2 = await prisma.timeSlot.create({
+  const user3 = await prisma.user.create({
     data: {
-      startTime: new Date('2026-01-01T00:00:00.000Z'),
-      endTime: new Date('2026-01-01T02:00:00.000Z'),
-      totalCapacity: 30,
-      availableSeats: 30,
-      storeId: store1.id,
+      studentId: '2022789012',
+      college: '성균관대학교',
+      major: '기계공학과',
+      name: '신보민',
     },
   })
 
-  await prisma.reservation.create({
+  const user4 = await prisma.user.create({
     data: {
-      headcount: 2,
-      userId: user1.id,
-      storeId: store1.id,
-      timeSlotId: timeSlot1.id,
+      studentId: '2020987654',
+      college: '성균관대학교',
+      major: '연기예술학과',
+      name: '김우주',
     },
   })
+
+  const user5 = await prisma.user.create({
+    data: {
+      studentId: '2020777777',
+      college: '성균관대학교',
+      major: '글로벌경제학과',
+      name: '송준혁',
+    },
+  })
+
+  const store1Slots = await prisma.$transaction([
+    prisma.timeSlot.create({
+      data: {
+        startTime: new Date('2026-01-01T18:00:00.000Z'),
+        endTime: new Date('2026-01-01T20:00:00.000Z'),
+        totalCapacity: 30,
+        availableSeats: 30,
+        storeId: store1.id,
+      },
+    }),
+    prisma.timeSlot.create({
+      data: {
+        startTime: new Date('2026-01-02T18:00:00.000Z'),
+        endTime: new Date('2026-01-02T20:00:00.000Z'),
+        totalCapacity: 30,
+        availableSeats: 30,
+        storeId: store1.id,
+      },
+    }),
+    prisma.timeSlot.create({
+      data: {
+        startTime: new Date('2026-01-03T20:00:00.000Z'),
+        endTime: new Date('2026-01-03T22:00:00.000Z'),
+        totalCapacity: 30,
+        availableSeats: 30,
+        storeId: store1.id,
+      },
+    }),
+    prisma.timeSlot.create({
+      data: {
+        startTime: new Date('2026-01-04T20:00:00.000Z'),
+        endTime: new Date('2026-01-04T22:00:00.000Z'),
+        totalCapacity: 30,
+        availableSeats: 30,
+        storeId: store1.id,
+      },
+    }),
+  ])
+
+  const store2Slots = await prisma.$transaction([
+    prisma.timeSlot.create({
+      data: {
+        startTime: new Date('2026-01-02T18:00:00.000Z'),
+        endTime: new Date('2026-01-02T20:00:00.000Z'),
+        totalCapacity: 30,
+        availableSeats: 30,
+        storeId: store2.id,
+      },
+    }),
+    prisma.timeSlot.create({
+      data: {
+        startTime: new Date('2026-01-02T20:00:00.000Z'),
+        endTime: new Date('2026-01-02T22:00:00.000Z'),
+        totalCapacity: 30,
+        availableSeats: 30,
+        storeId: store2.id,
+      },
+    }),
+    prisma.timeSlot.create({
+      data: {
+        startTime: new Date('2026-01-03T18:00:00.000Z'),
+        endTime: new Date('2026-01-03T20:00:00.000Z'),
+        totalCapacity: 30,
+        availableSeats: 30,
+        storeId: store2.id,
+      },
+    }),
+    prisma.timeSlot.create({
+      data: {
+        startTime: new Date('2026-01-03T20:00:00.000Z'),
+        endTime: new Date('2026-01-03T22:00:00.000Z'),
+        totalCapacity: 30,
+        availableSeats: 30,
+        storeId: store2.id,
+      },
+    }),
+  ])
+
+  await prisma.$transaction([
+    prisma.reservation.create({
+      data: { headcount: 2, userId: user1.id, storeId: store1.id, timeSlotId: store1Slots[0].id },
+    }),
+    prisma.reservation.create({
+      data: { headcount: 3, userId: user2.id, storeId: store1.id, timeSlotId: store1Slots[0].id },
+    }),
+    prisma.reservation.create({
+      data: { headcount: 2, userId: user3.id, storeId: store1.id, timeSlotId: store1Slots[0].id },
+    }),
+    prisma.reservation.create({
+      data: { headcount: 3, userId: user4.id, storeId: store1.id, timeSlotId: store1Slots[0].id },
+    }),
+    prisma.reservation.create({
+      data: { headcount: 2, userId: user5.id, storeId: store1.id, timeSlotId: store1Slots[0].id },
+    }),
+  ]);
+
+  await prisma.$transaction([
+    prisma.reservation.create({
+      data: { headcount: 2, userId: user1.id, storeId: store2.id, timeSlotId: store2Slots[0].id },
+    }),
+    prisma.reservation.create({
+      data: { headcount: 4, userId: user2.id, storeId: store2.id, timeSlotId: store2Slots[0].id },
+    }),
+    prisma.reservation.create({
+      data: { headcount: 2, userId: user3.id, storeId: store2.id, timeSlotId: store2Slots[0].id },
+    }),
+    prisma.reservation.create({
+      data: { headcount: 4, userId: user4.id, storeId: store2.id, timeSlotId: store2Slots[0].id },
+    }),
+    prisma.reservation.create({
+      data: { headcount: 2, userId: user5.id, storeId: store2.id, timeSlotId: store2Slots[0].id },
+    }),
+  ]);
 }
 
 main()
