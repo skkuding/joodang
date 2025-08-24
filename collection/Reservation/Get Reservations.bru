@@ -1,0 +1,15 @@
+meta {
+  name: Get Reservations
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/reservation
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}
