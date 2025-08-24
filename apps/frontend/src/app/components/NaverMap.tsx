@@ -79,10 +79,11 @@ export default function NaverMap() {
   // 컨테이너는 반드시 크기를 가져야 지도 보임!
   return (
     <div
+      className='my-3'
       ref={mapRef}
       style={{
         width: '100%',
-        height: 420,
+        height: 215,
         borderRadius: 12,
         overflow: 'hidden',
       }}
