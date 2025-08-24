@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, MenuCategory } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -37,11 +37,13 @@ async function main() {
         name: '떡볶이',
         price: 8000,
         storeId: store1.id,
+  category: MenuCategory.Bap,
       },
       {
         name: '치킨',
         price: 12000,
         storeId: store1.id,
+  category: MenuCategory.Tuiguim,
       },
     ],
   })
@@ -52,11 +54,13 @@ async function main() {
         name: '젤리',
         price: 3000,
         storeId: store2.id,
+  category: MenuCategory.Fruit,
       },
       {
         name: '과자',
         price: 3000,
         storeId: store2.id,
+  category: MenuCategory.Maroon5,
       },
     ],
   })
