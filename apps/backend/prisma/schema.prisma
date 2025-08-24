@@ -1,0 +1,119 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Store {
+  id             Int      @id @default(autoincrement())
+  name           String
+  phone          String
+  description    String?
+  organizer      String   @unique
+  instagramId    String?
+  startTime      DateTime
+  endTime        DateTime
+  isAvailable    Boolean  @default(true)
+  reservationFee Int
+  college        String
+
+  menus       Menu[]
+  timeSlots   TimeSlot[]
+  Reservation Reservation[]
+}
+
+model Menu {
+  id       Int     @id @default(autoincrement())
+  name     String
+  photoUrl String?
+  price    Int
+
+  storeId Int
+  store   Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  reservations Reservation[]
+}
+
+model User {
+  id        Int    @id @default(autoincrement())
+  studentId String @unique
+  college   String
+  major     String
+  name      String
+
+  reservations Reservation[]
+
+  NotificationRecord NotificationRecord[]
+  PushSubscription   PushSubscription[]
+}
+
+model TimeSlot {
+  id             Int      @id @default(autoincrement())
+  startTime      DateTime
+  endTime        DateTime
+  totalCapacity  Int
+  availableSeats Int
+
+  storeId Int
+  store   Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  reservations Reservation[]
+}
+
+model Reservation {
+  id        Int @id @default(autoincrement())
+  headcount Int
+
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+  storeId    Int
+  store      Store    @relation(fields: [storeId], references: [id])
+  timeSlotId Int
+  timeSlot   TimeSlot @relation(fields: [timeSlotId], references: [id])
+
+  menus Menu[]
+}
+
+model Notification {
+  id      Int     @id @default(autoincrement())
+  title   String
+  message String
+  url     String?
+  type    String  @default("Other")
+
+  createTime         DateTime             @default(now()) @map("create_time")
+  NotificationRecord NotificationRecord[]
+
+  @@map("notification")
+}
+
+model NotificationRecord {
+  id             Int          @id @default(autoincrement())
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  notificationId Int          @map("notification_id")
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         Int          @map("user_id")
+  isRead         Boolean      @default(false) @map("is_read")
+  createTime     DateTime     @default(now()) @map("create_time")
+
+  @@index([userId, createTime, id])
+  @@map("notification_record")
+}
+
+model PushSubscription {
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     Int      @map("user_id")
+  endpoint   String
+  p256dh     String
+  auth       String
+  userAgent  String?  @map("user_agent")
+  createTime DateTime @default(now()) @map("create_time")
+  updateTime DateTime @updatedAt @map("update_time")
+
+  @@unique([userId, endpoint])
+  @@map("push_subscription")
+}

@@ -1,0 +1,72 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Store {
+  id             Int        @id @default(autoincrement())
+  name           String     
+  phone          String     
+  description    String?    
+  organizer      String     @unique
+  instagramId    String?   
+  startTime      DateTime   
+  endTime        DateTime   
+  isAvailable    Boolean    @default(true)
+  reservationFee Int       
+  college        String     
+
+  menus       Menu[]
+  timeSlots   TimeSlot[]
+}
+
+model Menu {
+  id        Int      @id @default(autoincrement())
+  name      String   
+  photoUrl  String?  
+  price     Int     
+
+  storeId   Int
+  store     Store    @relation(fields: [storeId], references: [id])
+
+  reservations Reservation[]
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  college     String   
+  department  String   
+  studentId   String   @unique 
+  name        String   
+
+  reservations Reservation[]
+}
+
+model TimeSlot {
+  id              Int      @id @default(autoincrement())
+  startTime       DateTime 
+  endTime         DateTime 
+  totalCapacity   Int      
+  availableSeats  Int      
+
+  storeId         Int
+  store           Store    @relation(fields: [storeId], references: [id])
+
+  reservations    Reservation[]
+}
+
+model Reservation {
+  id          Int      @id @default(autoincrement())
+  headcount   Int      
+
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+  timeSlotId  Int
+  timeSlot    TimeSlot @relation(fields: [timeSlotId], references: [id])
+
+  menus       Menu[]
+}

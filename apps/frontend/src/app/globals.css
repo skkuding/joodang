@@ -1,6 +1,7 @@
 @import 'tailwindcss';
-
-@custom-variant dark (&:is(.dark *));
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 @config './tailwind.config.ts';
 
 @theme inline {

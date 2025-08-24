@@ -36,7 +36,7 @@ export default {
           strong: '#38110C',
         },
         color: {
-          commmon: {
+          common: {
             100: '#FFF',
             0: '#000',
           },
