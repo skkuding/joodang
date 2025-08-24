@@ -1,5 +1,6 @@
+import { Type } from 'class-transformer';
 import {
-  IsDateString,
+  IsDate,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -27,11 +28,13 @@ export class CreateStoreDto {
   @IsOptional()
   instagramId?: string
 
-  @IsDateString()
-  startTime: string
+  @Type(() => Date)
+  @IsDate()
+  startTime: Date
 
-  @IsDateString()
-  endTime: string
+  @Type(() => Date)
+  @IsDate()
+  endTime: Date
 
   @IsInt()
   reservationFee: number

@@ -90,7 +90,10 @@ model Reservation {
   timeSlotId Int
   timeSlot   TimeSlot @relation(fields: [timeSlotId], references: [id])
 
-  menus Menu[]
+  isDone Boolean @default(false)
+  menus  Menu[]
+
+  @@unique([userId, timeSlotId])
 }
 
 model Notification {

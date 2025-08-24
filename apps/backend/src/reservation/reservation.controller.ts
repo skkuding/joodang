@@ -1,34 +1,38 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { ReservationService } from './reservation.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
-import { UpdateReservationDto } from './dto/update-reservation.dto';
 
 @Controller('reservation')
 export class ReservationController {
   constructor(private readonly reservationService: ReservationService) {}
 
   @Post()
-  create(@Body() createReservationDto: CreateReservationDto) {
-    return this.reservationService.create(createReservationDto);
+  createReservation(@Body() createReservationDto: CreateReservationDto) {
+    return this.reservationService.createReservation(createReservationDto);
+  }
+
+  @Post('/call/:id')
+  callReservation(@Param('id', ParseIntPipe) id: number) {
+    return this.reservationService.callReservation(id);
   }
 
   @Get()
-  findAll() {
-    return this.reservationService.findAll();
+  getReservations() {
+    return this.reservationService.getReservations(1);
+  }
+
+  @Get('/store/:storeId')
+  getStoreReservations(@Param('storeId', ParseIntPipe) storeId: number) {
+    return this.reservationService.getStoreReservations(storeId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.reservationService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReservationDto: UpdateReservationDto) {
-    return this.reservationService.update(+id, updateReservationDto);
+  getReservation(@Param('id', ParseIntPipe) id: number) {
+    return this.reservationService.getReservation(id);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reservationService.remove(+id);
+  removeReservation(@Param('id', ParseIntPipe) id: number) {
+    return this.reservationService.removeReservation(id);
   }
 }
