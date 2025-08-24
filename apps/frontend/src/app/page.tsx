@@ -1,4 +1,8 @@
 'use client';
+import foodIcon from '@/assets/graphic_food.svg';
+import animalIcon from '@/assets/icon_aninal.svg';
+import heartIcon from '@/assets/icon_heart.svg';
+
 import {
   Carousel,
   CarouselContent,
@@ -16,13 +20,14 @@ import GrayBeer from '@/icons/grayBeer.png';
 import GrayHouse from '@/icons/grayHouse.png';
 import Image from 'next/image';
 import Link from 'next/link';
-import Script from 'next/script';
 import { useState } from 'react';
 import {
   IoIosArrowDown,
   IoIosArrowForward,
   IoIosRefresh,
 } from 'react-icons/io';
+import NaverMap from './components/NaverMap';
+import { dateFormatter } from './libs/utils';
 
 export default function Home() {
   const [page, setPage] = useState('home');
@@ -63,14 +68,91 @@ export default function Home() {
             <IoIosRefresh className="w-3.5 h-3.5" />
           </div>
           <Carousel>
-            <CarouselContent className="-ml-4">
-              <CarouselItem className="pl-4">...</CarouselItem>
-              <CarouselItem className="pl-4">...</CarouselItem>
-              <CarouselItem className="pl-4">...</CarouselItem>
+            <CarouselContent className="-ml-2 md:-ml-4">
+              <CarouselItem className="pl-2 md:pl-4">
+                <StoreCard
+                  id={0}
+                  clubName={'KUSA'}
+                  storeName={'놀러와요 동물의 숲'}
+                  startTime={new Date('2025-01-01T18:00:00')}
+                  endTime={new Date('2025-01-02T23:00:00')}
+                />
+              </CarouselItem>
+              <CarouselItem className="pl-2 md:pl-4">
+                <StoreCard
+                  id={1}
+                  clubName={'SKKUDING'}
+                  storeName={'모태솔로지만 연애는 하고싶어'}
+                  startTime={new Date('2025-01-01T18:00:00')}
+                  endTime={new Date('2025-01-02T23:00:00')}
+                />
+              </CarouselItem>
             </CarouselContent>
           </Carousel>
         </div>
       </Section>
+    );
+  }
+
+  function renderStaticNotice() {
+    return (
+      <div className="relative px-5 py-3 bg-primary-normal h-[108px]">
+        <span className="px-1.5 py-0.5 text-white bg-black text-[10px] rounded-sm font-medium">
+          Commit
+        </span>
+        <p className="text-white text-lg font-medium">
+          이세계 음식점에 놀러오세요!
+        </p>
+        <p className="text-sm font-normal text-white/70">
+          이곳에서만 맛볼 수 있는 특별한 메뉴
+        </p>
+        <Image
+          src={foodIcon}
+          alt="food"
+          className="absolute right-5 top-1/2 -translate-y-1/2 w-[84px] h-[84px]"
+        />
+      </div>
+    );
+  }
+
+  interface StoreCardProps {
+    id: number;
+    clubName: string;
+    storeName: string;
+    startTime: Date;
+    endTime: Date;
+  }
+
+  function StoreCard({
+    id,
+    clubName,
+    storeName,
+    startTime,
+    endTime,
+  }: StoreCardProps) {
+    return (
+      <div className="flex justify-between flex-col w-[170px] h-[180px] p-[14px] rounded-md shadow-[0px_0px_20px_0px_rgba(0,0,0,0.12)]">
+        <div className="flex justify-end">
+          <Image
+            src={id % 2 === 0 ? animalIcon : heartIcon}
+            alt={`index-${id}`}
+            className="w-[48.60px] h-[40.50px]"
+          />
+        </div>
+
+        <div>
+          <h3 className="text-[13px] font-medium text-primary-normal">
+            {clubName}
+          </h3>
+          <h3 className="text-sm font-normal mb-1 text-color-neutral-50 overflow-hidden text-ellipsis whitespace-nowrap">
+            {storeName}
+          </h3>
+          <p>
+            {dateFormatter(startTime, 'YYYY.MM.DD')} -{' '}
+            {dateFormatter(endTime, 'DD')}
+          </p>
+        </div>
+      </div>
     );
   }
 
@@ -156,18 +238,13 @@ export default function Home() {
       </>
     );
   }
-  // const NaverMap = dynamic(() => import('./components/NaverMap'), {
-  //   ssr: false,
-  // });
 
   return (
     <div className="flex flex-col px-5 py-10 gap-10">
       {renderHeader()}
       {renderRecommendation()}
-      <Script
-        type="text/javascript"
-        src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.NEXT_PUBLIC_NAVER_ID}`}
-      />
+      {renderStaticNotice()}
+      <NaverMap />
       {renderFooter()}
     </div>
   );
