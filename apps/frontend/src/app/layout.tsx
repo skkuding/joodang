@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
-import Footer from './(components)/footer';
 import './globals.css';
 
 const geistSans = Geist({
@@ -25,11 +24,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <Script
+        type="text/javascript"
+        src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.NEXT_PUBLIC_NAVER_ID}&submodules=geocoder`}
+      />
+
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
-        <Footer />
       </body>
     </html>
   );
