@@ -45,10 +45,13 @@ export default async function Home() {
             <span>2025. 01. 01 (목)</span>
             <IoIosRefresh className="w-3.5 h-3.5" />
           </div>
-          <Carousel>
+          <Carousel opts={{ align: "start" }}>
             <CarouselContent className="-ml-2 my-[14px]">
               {stores.map((store) => (
-                <CarouselItem className="pl-4" key={store.id}>
+                <CarouselItem
+                  className="pl-4 basis-auto sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
+                  key={store.id}
+                >
                   <StoreCard
                     id={store.id}
                     clubName={store.organizer}
@@ -92,10 +95,13 @@ export default async function Home() {
       <Section title="주점 위치를 알아볼까요?" route="/location">
         <div className="">
           {<NaverMap />}
-          <Carousel>
+          <Carousel opts={{ align: "start" }}>
             <CarouselContent className="-ml-2 my-[14px]">
               {stores.map((store) => (
-                <CarouselItem className="pl-4" key={store.id}>
+                <CarouselItem
+                  className="pl-4 basis-auto sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
+                  key={store.id}
+                >
                   <StoreCard
                     id={store.id}
                     clubName={store.organizer}
@@ -181,8 +187,8 @@ export default async function Home() {
   }
   function Section({ title, route, children }: SectionProps) {
     return (
-      <div className="bg-white px-5 py-[30px] rounded-xl item-center">
-        <div className="flex justify-between">
+      <div className="bg-white px-5 py-[30px] rounded-xl">
+        <div className="flex justify-between mb-5">
           <h2 className="text-xl font-medium">{title}</h2>
           <Link href={route} className="flex items-center gap-[2px]">
             <span className=" text-xs font-normal text-color-neutral-40">
