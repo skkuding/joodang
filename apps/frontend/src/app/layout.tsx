@@ -31,8 +31,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "주당",
-  description: "대학 축제 주점 예약 플랫폼",
+  title: "judang",
+  description: "university festival platform",
   icons: {
     icon: "/icon.png",
     apple: "/logo.png",
