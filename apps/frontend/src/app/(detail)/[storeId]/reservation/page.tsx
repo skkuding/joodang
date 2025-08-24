@@ -16,10 +16,19 @@ import { useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import { renderStoreSummary } from "../../components/store";
 
+type StoreDetail = {
+  id: number;
+  name: string;
+  startTime: string;
+  endTime: string;  
+  currentAvailableSeats: number | null;
+  timeSlots: { startTime: string; endTime: string; availableSeats: number }[];
+};
+
 export default function Page({ params }: { params: { storeId: string } }) {
   const storeId = params.storeId;
   const { data: store } = useQuery(
-    queryOptions({
+    queryOptions<StoreDetail>({
       queryKey: ["store", storeId],
       queryFn: () => {
         const response = safeFetcher.get(`store/${storeId}`).json();
