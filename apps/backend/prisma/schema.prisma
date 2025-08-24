@@ -45,6 +45,8 @@ model Menu {
   store   Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
 
   reservations Reservation[]
+  
+  @@index([storeId])
 }
 
 model User {
