@@ -30,10 +30,7 @@ export default function Page({ params }: { params: { storeId: string } }) {
   const { data: store } = useQuery(
     queryOptions<StoreDetail>({
       queryKey: ["store", storeId],
-      queryFn: () => {
-        const response = safeFetcher.get(`store/${storeId}`).json();
-        return response;
-      },
+      queryFn: () => safeFetcher.get(`store/${storeId}`).json<StoreDetail>(),
     }),
   );
   const { data: menuData } = useQuery(
