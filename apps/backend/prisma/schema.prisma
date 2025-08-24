@@ -20,6 +20,10 @@ model Store {
   reservationFee Int
   college        String
 
+  location  String @default("디도 앞 잔디밭")
+  latitude  Float  @default(37.2931959)
+  longitude Float  @default(126.9745929)
+
   menus       Menu[]
   timeSlots   TimeSlot[]
   Reservation Reservation[]
