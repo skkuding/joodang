@@ -1,4 +1,5 @@
 "use client";
+import { dateFormatter } from "@/app/libs/utils";
 import foodIcon from "@/assets/graphic_food.svg";
 import animalIcon from "@/assets/icon_aninal.svg";
 import heartIcon from "@/assets/icon_heart.svg";
@@ -13,8 +14,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { FaLocationDot } from "react-icons/fa6";
 import { IoIosArrowForward, IoIosRefresh } from "react-icons/io";
-import { dateFormatter } from "./libs/utils";
-import NaverMap from "./components/NaverMap";
+import NaverMap from "../components/NaverMap";
 
 export default function Home() {
   function renderHeader() {
