@@ -1,4 +1,4 @@
-import { Store } from "@/app/type";
+import { StoreDetail } from "@/app/type";
 import clockIcon from "@/assets/icon_clock.svg";
 import locationIcon from "@/assets/icon_location.svg";
 import moneyIcon from "@/assets/icon_money.svg";
@@ -6,7 +6,7 @@ import { dateFormatter } from "@/lib/utils";
 import Image from "next/image";
 
 interface senderStoreSummaryProps {
-  store: Store;
+  store: StoreDetail;
 }
 
 export function renderStoreSummary({ store }: senderStoreSummaryProps) {
@@ -44,7 +44,9 @@ export function renderStoreSummary({ store }: senderStoreSummaryProps) {
             <div className="rounded-full bg-primary-normal w-1.5 h-1.5" />
             <span>현재 예약 가능한 인원</span>
           </div>
-          <span className="text-primary-normal">13명</span>
+          <span className="text-primary-normal">
+            {store.currentAvailableSeats ?? "0"} 명
+          </span>
         </div>
       </div>
     </div>
