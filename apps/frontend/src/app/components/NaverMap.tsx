@@ -5,7 +5,7 @@ import Script from "next/script";
 
 declare global {
   interface Window {
-    naver: any;
+    naver: naver.maps.Map;
   }
 }
 
