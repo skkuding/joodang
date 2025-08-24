@@ -1,15 +1,21 @@
 import Location from "@/icons/icon_location.svg";
 import Clock from "@/icons/orangeClock.svg";
 import Money from "@/icons/orangeMoney.svg";
+import Macju from "@/picture/drinkMacju.png";
 import Image from "next/image";
 
 export default function BarCard() {
   return (
-    <div className="w-[335px] h-[250px] rounded-[6px]">
-      <div></div>
+    <div
+      className="w-[335px] h-[284px] rounded-[6px] overflow-hidden"
+      style={{ boxShadow: "0 0 20px 0 rgba(0, 0, 0, 0.12)" }}
+    >
+      <div
+        className="w-full h-[110px] bg-cover bg-center"
+        style={{ backgroundImage: `url(${Macju.src})` }}
+      ></div>
 
-      <div>
-        <div></div>
+      <div className="px-5 pb-5 pt-[14px]">
         <div
           className="text-[#FF5940]
            text-xs
@@ -19,15 +25,17 @@ export default function BarCard() {
         >
           SKKUDING
         </div>
-        <div
-          className="text-color-common-0
-           text-base
-           font-medium
-           leading-[140%]
-           tracking-[-0.48px]
-           mb-3"
-        >
-          모태솔로지만 연애는 하고싶어
+        <div className="h-[22px] mb-3">
+          <div
+            className="text-color-common-0
+            text-base
+            font-medium
+            leading-[140%]
+            tracking-[-0.48px]
+            "
+          >
+            모태솔로지만 연애는 하고싶어
+          </div>
         </div>
         <div className="flex flex-col p-2 justify-center items-start gap-1 self-stretch rounded-[6px] bg-color-neutral-99 w-[295px] h-[87px]">
           <div className="flex flex-row  w-full items-center">

@@ -92,7 +92,7 @@ export default function BarPage() {
                 tracking-[-0.48px]
                 ml-auto"
               >
-                0시 ~ 0시
+                00:00 ~ 00:00
               </p>
             </div>
           </div>
