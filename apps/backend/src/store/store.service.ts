@@ -2,6 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 import { PrismaService } from 'prisma/prisma.service';
+import { GetStoresDto } from './dto/get-stores.dto';
+import { Prisma } from '@prisma/client';
 
 export type StoreSortFilter = 'popular' | 'fee' | 'seats';
 
@@ -13,21 +15,28 @@ export class StoreService {
    * 정렬 필터에 따라 가게 목록을 조회합니다.
    * @param filter 'popular', 'fee', 'seats'
    */
-  async getStores(filter?: StoreSortFilter) {
-    const now = new Date()
-
-    if (!filter) {
-      return await this.prisma.store.findMany({
-        where: { 
-          endTime: { gte: now } 
-        },
-        orderBy: { 
-          id: 'asc' 
-        }
-      })
+  async getStores(dto: GetStoresDto) {
+    const { sort, minFee, maxFee, startTime, endTime } = dto
+    const where: Prisma.StoreWhereInput = {
+      endTime: { gte: new Date() },
     }
 
-    switch (filter) {
+    if (minFee !== undefined || maxFee !== undefined) {
+      where.reservationFee = {};
+      if (minFee !== undefined) where.reservationFee.gte = minFee;
+      if (maxFee !== undefined) where.reservationFee.lte = maxFee;
+    }
+
+    if (startTime && endTime) {
+      where.timeSlots = {
+        some: {
+          startTime: { lt: endTime },
+          endTime: { gt: startTime },
+        },
+      };
+    }
+
+    switch (sort) {
       case 'popular': {
         const popularStoresData = await this.prisma.reservation.groupBy({
           by: ['storeId'],
@@ -54,7 +63,7 @@ export class StoreService {
         const popularStores = await this.prisma.store.findMany({
           where: {
             id: { in: sortedStoreIds },
-            endTime: { gte: now }
+            ...where
           }
         })
         
@@ -89,6 +98,13 @@ export class StoreService {
             return storeData;
         });
       }
+
+      default: {
+        return await this.prisma.store.findMany({
+          where,
+          orderBy: { id: 'asc' },
+        });
+      }
     }
   }
 
@@ -102,9 +118,9 @@ export class StoreService {
     const newStore = await this.prisma.store.create({
       data: {
         ...restData,
-        startTime: new Date(startTime),
-        endTime: new Date(endTime),
-      },
+        startTime,
+        endTime
+      }
     })
     return newStore
   }
@@ -118,13 +134,20 @@ export class StoreService {
       throw new NotFoundException('해당 가게를 찾을 수 없습니다.');
     }
     const { startTime, endTime, ...restData } = updateStoreDto;
-    const dataToUpdate = { ...restData };
-
-    if (startTime) {
-      (dataToUpdate as any).startTime = new Date(startTime);
+    const dataToUpdate: Prisma.StoreUpdateInput = {
+      ...Object.fromEntries(
+        Object.entries(restData).filter(([, v]) => v !== undefined)
+      ),
+      ...(startTime !== undefined ? { startTime } : {}),
+      ...(endTime !== undefined ? { endTime } : {}),
     }
-    if (endTime) {
-      (dataToUpdate as any).endTime = new Date(endTime);
+
+    if (dataToUpdate.startTime && dataToUpdate.endTime) {
+      const s = dataToUpdate.startTime as Date;
+      const e = dataToUpdate.endTime as Date;
+      if (s > e) {
+        throw new Error('startTime은 endTime보다 이전이어야 합니다.');
+      }
     }
 
     return await this.prisma.store.update({
