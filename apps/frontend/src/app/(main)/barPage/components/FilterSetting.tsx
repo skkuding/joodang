@@ -4,7 +4,7 @@ import OrangeDot from "@/icons/orange_dot.svg";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useId, useState } from "react";
-import PriceSlider from "./Slider";
+import PriceSlider from "./PriceSlider";
 
 type Props = {
   open: boolean;
@@ -27,6 +27,10 @@ export default function FilterSheet({
 }: Props) {
   const titleId = useId();
   const [price, setPrice] = useState(15000);
+  function handleSliderValueChange(next: number[]) {
+    console.log("next: ", next[0]);
+    setPrice(next[0]);
+  }
 
   // ESC로 닫기 + body 스크롤 잠금
   useEffect(() => {
@@ -111,11 +115,14 @@ export default function FilterSheet({
                     16,000원
                   </span>
                 </div>
-                <div className="mt-3 h-10 rounded-lg bg-[var(--Neutral-99,#f6f6f6)] grid place-items-center text-xs text-[var(--Neutral-40,#5c5c5c)]">
+                <div className="mt-3 h-10 rounded-lg grid place-items-center text-xs text-[var(--Neutral-40,#5c5c5c)]">
                   <PriceSlider
-                    options={[10000, 15000, 20000]}
-                    value={price}
-                    onChange={setPrice}
+                    defaultValue={[15000]}
+                    value={[price]}
+                    min={10000}
+                    max={20000}
+                    onValueChange={(next) => handleSliderValueChange(next)}
+                    className="color-orange"
                   />
                 </div>
               </section>
