@@ -9,27 +9,17 @@ import PriceSlider from "./Slider";
 type Props = {
   open: boolean;
   onClose: () => void;
-
-  /** 오버레이의 '위쪽 투명 스트립' 높이(px). 기본 80 */
   overlayClear?: number;
-
-  /** 모달 시트가 시작할 top 위치(px). 기본 150 (overlayClear와 독립) */
   sheetTop?: number;
-
-  /** 시트 최대 너비. 기본 375px */
   maxWidth?: number | string;
-
-  /** 모달 제목(접근성용) */
   title?: string;
-
-  /** 모달 본문 */
   children?: React.ReactNode;
 };
 
 export default function FilterSheet({
   open,
   onClose,
-  overlayClear = 70,
+  overlayClear = 68,
   sheetTop = 150,
   maxWidth = 375,
   title = "필터 설정하기",

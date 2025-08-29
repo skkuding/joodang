@@ -38,111 +38,123 @@ export default function RootLayout({
   const [page, setPage] = useState("home");
   return (
     <html lang="en">
-      <header>
-        <div className="fixed left-0 right-0 top-0 w-full px-5 flex bg-white h-[68px] items-end ">
-          <DropdownMenu>
-            <DropdownMenuTrigger className="flex gap-1 items-center">
-              <span className="text-xl font-semibold">성균관대학교</span>
-              <IoIosArrowDown className="h-4 w-4" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuLabel>성균관대학교</DropdownMenuLabel>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </header>
-      <Script
-        type="text/javascript"
-        src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.NEXT_PUBLIC_NAVER_ID}&submodules=geocoder`}
-      />
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased pt-[48px] pb-20`}
-      >
-        {children}
-      </body>
-      <footer>
-        <div
-          className="fixed left-0 right-0 bottom-0 z-50 w-full bg-white h-20 flex items-center justify-center"
-          style={{ boxShadow: "0 -2px 8px rgba(0,0,0,0.1)" }}
+      <body>
+        <header>
+          <div className="fixed left-0 right-0 top-0 w-full px-5 flex bg-white h-[68px] items-end ">
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex gap-1 items-center">
+                <span className="text-xl font-semibold">성균관대학교</span>
+                <IoIosArrowDown className="h-4 w-4" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>성균관대학교</DropdownMenuLabel>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </header>
+        <Script
+          type="text/javascript"
+          src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.NEXT_PUBLIC_NAVER_ID}&submodules=geocoder`}
+        />
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased pt-[48px] pb-20`}
         >
-          <div className="flex flex-row justify-center gap-[60px] -mt-2">
-            <div
-              onClick={() => {
-                setPage("home");
-                router.push("/");
-              }}
-              className="w-[60px] h-[54px] flex flex-col items-center"
-            >
-              {page === "home" ? (
-                <>
-                  <Image
-                    src={BlackHouse}
-                    alt="검은 집"
-                    width={32}
-                    height={32}
-                  />
-                  <p className="text-black text-xs">홈</p>
-                </>
-              ) : (
-                <>
-                  <Image src={GrayHouse} alt="회색 집" width={32} height={32} />
-                  <p className="text-[#9B9B9B] text-xs">홈</p>
-                </>
-              )}
-            </div>
-            <div
-              onClick={() => {
-                setPage("beer");
-                router.push("/barPage");
-              }}
-              className="w-[60px] h-[54px] flex flex-col items-center"
-            >
-              {page === "beer" ? (
-                <>
-                  <Image
-                    src={BlackBeer}
-                    alt="검은 맥주"
-                    width={34}
-                    height={34}
-                  />
-                  <p className="text-black text-xs">주점 찾기</p>
-                </>
-              ) : (
-                <>
-                  <Image
-                    src={GrayBeer}
-                    alt="회색 맥주"
-                    width={34}
-                    height={34}
-                  />
-                  <p className="text-[#9B9B9B] text-xs">주점 찾기</p>
-                </>
-              )}
-            </div>
-            <div
-              onClick={() => setPage("reservation")}
-              className="w-[60px] h-[54px] flex flex-col items-center"
-            >
-              {page === "reservation" ? (
-                <>
-                  <Image src={BlackReserv} alt="예약" width={32} height={32} />
-                  <p className="text-black text-xs">예약 내역</p>
-                </>
-              ) : (
-                <>
-                  <Image
-                    src={GrayReserv}
-                    alt="회색 예약"
-                    width={32}
-                    height={32}
-                  />
-                  <p className="text-[#9B9B9B] text-xs">예약 내역</p>
-                </>
-              )}
+          {children}
+        </body>
+        <footer>
+          <div
+            className="fixed left-0 right-0 bottom-0 z-50 w-full bg-white h-20 flex items-center justify-center"
+            style={{ boxShadow: "0 -2px 8px rgba(0,0,0,0.1)" }}
+          >
+            <div className="flex flex-row justify-center gap-[60px] -mt-2">
+              <div
+                onClick={() => {
+                  setPage("home");
+                  router.push("/");
+                }}
+                className="w-[60px] h-[54px] flex flex-col items-center"
+              >
+                {page === "home" ? (
+                  <>
+                    <Image
+                      src={BlackHouse}
+                      alt="검은 집"
+                      width={32}
+                      height={32}
+                    />
+                    <p className="text-black text-xs">홈</p>
+                  </>
+                ) : (
+                  <>
+                    <Image
+                      src={GrayHouse}
+                      alt="회색 집"
+                      width={32}
+                      height={32}
+                    />
+                    <p className="text-[#9B9B9B] text-xs">홈</p>
+                  </>
+                )}
+              </div>
+              <div
+                onClick={() => {
+                  setPage("beer");
+                  router.push("/barPage");
+                }}
+                className="w-[60px] h-[54px] flex flex-col items-center"
+              >
+                {page === "beer" ? (
+                  <>
+                    <Image
+                      src={BlackBeer}
+                      alt="검은 맥주"
+                      width={34}
+                      height={34}
+                    />
+                    <p className="text-black text-xs">주점 찾기</p>
+                  </>
+                ) : (
+                  <>
+                    <Image
+                      src={GrayBeer}
+                      alt="회색 맥주"
+                      width={34}
+                      height={34}
+                    />
+                    <p className="text-[#9B9B9B] text-xs">주점 찾기</p>
+                  </>
+                )}
+              </div>
+              <div
+                onClick={() => setPage("reservation")}
+                className="w-[60px] h-[54px] flex flex-col items-center"
+              >
+                {page === "reservation" ? (
+                  <>
+                    <Image
+                      src={BlackReserv}
+                      alt="예약"
+                      width={32}
+                      height={32}
+                    />
+                    <p className="text-black text-xs">예약 내역</p>
+                  </>
+                ) : (
+                  <>
+                    <Image
+                      src={GrayReserv}
+                      alt="회색 예약"
+                      width={32}
+                      height={32}
+                    />
+                    <p className="text-[#9B9B9B] text-xs">예약 내역</p>
+                  </>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      </footer>
+        </footer>
+      </body>
     </html>
   );
 }
