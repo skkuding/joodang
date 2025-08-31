@@ -8,7 +8,7 @@ async function bootstrap() {
     logger: ['error', 'warn', 'log', 'debug', 'verbose'],
   })
 
-  app.use(morgan('dev'))
+  app.use(morgan.default('dev'))
 
   app.enableCors({
     origin: [
