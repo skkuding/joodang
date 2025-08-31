@@ -64,8 +64,13 @@ export function Footer() {
               </>
             )}
           </div>
-          <div className="w-[60px] h-[54px] flex flex-col items-center">
-            {pathname === "/reservation" ? (
+          <div
+            onClick={() => {
+              router.push("/reservationCheckPage");
+            }}
+            className="w-[60px] h-[54px] flex flex-col items-center"
+          >
+            {pathname === "/reservationCheckPage" ? (
               <>
                 <Image src={BlackReserv} alt="예약" width={32} height={32} />
                 <p className="text-black text-xs">예약 내역</p>
