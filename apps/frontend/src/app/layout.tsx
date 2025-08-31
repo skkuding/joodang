@@ -35,10 +35,7 @@ export default function RootLayout({
 }>) {
   const router = useRouter();
   const pathname = usePathname();
-  console.log("pathname: ", pathname);
-  if (pathname === "/") {
-    console.log("home");
-  }
+
   return (
     <html lang="en">
       <body>

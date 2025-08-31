@@ -16,7 +16,7 @@ export default function BarPage() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="mt-[30px] ">
+    <div>
       <div className="p-5">
         <FilterSetting open={open} onClose={() => setOpen(false)} />
         <div>

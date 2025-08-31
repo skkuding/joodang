@@ -3,9 +3,9 @@ import BlackBeer from "@/icons/blackBeer.png";
 import BlackHouse from "@/icons/blackHouse.png";
 import GrayBeer from "@/icons/grayBeer.png";
 import GrayHouse from "@/icons/grayHouse.png";
+import { requestPermissionAndSubscribe } from "@/lib/push-subscription";
 import Image from "next/image";
 import { useState } from "react";
-import { requestPermissionAndSubscribe } from "@/lib/push-subscription";
 
 export function Footer() {
   const [page, setPage] = useState("home");
