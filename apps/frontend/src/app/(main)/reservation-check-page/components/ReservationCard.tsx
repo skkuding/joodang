@@ -5,13 +5,18 @@ import Location from "@/icons/icon_location.svg";
 import Calendar from "@/icons/orangeCalendar.svg";
 import Clock from "@/icons/orangeClock.svg";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function ReservationCard() {
   // const store: Store = await safeFetcher.get("store").json();
+  const router = useRouter();
   return (
     <div
       className="w-[335px]  h-[174px] rounded-[6px] overflow-hidden"
       style={{ boxShadow: "0 0 20px 0 rgba(0, 0, 0, 0.12)" }}
+      onClick={() => {
+        router.push("/reservation-check-page/1");
+      }}
     >
       <div className="px-5 pb-5 pt-[14px]">
         <div

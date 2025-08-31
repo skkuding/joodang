@@ -92,7 +92,7 @@ export default function ReservationDetail() {
             </div>
           </div>
         </div>
-        <div className="mt-[60px] mb-[60px]">
+        <div className="mt-[60px] mb-[40px]">
           <button
             className="h-11 w-full rounded-xl bg-[#FF5940] text-white text-sm font-medium"
             onClick={() => {
