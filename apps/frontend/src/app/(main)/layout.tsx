@@ -15,11 +15,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Joodang 주당",
-  description: "Joodang, Reservation for College Festival Booth",
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
