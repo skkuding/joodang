@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common'
+import {
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import * as webpush from 'web-push'
 import { PrismaService } from '../../prisma/prisma.service'
@@ -8,18 +12,18 @@ import { CreatePushSubscriptionDto } from './dto/create-push-subscription.dto'
 export class NotificationService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly config: ConfigService
+    private readonly config: ConfigService,
   ) {
     const vapidKeys = {
       publicKey: this.config.get('VAPID_PUBLIC_KEY'),
-      privateKey: this.config.get('VAPID_PRIVATE_KEY')
+      privateKey: this.config.get('VAPID_PRIVATE_KEY'),
     }
 
     if (vapidKeys.publicKey && vapidKeys.privateKey) {
       webpush.setVapidDetails(
         'mailto:woojoo@spacekim.org',
         vapidKeys.publicKey,
-        vapidKeys.privateKey
+        vapidKeys.privateKey,
       )
     }
   }
@@ -29,29 +33,22 @@ export class NotificationService {
       where: { id: reservationId },
       select: {
         store: {
-            select: {
-                name: true
-            }
+          select: {
+            name: true,
+          },
         },
-        userId: true
-      }
+        userId: true,
+      },
     })
 
-    if(!reservationInfo)
-        return
+    if (!reservationInfo) return
 
     const receivers = reservationInfo ? [reservationInfo.userId] : []
 
     const title = reservationInfo.store.name ?? 'Reservation'
     const message = `오래 기다리셨습니다. 지금 방문해주세요!`
 
-    await this.saveNotification(
-      receivers,
-      title,
-      message,
-      '',
-      ''
-    )
+    await this.saveNotification(receivers, title, message, '', '')
 
     await this.sendPushNotification(receivers, title, message, '')
   }
@@ -61,7 +58,7 @@ export class NotificationService {
     title: string,
     message: string,
     type: string = 'Other',
-    url?: string
+    url?: string,
   ) {
     if (userIds.length === 0) {
       return
@@ -72,17 +69,17 @@ export class NotificationService {
         title,
         message,
         url,
-        type
-      }
+        type,
+      },
     })
 
     const notificationRecords = userIds.map((userId) => ({
       notificationId: notification.id,
-      userId
+      userId,
     }))
 
     await this.prisma.notificationRecord.createMany({
-      data: notificationRecords
+      data: notificationRecords,
     })
   }
 
@@ -90,7 +87,7 @@ export class NotificationService {
     userIds: number[],
     title: string,
     message: string,
-    url?: string
+    url?: string,
   ) {
     if (userIds.length === 0) {
       return
@@ -98,8 +95,8 @@ export class NotificationService {
 
     const subscriptions = await this.prisma.pushSubscription.findMany({
       where: {
-        userId: { in: userIds }
-      }
+        userId: { in: userIds },
+      },
     })
 
     const payload = JSON.stringify({
@@ -107,7 +104,7 @@ export class NotificationService {
       body: message,
       icon: '/logos/transparent.png',
       badge: '/logos/codedang-badge.png',
-      data: { url }
+      data: { url },
     })
 
     const sendPromises = subscriptions.map(async (subscription) => {
@@ -117,20 +114,20 @@ export class NotificationService {
             endpoint: subscription.endpoint,
             keys: {
               p256dh: subscription.p256dh,
-              auth: subscription.auth
-            }
+              auth: subscription.auth,
+            },
           },
-          payload
+          payload,
         )
       } catch (error) {
         console.error(
           `Failed to send push notification to user ${subscription.userId}:`,
-          error
+          error,
         )
 
         if (error?.statusCode === 410) {
           await this.prisma.pushSubscription.delete({
-            where: { id: subscription.id }
+            where: { id: subscription.id },
           })
         }
       }
@@ -139,7 +136,7 @@ export class NotificationService {
     await Promise.allSettled(sendPromises)
   }
 
-   /**
+  /**
    * 사용자의 알림 목록을 조회합니다
    * @param userId - 사용자 ID
    * @param cursor - 커서 기반 페이징을 위한 마지막 알림 ID
@@ -149,13 +146,13 @@ export class NotificationService {
     userId: number,
     cursor: number | null,
     take: number,
-    isRead: boolean | null
+    isRead: boolean | null,
   ) {
     const paginator = this.prisma.getPaginator(cursor)
 
     const whereOptions = {
       userId,
-      isRead: isRead !== null ? isRead : undefined
+      isRead: isRead !== null ? isRead : undefined,
     }
 
     const notificationRecords = await this.prisma.notificationRecord.findMany({
@@ -163,11 +160,11 @@ export class NotificationService {
       take,
       where: whereOptions,
       include: {
-        notification: true
+        notification: true,
       },
       orderBy: {
-        createTime: 'desc'
-      }
+        createTime: 'desc',
+      },
     })
 
     return notificationRecords.map((record) => ({
@@ -178,10 +175,9 @@ export class NotificationService {
       url: record.notification.url,
       type: record.notification.type,
       isRead: record.isRead,
-      createTime: record.createTime
+      createTime: record.createTime,
     }))
   }
-
 
   /**
    * 사용자의 모든 알림을 읽음으로 표시합니다
@@ -191,11 +187,11 @@ export class NotificationService {
     const updated = await this.prisma.notificationRecord.updateMany({
       where: {
         userId,
-        isRead: false
+        isRead: false,
       },
       data: {
-        isRead: true
-      }
+        isRead: true,
+      },
     })
 
     return { successCount: updated.count }
@@ -212,12 +208,14 @@ export class NotificationService {
           endpoint: dto.endpoint,
           p256dh: dto.keys.p256dh,
           auth: dto.keys.auth,
-          userAgent: dto.userAgent
-        }
+          userAgent: dto.userAgent,
+        },
       })
     } catch (error) {
       if (error.code === 'P2002') {
-        throw new UnprocessableEntityException('Push subscription already exists')
+        throw new UnprocessableEntityException(
+          'Push subscription already exists',
+        )
       }
       throw error
     }
@@ -245,13 +243,13 @@ export class NotificationService {
         const deleted = await this.prisma.pushSubscription.delete({
           where: {
             //eslint-disable-next-line @typescript-eslint/naming-convention
-            userId_endpoint: { userId, endpoint }
-          }
+            userId_endpoint: { userId, endpoint },
+          },
         })
         return { deletedCount: 1, subscription: deleted }
       } else {
         const deleted = await this.prisma.pushSubscription.deleteMany({
-          where: { userId }
+          where: { userId },
         })
         return { deletedCount: deleted.count }
       }

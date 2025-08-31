@@ -9,7 +9,7 @@ import {
   DefaultValuePipe,
   ParseBoolPipe,
   Post,
-  Body
+  Body,
 } from '@nestjs/common'
 import { CreatePushSubscriptionDto } from './dto/create-push-subscription.dto'
 import { NotificationService } from './notification.service'
@@ -27,13 +27,13 @@ export class NotificationController {
     @Query('take', new DefaultValuePipe(8))
     take: number,
     @Query('isRead', new ParseBoolPipe({ optional: true }))
-    isRead: boolean | null
+    isRead: boolean | null,
   ) {
     return await this.notificationService.getNotifications(
       1,
       cursor,
       take,
-      isRead
+      isRead,
     )
   }
 
@@ -50,22 +50,15 @@ export class NotificationController {
    * endpoint가 제공되지 않으면 해당 사용자의 모든 subscription을 삭제합니다
    */
   @Delete('/push-subscription')
-  async deletePushSubscription(
-    @Query('endpoint') endpoint?: string
-  ) {
-    return this.notificationService.deletePushSubscription(
-      1,
-      endpoint
-    )
+  async deletePushSubscription(@Query('endpoint') endpoint?: string) {
+    return this.notificationService.deletePushSubscription(1, endpoint)
   }
 
   /**
    * Push subscription을 생성합니다
    */
   @Post('/push-subscription')
-  async createPushSubscription(
-    @Body() dto: CreatePushSubscriptionDto
-  ) {
+  async createPushSubscription(@Body() dto: CreatePushSubscriptionDto) {
     return this.notificationService.createPushSubscription(1, dto)
   }
 
