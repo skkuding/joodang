@@ -13,9 +13,8 @@ import GrayHouse from "@/icons/grayHouse.png";
 import GrayReserv from "@/icons/reserv.svg";
 import { Geist, Geist_Mono } from "next/font/google";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Script from "next/script";
-import { useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import "./globals.css";
 
@@ -29,13 +28,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata = {
-  title: "주당",
-  description: "주당 Joodang",
-  icons: {
-    icon: "/icon.png",
-  },
-};
+// export const metadata = {
+//   title: "주당",
+//   description: "주당 Joodang",
+//   icons: {
+//     icon: "/icon.png",
+//   },
+// };
 
 export default function RootLayout({
   children,
@@ -43,7 +42,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const router = useRouter();
-  const [page, setPage] = useState("home");
+  const pathname = usePathname();
+
   return (
     <html lang="en">
       <body>
@@ -64,11 +64,11 @@ export default function RootLayout({
           type="text/javascript"
           src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.NEXT_PUBLIC_NAVER_ID}&submodules=geocoder`}
         />
-        <body
+        <main
           className={`${geistSans.variable} ${geistMono.variable} antialiased pt-[48px] pb-20`}
         >
           {children}
-        </body>
+        </main>
         <footer>
           <div
             className="fixed left-0 right-0 bottom-0 z-50 w-full bg-white h-20 flex items-center justify-center"
@@ -77,12 +77,11 @@ export default function RootLayout({
             <div className="flex flex-row justify-center gap-[60px] -mt-2">
               <div
                 onClick={() => {
-                  setPage("home");
                   router.push("/");
                 }}
                 className="w-[60px] h-[54px] flex flex-col items-center"
               >
-                {page === "home" ? (
+                {pathname === "/" ? (
                   <>
                     <Image
                       src={BlackHouse}
@@ -106,12 +105,11 @@ export default function RootLayout({
               </div>
               <div
                 onClick={() => {
-                  setPage("beer");
                   router.push("/barPage");
                 }}
                 className="w-[60px] h-[54px] flex flex-col items-center"
               >
-                {page === "beer" ? (
+                {pathname === "/barPage" ? (
                   <>
                     <Image
                       src={BlackBeer}
@@ -133,11 +131,8 @@ export default function RootLayout({
                   </>
                 )}
               </div>
-              <div
-                onClick={() => setPage("reservation")}
-                className="w-[60px] h-[54px] flex flex-col items-center"
-              >
-                {page === "reservation" ? (
+              <div className="w-[60px] h-[54px] flex flex-col items-center">
+                {pathname === "/reservation" ? (
                   <>
                     <Image
                       src={BlackReserv}
