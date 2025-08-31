@@ -1,11 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateStoreDto } from './dto/create-store.dto';
-import { UpdateStoreDto } from './dto/update-store.dto';
-import { PrismaService } from 'prisma/prisma.service';
-import { GetStoresDto } from './dto/get-stores.dto';
-import { Prisma } from '@prisma/client';
+import { Injectable, NotFoundException } from '@nestjs/common'
+import { CreateStoreDto } from './dto/create-store.dto'
+import { UpdateStoreDto } from './dto/update-store.dto'
+import { PrismaService } from 'prisma/prisma.service'
+import { GetStoresDto } from './dto/get-stores.dto'
+import { Prisma } from '@prisma/client'
 
-export type StoreSortFilter = 'popular' | 'fee' | 'seats';
+export type StoreSortFilter = 'popular' | 'fee' | 'seats'
 
 @Injectable()
 export class StoreService {
@@ -22,9 +22,9 @@ export class StoreService {
     }
 
     if (minFee !== undefined || maxFee !== undefined) {
-      where.reservationFee = {};
-      if (minFee !== undefined) where.reservationFee.gte = minFee;
-      if (maxFee !== undefined) where.reservationFee.lte = maxFee;
+      where.reservationFee = {}
+      if (minFee !== undefined) where.reservationFee.gte = minFee
+      if (maxFee !== undefined) where.reservationFee.lte = maxFee
     }
 
     if (startTime && endTime) {
@@ -33,7 +33,7 @@ export class StoreService {
           startTime: { lt: endTime },
           endTime: { gt: startTime },
         },
-      };
+      }
     }
 
     switch (sort) {
@@ -41,41 +41,41 @@ export class StoreService {
         const popularStoresData = await this.prisma.reservation.groupBy({
           by: ['storeId'],
           _count: {
-            id: true
+            id: true,
           },
           having: {
             id: {
               _count: {
-                gte: 5 // 최소 예약 수 (추후 초기 기획인 40으로 수정)
-              }
-            }
-          }
+                gte: 5, // 최소 예약 수 (추후 초기 기획인 40으로 수정)
+              },
+            },
+          },
         })
-        
+
         popularStoresData.sort((a, b) => {
           if (b._count.id !== a._count.id) return b._count.id - a._count.id
           return a.storeId - b.storeId
         })
 
-        const sortedStoreIds = popularStoresData.map(data => data.storeId)
+        const sortedStoreIds = popularStoresData.map((data) => data.storeId)
         if (sortedStoreIds.length === 0) return []
 
         const popularStores = await this.prisma.store.findMany({
           where: {
             id: { in: sortedStoreIds },
-            ...where
-          }
+            ...where,
+          },
         })
-        
+
         return sortedStoreIds
-          .map(id => popularStores.find(store => store.id === id))
+          .map((id) => popularStores.find((store) => store.id === id))
           .filter(Boolean)
       }
 
       case 'fee': {
         return await this.prisma.store.findMany({
           where,
-          orderBy: [{ reservationFee: 'asc' }, { id: 'asc' }]
+          orderBy: [{ reservationFee: 'asc' }, { id: 'asc' }],
         })
       }
 
@@ -88,24 +88,30 @@ export class StoreService {
               select: { availableSeats: true },
             },
           },
-        });
+        })
         stores.sort((a, b) => {
-          const totalSeatsA = a.timeSlots.reduce((sum, slot) => sum + slot.availableSeats, 0);
-          const totalSeatsB = b.timeSlots.reduce((sum, slot) => sum + slot.availableSeats, 0);
-          if (totalSeatsB !== totalSeatsA) return totalSeatsB - totalSeatsA;
-          return a.id - b.id;
-        });
-        return stores.map(store => {
-            const { timeSlots, ...storeData } = store;
-            return storeData;
-        });
+          const totalSeatsA = a.timeSlots.reduce(
+            (sum, slot) => sum + slot.availableSeats,
+            0,
+          )
+          const totalSeatsB = b.timeSlots.reduce(
+            (sum, slot) => sum + slot.availableSeats,
+            0,
+          )
+          if (totalSeatsB !== totalSeatsA) return totalSeatsB - totalSeatsA
+          return a.id - b.id
+        })
+        return stores.map((store) => {
+          const { timeSlots, ...storeData } = store
+          return storeData
+        })
       }
 
       default: {
         return await this.prisma.store.findMany({
           where,
           orderBy: { id: 'asc' },
-        });
+        })
       }
     }
   }
@@ -126,16 +132,16 @@ export class StoreService {
       },
     })
 
-    const now = new Date();
+    const now = new Date()
     const currentTimeSlot =
       store.timeSlots.find(
         (timeslot) => timeslot.startTime <= now && timeslot.endTime > now,
-      ) ?? null;
+      ) ?? null
 
     return {
       ...store,
       currentAvailableSeats: currentTimeSlot?.availableSeats ?? null,
-    };
+    }
   }
 
   async createStore(createStoreDto: CreateStoreDto) {
@@ -145,7 +151,7 @@ export class StoreService {
       data: {
         ...storeData,
         timeSlots: {
-          create: timeSlots.map(timeslot => ({
+          create: timeSlots.map((timeslot) => ({
             ...timeslot,
             availableSeats: timeslot.totalCapacity,
           })),
@@ -159,7 +165,7 @@ export class StoreService {
       where: { id },
     })
     if (!existingStore) {
-      throw new NotFoundException('해당 가게를 찾을 수 없습니다.');
+      throw new NotFoundException('해당 가게를 찾을 수 없습니다.')
     }
 
     const { timeSlots, ...rest } = updateStoreDto
@@ -188,7 +194,7 @@ export class StoreService {
             })),
           },
         },
-        include: { timeSlots: true }
+        include: { timeSlots: true },
       })
 
       return updated
@@ -207,7 +213,7 @@ export class StoreService {
       await tx.reservation.deleteMany({ where: { storeId: id } })
 
       const deleted = await tx.store.delete({
-        where: { id }
+        where: { id },
       })
 
       return deleted
