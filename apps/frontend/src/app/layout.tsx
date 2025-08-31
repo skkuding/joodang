@@ -1,22 +1,14 @@
-"use client";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import BlackBeer from "@/icons/blackBeer.png";
-import BlackHouse from "@/icons/blackHouse.png";
-import BlackReserv from "@/icons/blackReserv.svg";
-import GrayBeer from "@/icons/grayBeer.png";
-import GrayHouse from "@/icons/grayHouse.png";
-import GrayReserv from "@/icons/reserv.svg";
 import { Geist, Geist_Mono } from "next/font/google";
-import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
 import Script from "next/script";
 import { IoIosArrowDown } from "react-icons/io";
 import "./globals.css";
+import { Footer } from './components/Footer'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,22 +20,19 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// export const metadata = {
-//   title: "주당",
-//   description: "주당 Joodang",
-//   icons: {
-//     icon: "/icon.png",
-//   },
-// };
+export const metadata = {
+  title: "주당",
+  description: "주당 Joodang",
+  icons: {
+    icon: "/icon.png",
+  },
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const router = useRouter();
-  const pathname = usePathname();
-
   return (
     <html lang="en">
       <body>
@@ -69,94 +58,7 @@ export default function RootLayout({
         >
           {children}
         </main>
-        <footer>
-          <div
-            className="fixed left-0 right-0 bottom-0 z-50 w-full bg-white h-20 flex items-center justify-center"
-            style={{ boxShadow: "0 -2px 8px rgba(0,0,0,0.1)" }}
-          >
-            <div className="flex flex-row justify-center gap-[60px] -mt-2">
-              <div
-                onClick={() => {
-                  router.push("/");
-                }}
-                className="w-[60px] h-[54px] flex flex-col items-center"
-              >
-                {pathname === "/" ? (
-                  <>
-                    <Image
-                      src={BlackHouse}
-                      alt="검은 집"
-                      width={32}
-                      height={32}
-                    />
-                    <p className="text-black text-xs">홈</p>
-                  </>
-                ) : (
-                  <>
-                    <Image
-                      src={GrayHouse}
-                      alt="회색 집"
-                      width={32}
-                      height={32}
-                    />
-                    <p className="text-[#9B9B9B] text-xs">홈</p>
-                  </>
-                )}
-              </div>
-              <div
-                onClick={() => {
-                  router.push("/barPage");
-                }}
-                className="w-[60px] h-[54px] flex flex-col items-center"
-              >
-                {pathname === "/barPage" ? (
-                  <>
-                    <Image
-                      src={BlackBeer}
-                      alt="검은 맥주"
-                      width={34}
-                      height={34}
-                    />
-                    <p className="text-black text-xs">주점 찾기</p>
-                  </>
-                ) : (
-                  <>
-                    <Image
-                      src={GrayBeer}
-                      alt="회색 맥주"
-                      width={34}
-                      height={34}
-                    />
-                    <p className="text-[#9B9B9B] text-xs">주점 찾기</p>
-                  </>
-                )}
-              </div>
-              <div className="w-[60px] h-[54px] flex flex-col items-center">
-                {pathname === "/reservation" ? (
-                  <>
-                    <Image
-                      src={BlackReserv}
-                      alt="예약"
-                      width={32}
-                      height={32}
-                    />
-                    <p className="text-black text-xs">예약 내역</p>
-                  </>
-                ) : (
-                  <>
-                    <Image
-                      src={GrayReserv}
-                      alt="회색 예약"
-                      width={32}
-                      height={32}
-                    />
-                    <p className="text-[#9B9B9B] text-xs">예약 내역</p>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        </footer>
+        <Footer />
       </body>
     </html>
   );
