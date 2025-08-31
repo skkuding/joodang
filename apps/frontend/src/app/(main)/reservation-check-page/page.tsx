@@ -2,7 +2,7 @@ import Checkbox from "@/icons/orangeCheckbox.svg";
 import Image from "next/image";
 import ReservationCard from "./components/ReservationCard";
 
-export default function reservationCheckPage() {
+export default function ReservationCheckPage() {
   return (
     <div className="px-5">
       <div className="mb-[30px]">
