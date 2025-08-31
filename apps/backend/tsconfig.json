@@ -17,7 +17,7 @@
     "paths": {
       "@app/*": ["src/*"],
       "@auth/*": ["src/auth/*"],
-      "@prisma/*": ["src/prisma/*"],
+      "@prisma/*": ["prisma/*"],
       "@store/*": ["src/store/*"],
       "@reservation/*": ["src/reservation/*"],
       "@notification/*": ["src/notification/*"],
