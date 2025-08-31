@@ -92,6 +92,7 @@ async function main() {
 
   const user1 = await prisma.user.create({
     data: {
+  kakaoId: 'kakao_2020123456',
       studentId: '2020123456',
       college: '성균관대학교',
       major: '소프트웨어학과',
@@ -101,6 +102,7 @@ async function main() {
 
   const user2 = await prisma.user.create({
     data: {
+  kakaoId: 'kakao_2020456789',
       studentId: '2020456789',
       college: '성균관대학교',
       major: '문헌정보학과',
@@ -110,6 +112,7 @@ async function main() {
 
   const user3 = await prisma.user.create({
     data: {
+  kakaoId: 'kakao_2022789012',
       studentId: '2022789012',
       college: '성균관대학교',
       major: '기계공학과',
@@ -119,6 +122,7 @@ async function main() {
 
   const user4 = await prisma.user.create({
     data: {
+  kakaoId: 'kakao_2020987654',
       studentId: '2020987654',
       college: '성균관대학교',
       major: '연기예술학과',
@@ -128,6 +132,7 @@ async function main() {
 
   const user5 = await prisma.user.create({
     data: {
+  kakaoId: 'kakao_2020777777',
       studentId: '2020777777',
       college: '성균관대학교',
       major: '글로벌경제학과',
