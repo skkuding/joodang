@@ -2,6 +2,7 @@ import Checkbox from "@/icons/orangeCheckbox.svg";
 import Image from "next/image";
 import ReservationCard from "./components/ReservationCard";
 
+// TODO: 어드민 페이지일 때 탭을 나누어서 '우리 주점을 예약한' 부분의 컴포넌트를 렌더링해야합니다.
 export default function ReservationCheckPage() {
   return (
     <div className="px-5">
