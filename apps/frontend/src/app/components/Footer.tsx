@@ -48,11 +48,11 @@ export function Footer() {
           </div>
           <div
             onClick={() => {
-              router.push("/barPage");
+              router.push("/bar-page");
             }}
             className="w-[60px] h-[54px] flex flex-col items-center"
           >
-            {pathname === "/barPage" ? (
+            {pathname === "/bar-page" ? (
               <>
                 <Image src={BlackBeer} alt="검은 맥주" width={34} height={34} />
                 <p className="text-black text-xs">주점 찾기</p>
@@ -66,11 +66,11 @@ export function Footer() {
           </div>
           <div
             onClick={() => {
-              router.push("/reservationCheckPage");
+              router.push("/reservation-check-page");
             }}
             className="w-[60px] h-[54px] flex flex-col items-center"
           >
-            {pathname === "/reservationCheckPage" ? (
+            {pathname === "/reservation-check-page" ? (
               <>
                 <Image src={BlackReserv} alt="예약" width={32} height={32} />
                 <p className="text-black text-xs">예약 내역</p>
