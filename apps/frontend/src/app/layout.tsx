@@ -23,7 +23,7 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "주당 Joodang",
-  description: "주당 Joodang"
+  description: "대학 축제 주점 예약 플랫폼"
 }
 
 export default function RootLayout({
