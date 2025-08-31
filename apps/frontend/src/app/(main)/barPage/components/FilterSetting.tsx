@@ -35,7 +35,7 @@ export default function FilterSheet({
   const sheetRef = useRef<HTMLDivElement>(null);
 
   const titleId = useId();
-  // TODO: 시간선택도 상태로 처리해야합니다!
+  // TODO: 시간선택도 상태로 처리해야합니다! 그리고 그것도 state 끌올 해야합니다.
   const [price, setPrice] = useState(15000); // 이거 state 끌올 해야함
   function handleSliderValueChange(next: number[]) {
     console.log("next: ", next[0]);
