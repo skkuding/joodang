@@ -13,10 +13,10 @@ export default function reservationCheckPage() {
           height={24}
           className="mb-1"
         />
-        <p className="w-[240px] h-[28px] text-color-common-0 font-pretendard font-medium text-xl leading-[140%] tracking-[-0.03em] text-left">
+        <p className="w-[240px] h-[28px] text-color-common-0 font-pretendard font-medium text-xl leading-[140%] tracking-[-0.03em] text-left mb-2">
           내 예약을 한 눈에 볼 수 있어요
         </p>
-        <div className="text-color-neutral-40 font-pretendard font-normal text-[14px] leading-[140%] tracking-[-0.03em] text-left">
+        <div className="text-color-neutral-40 font-pretendard font-normal text-[14px] leading-[140%] tracking-[-0.03em] ">
           <p>나의 주점 예약 내역을 주당이</p>
           <p>한 눈에 정리해드려요!</p>
         </div>

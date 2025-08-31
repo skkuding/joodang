@@ -19,7 +19,8 @@ export default function ReservationCard() {
            text-xs
            font-normal
            leading-[140%]
-           tracking-[-0.36px]"
+           tracking-[-0.36px]
+           mb-[2px]"
         >
           성균관대학교
         </div>
