@@ -17,7 +17,7 @@ export default function BarPage() {
 
   return (
     <div>
-      <div className="p-5">
+      <div className="p-5 mt-[48px]">
         <FilterSetting open={open} onClose={() => setOpen(false)} />
         <div>
           <Image src={IconLocation} alt="주황위치" width={24} height={24} />

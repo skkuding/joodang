@@ -26,7 +26,7 @@ export default function RootLayout({
         src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.NEXT_PUBLIC_NAVER_ID}&submodules=geocoder`}
       />
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased pt-[48px] pb-20`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased pb-20`}
       >
         <Header />
         {children}
