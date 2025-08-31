@@ -20,13 +20,18 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+
 export const metadata = {
-  title: "주당",
+  title: "주당 Joodang",
   description: "주당 Joodang",
   icons: {
-    icon: "/icon.png",
-  },
-};
+    icon: [
+      { url: "/favicon.png", sizes: "32x32", type: "image/png" },
+      { url: "/icon-120.png", sizes: "120x120", type: "image/png" },
+      { url: "/apple-touch-icon.png", sizes: "180x180" }
+    ]
+  }
+}
 
 export default function RootLayout({
   children,
@@ -35,6 +40,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" href="/favicon.png" sizes="32x32" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+      </head>
       <body>
         <header>
           <div className="fixed left-0 right-0 top-0 w-full px-5 flex bg-white h-[68px] items-end ">
