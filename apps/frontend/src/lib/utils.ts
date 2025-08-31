@@ -32,3 +32,7 @@ export const dateFormatter = (date: string | Date, format: string) => {
     new Date(date).toLocaleString("en-US", { timeZone: "Asia/Seoul" }),
   ).format(format);
 };
+
+export function formatWithComma(num: number): string {
+  return num.toLocaleString();
+}

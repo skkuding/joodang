@@ -1,9 +1,17 @@
 "use client";
 // FilterSheet.tsx
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import OrangeDot from "@/icons/orange_dot.svg";
+import { formatWithComma } from "@/lib/utils";
 import { X } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import PriceSlider from "./PriceSlider";
 
 type Props = {
@@ -19,20 +27,21 @@ type Props = {
 export default function FilterSheet({
   open,
   onClose,
-  overlayClear = 68,
-  sheetTop = 150,
-  maxWidth = 375,
+  overlayClear = 0,
+  sheetTop = 60,
   title = "필터 설정하기",
   children,
 }: Props) {
+  const sheetRef = useRef<HTMLDivElement>(null);
+
   const titleId = useId();
-  const [price, setPrice] = useState(15000);
+  // TODO: 시간선택도 상태로 처리해야합니다!
+  const [price, setPrice] = useState(15000); // 이거 state 끌올 해야함
   function handleSliderValueChange(next: number[]) {
     console.log("next: ", next[0]);
     setPrice(next[0]);
   }
 
-  // ESC로 닫기 + body 스크롤 잠금
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -55,13 +64,12 @@ export default function FilterSheet({
       aria-labelledby={titleId}
       role="dialog"
       aria-modal="true"
+      ref={sheetRef}
     >
-      {/* 1) 위쪽 투명 영역 (클릭 통과) */}
       <div
         className="absolute inset-x-0 top-0"
-        style={{ height: overlayClear, pointerEvents: "none" }}
+        style={{ height: overlayClear, pointerEvents: "auto" }}
       />
-      {/* 2) 아래 어두운 영역 (클릭 시 닫힘) */}
       <div
         className="absolute inset-x-0 bg-black/60"
         style={{ top: overlayClear, bottom: 0 }}
@@ -74,9 +82,9 @@ export default function FilterSheet({
           fixed left-1/2 -translate-x-1/2
           bg-white rounded-t-2xl shadow-[0_0_20px_0_rgba(0,0,0,0.12)]
           flex flex-col
-          max-h-[85vh] overflow-hidden
+          max-h-full overflow-hidden
         "
-        style={{ top: sheetTop, bottom: 0, width: "100%", maxWidth }}
+        style={{ top: sheetTop, bottom: 0, width: "100%" }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* 헤더 */}
@@ -89,16 +97,17 @@ export default function FilterSheet({
             className="ml-auto -mr-1 p-2 rounded-md hover:bg-black/5 active:bg-black/10"
             onClick={onClose}
           >
-            <X className="h-5 w-5" />
+            <X className="h-5 w-5 text-color-neutral-60" />
           </button>
         </div>
 
         {/* 스크롤 영역 */}
-        <div className="px-5 pb-4 flex-1 overflow-y-auto">
+        <div
+          className="px-5 pb-4 flex-1 overflow-y-auto w-full"
+          style={{ overscrollBehavior: "contain", scrollbarGutter: "stable" }}
+        >
           {children ?? (
             <>
-              {/* 예시 섹션: 최대 입장료 */}
-
               <section className="mb-5">
                 <div className="flex items-center">
                   <Image
@@ -112,7 +121,7 @@ export default function FilterSheet({
                     최대 입장료
                   </span>
                   <span className="ml-auto text-color-common-0 text-sm font-medium">
-                    16,000원
+                    {formatWithComma(price)}원
                   </span>
                 </div>
                 <div className="mt-3 h-10 rounded-lg grid place-items-center text-xs text-[var(--Neutral-40,#5c5c5c)]">
@@ -127,8 +136,8 @@ export default function FilterSheet({
                 </div>
               </section>
 
-              <section className="mb-5">
-                <div className="flex items-center">
+              <section className="mb-5 flex flex-col">
+                <div className="flex items-center w-[55px] h-[24px] mb-3">
                   <Image
                     src={OrangeDot}
                     alt="주황닷"
@@ -139,11 +148,22 @@ export default function FilterSheet({
                   <div className="text-sm text-[var(--Neutral-30,#474747)]">
                     시간대
                   </div>
-                  <select id="price" name="price">
-                    <option value="10000">1시간</option>
-                    <option value="15000">2시간</option>
-                    <option value="20000">3시간</option>
-                  </select>
+                </div>
+                <div>
+                  <Select>
+                    <SelectTrigger className="w-full h-[52px] data-[placeholder]:text-color-neutral-90 shadow-[0px_4px_20px_0px_rgba(0,0,0,0.12)]">
+                      <SelectValue placeholder="시간대를 선택하세요" />
+                    </SelectTrigger>
+                    <SelectContent
+                      className="z-[200] w-full"
+                      avoidCollisions={true}
+                      portalContainer={sheetRef.current}
+                    >
+                      <SelectItem value="light">Light</SelectItem>
+                      <SelectItem value="dark">Dark</SelectItem>
+                      <SelectItem value="sㅈystem">System</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </section>
             </>
