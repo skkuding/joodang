@@ -35,6 +35,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="apple-touch-icon" href="/apple-icon.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+      </head>
       <body>
         <header>
           <div className="fixed left-0 right-0 top-0 w-full px-5 flex bg-white h-[68px] items-end ">
