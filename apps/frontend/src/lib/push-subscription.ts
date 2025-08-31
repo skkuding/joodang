@@ -1,3 +1,5 @@
+import { baseUrl } from "@/constant";
+
 // src/lib/push-subscription.ts
 export function urlBase64ToUint8Array(base64String: string) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -32,9 +34,9 @@ export async function requestPermissionAndSubscribe() {
   }
 
   // 서버에서 VAPID 퍼블릭키 받기
-  const { publicKey } = await fetch(
-    "https://spacekim.org/api/notification/vapid",
-  ).then((r) => r.json());
+  const { publicKey } = await fetch(`${baseUrl}/notification/vapid`).then((r) =>
+    r.json(),
+  );
 
   // 이미 구독이 있으면 재사용
   const existing = await registration.pushManager.getSubscription();
@@ -46,7 +48,7 @@ export async function requestPermissionAndSubscribe() {
     }));
 
   // 서버에 구독 저장 (로그인 필요 시 서버에서 userId 바인딩)
-  await fetch("https://spacekim.org/api/notification/push-subscription", {
+  await fetch(`${baseUrl}/notification/push-subscription`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(sub.toJSON()),

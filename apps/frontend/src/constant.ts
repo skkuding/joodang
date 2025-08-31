@@ -1,1 +1,1 @@
-export const baseUrl = "https://spacekim.org/api";
+export const baseUrl = "https://api.joodang.com";

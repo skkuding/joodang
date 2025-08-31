@@ -55,19 +55,20 @@ model Menu {
 }
 
 model User {
-  id        Int    @id @default(autoincrement())
-  studentId String @unique
-  college   String
-  major     String
-  name      String
+  id                Int    @id @default(autoincrement())
+  kakaoId           String @unique
+  name              String
+  studentId         String? @unique
+  college           String?
+  major             String?
+  profileImageUrl   String?
 
-  storeId Int?
-  store   Store? @relation(fields: [storeId], references: [id], onDelete: SetNull)
+  storeId         Int?
+  store           Store? @relation(fields: [storeId], references: [id], onDelete: SetNull)
 
-  reservations Reservation[]
-
-  NotificationRecord NotificationRecord[]
-  PushSubscription   PushSubscription[]
+  reservations         Reservation[]
+  NotificationRecord   NotificationRecord[]
+  PushSubscription     PushSubscription[]
 }
 
 model TimeSlot {

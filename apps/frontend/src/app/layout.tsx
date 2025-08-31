@@ -28,6 +28,14 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const metadata = {
+  title: "주당",
+  description: "주당 Joodang",
+  icons: {
+    icon: "/icon.png",
+  },
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
