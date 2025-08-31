@@ -1,11 +1,14 @@
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
+import * as morgan from 'morgan'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
     logger: ['error', 'warn', 'log', 'debug', 'verbose'],
   })
+
+  app.use(morgan('dev'))
 
   app.enableCors({
     origin: [
