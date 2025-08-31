@@ -56,34 +56,38 @@ export default function FilterSheet({
     };
   }, [open, onClose]);
 
-  if (!open) return null;
-
   return (
     <div
-      className="fixed inset-0 z-[100]"
+      className={`
+        fixed inset-0 z-[100]
+        ${open ? "pointer-events-auto" : "pointer-events-none"}
+      `}
       aria-labelledby={titleId}
       role="dialog"
       aria-modal="true"
       ref={sheetRef}
     >
       <div
-        className="absolute inset-x-0 top-0"
-        style={{ height: overlayClear, pointerEvents: "auto" }}
-      />
-      <div
-        className="absolute inset-x-0 bg-black/60"
+        className={`
+      absolute inset-x-0
+      bg-black/40 backdrop-blur-md
+      transition-opacity duration-300
+      ${open ? "opacity-100" : "opacity-0"}
+    `}
         style={{ top: overlayClear, bottom: 0 }}
         onClick={onClose}
       />
 
       {/* 3) 시트 (오버레이와 독립적으로 top 제어) */}
       <div
-        className="
+        className={`
           fixed left-1/2 -translate-x-1/2
           bg-white rounded-t-2xl shadow-[0_0_20px_0_rgba(0,0,0,0.12)]
           flex flex-col
           max-h-full overflow-hidden
-        "
+          transform transition-transform duration-300 ease-out
+          ${open ? "translate-y-0" : "translate-y-full"}
+        `}
         style={{ top: sheetTop, bottom: 0, width: "100%" }}
         onClick={(e) => e.stopPropagation()}
       >
