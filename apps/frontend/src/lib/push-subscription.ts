@@ -13,7 +13,7 @@ export function urlBase64ToUint8Array(base64String: string) {
 export async function requestPermissionAndSubscribe() {
   if (typeof window === "undefined") return;
   if (!("Notification" in window) || !("serviceWorker" in navigator)) {
-    alert("이 브라우저는 알림을 지원하지 않아요.");
+    alert("이 브라우저는 알림을 지원하지 않아요. PWA 설치를 해주세요.");
     return;
   }
 
