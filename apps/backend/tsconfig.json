@@ -14,6 +14,15 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
+    "paths": {
+      "@app/*": ["src/*"],
+      "@auth/*": ["src/auth/*"],
+      "@prisma/*": ["prisma/*"],
+      "@store/*": ["src/store/*"],
+      "@reservation/*": ["src/reservation/*"],
+      "@notification/*": ["src/notification/*"],
+      "@menu/*": ["src/menu/*"]
+    },
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,

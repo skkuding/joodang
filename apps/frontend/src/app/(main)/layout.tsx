@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import { Footer } from "../components/Footer";
@@ -15,11 +14,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Joodang 주당",
-  description: "Joodang, Reservation for College Festival Booth",
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -32,7 +26,7 @@ export default function RootLayout({
         src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.NEXT_PUBLIC_NAVER_ID}&submodules=geocoder`}
       />
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased pt-[48px] pb-20`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased pb-20`}
       >
         <Header />
         {children}

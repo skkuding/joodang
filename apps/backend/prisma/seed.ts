@@ -88,57 +88,57 @@ async function main() {
         category: MenuCategory.Maroon5,
       },
     ],
-  })
+  });
 
   const user1 = await prisma.user.create({
     data: {
-  kakaoId: 'kakao_2020123456',
+      kakaoId: 'kakao_2020123456',
       studentId: '2020123456',
       college: '성균관대학교',
       major: '소프트웨어학과',
       name: '성민규',
     },
-  })
+  });
 
   const user2 = await prisma.user.create({
     data: {
-  kakaoId: 'kakao_2020456789',
+      kakaoId: 'kakao_2020456789',
       studentId: '2020456789',
       college: '성균관대학교',
       major: '문헌정보학과',
       name: '방승현',
     },
-  })
+  });
 
   const user3 = await prisma.user.create({
     data: {
-  kakaoId: 'kakao_2022789012',
+      kakaoId: 'kakao_2022789012',
       studentId: '2022789012',
       college: '성균관대학교',
       major: '기계공학과',
       name: '신보민',
     },
-  })
+  });
 
   const user4 = await prisma.user.create({
     data: {
-  kakaoId: 'kakao_2020987654',
+      kakaoId: 'kakao_2020987654',
       studentId: '2020987654',
       college: '성균관대학교',
       major: '연기예술학과',
       name: '김우주',
     },
-  })
+  });
 
   const user5 = await prisma.user.create({
     data: {
-  kakaoId: 'kakao_2020777777',
+      kakaoId: 'kakao_2020777777',
       studentId: '2020777777',
       college: '성균관대학교',
       major: '글로벌경제학과',
       name: '송준혁',
     },
-  })
+  });
 
   const store1Slots = await prisma.$transaction([
     prisma.timeSlot.create({
@@ -177,7 +177,7 @@ async function main() {
         storeId: store1.id,
       },
     }),
-  ])
+  ]);
 
   const store2Slots = await prisma.$transaction([
     prisma.timeSlot.create({
@@ -216,11 +216,16 @@ async function main() {
         storeId: store2.id,
       },
     }),
-  ])
+  ]);
 
   await prisma.$transaction([
     prisma.reservation.create({
-      data: { headcount: 2, userId: user1.id, storeId: store1.id, timeSlotId: store1Slots[0].id },
+      data: {
+        headcount: 2,
+        userId: user1.id,
+        storeId: store1.id,
+        timeSlotId: store1Slots[0].id,
+      },
     }),
     prisma.timeSlot.update({
       where: { id: store1Slots[0].id },
@@ -228,7 +233,12 @@ async function main() {
     }),
 
     prisma.reservation.create({
-      data: { headcount: 3, userId: user2.id, storeId: store1.id, timeSlotId: store1Slots[0].id },
+      data: {
+        headcount: 3,
+        userId: user2.id,
+        storeId: store1.id,
+        timeSlotId: store1Slots[0].id,
+      },
     }),
     prisma.timeSlot.update({
       where: { id: store1Slots[0].id },
@@ -236,7 +246,12 @@ async function main() {
     }),
 
     prisma.reservation.create({
-      data: { headcount: 2, userId: user3.id, storeId: store1.id, timeSlotId: store1Slots[0].id },
+      data: {
+        headcount: 2,
+        userId: user3.id,
+        storeId: store1.id,
+        timeSlotId: store1Slots[0].id,
+      },
     }),
     prisma.timeSlot.update({
       where: { id: store1Slots[0].id },
@@ -244,7 +259,12 @@ async function main() {
     }),
 
     prisma.reservation.create({
-      data: { headcount: 3, userId: user4.id, storeId: store1.id, timeSlotId: store1Slots[0].id },
+      data: {
+        headcount: 3,
+        userId: user4.id,
+        storeId: store1.id,
+        timeSlotId: store1Slots[0].id,
+      },
     }),
     prisma.timeSlot.update({
       where: { id: store1Slots[0].id },
@@ -252,7 +272,12 @@ async function main() {
     }),
 
     prisma.reservation.create({
-      data: { headcount: 2, userId: user5.id, storeId: store1.id, timeSlotId: store1Slots[0].id },
+      data: {
+        headcount: 2,
+        userId: user5.id,
+        storeId: store1.id,
+        timeSlotId: store1Slots[0].id,
+      },
     }),
     prisma.timeSlot.update({
       where: { id: store1Slots[0].id },
@@ -262,7 +287,12 @@ async function main() {
 
   await prisma.$transaction([
     prisma.reservation.create({
-      data: { headcount: 2, userId: user1.id, storeId: store2.id, timeSlotId: store2Slots[0].id },
+      data: {
+        headcount: 2,
+        userId: user1.id,
+        storeId: store2.id,
+        timeSlotId: store2Slots[0].id,
+      },
     }),
     prisma.timeSlot.update({
       where: { id: store2Slots[0].id },
@@ -270,7 +300,12 @@ async function main() {
     }),
 
     prisma.reservation.create({
-      data: { headcount: 4, userId: user2.id, storeId: store2.id, timeSlotId: store2Slots[0].id },
+      data: {
+        headcount: 4,
+        userId: user2.id,
+        storeId: store2.id,
+        timeSlotId: store2Slots[0].id,
+      },
     }),
     prisma.timeSlot.update({
       where: { id: store2Slots[0].id },
@@ -278,15 +313,25 @@ async function main() {
     }),
 
     prisma.reservation.create({
-      data: { headcount: 2, userId: user3.id, storeId: store2.id, timeSlotId: store2Slots[0].id },
+      data: {
+        headcount: 2,
+        userId: user3.id,
+        storeId: store2.id,
+        timeSlotId: store2Slots[0].id,
+      },
     }),
     prisma.timeSlot.update({
       where: { id: store2Slots[0].id },
       data: { availableSeats: { decrement: 2 } },
     }),
-    
+
     prisma.reservation.create({
-      data: { headcount: 4, userId: user4.id, storeId: store2.id, timeSlotId: store2Slots[0].id },
+      data: {
+        headcount: 4,
+        userId: user4.id,
+        storeId: store2.id,
+        timeSlotId: store2Slots[0].id,
+      },
     }),
     prisma.timeSlot.update({
       where: { id: store2Slots[0].id },
@@ -294,7 +339,12 @@ async function main() {
     }),
 
     prisma.reservation.create({
-      data: { headcount: 2, userId: user5.id, storeId: store2.id, timeSlotId: store2Slots[0].id },
+      data: {
+        headcount: 2,
+        userId: user5.id,
+        storeId: store2.id,
+        timeSlotId: store2Slots[0].id,
+      },
     }),
     prisma.timeSlot.update({
       where: { id: store2Slots[0].id },
@@ -305,9 +355,9 @@ async function main() {
 
 main()
   .then(async () => {
-    await prisma.$disconnect()
+    await prisma.$disconnect();
   })
   .catch((e) => {
-    console.error(e)
-    process.exit(1)
-  })
+    console.error(e);
+    process.exit(1);
+  });

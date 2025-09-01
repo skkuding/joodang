@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer';
+import { Type } from 'class-transformer'
 import {
   IsArray,
   IsDate,
@@ -9,8 +9,8 @@ import {
   IsString,
   IsLatitude,
   IsLongitude,
-  ValidateNested
-} from 'class-validator';
+  ValidateNested,
+} from 'class-validator'
 
 export class TimeSlotInput {
   @Type(() => Date)

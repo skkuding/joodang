@@ -1,4 +1,3 @@
-
 class PushSubscriptionKeys {
   p256dh: string
   auth: string
