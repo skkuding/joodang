@@ -1,9 +1,3 @@
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import { IoIosArrowDown } from "react-icons/io";
