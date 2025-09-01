@@ -10,6 +10,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import { Footer } from "./components/Footer";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -261,6 +262,7 @@ export default function RootLayout({
           </div>
         </header>
         <Analytics />
+        <SpeedInsights />
         <Script
           type="text/javascript"
           src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.NEXT_PUBLIC_NAVER_ID}&submodules=geocoder`}
