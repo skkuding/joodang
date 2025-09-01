@@ -29,7 +29,7 @@ export class AuthService {
       },
     })
 
-    const payload = { sub: dbUser.id, kakaoId: dbUser.kakaoId }
+    const payload = { sub: dbUser.id as number, kakaoId: dbUser.kakaoId }
     return await this.jwt.signAsync(payload)
   }
 }

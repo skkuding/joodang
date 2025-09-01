@@ -6,6 +6,9 @@ import { KakaoStrategy } from '@auth/kakao.strategy'
 import { AuthController } from '@auth/auth.controller'
 import { PrismaModule } from '@prisma/prisma.module'
 import { AuthService } from '@auth/auth.service'
+import { JwtStrategy } from '@auth/jwt.strategy'
+import { JwtAuthGuard } from '@auth/jwt.guard'
+import { OptionalJwtAuthGuard } from '@auth/optional-jwt.guard'
 
 @Module({
   imports: [
@@ -21,7 +24,14 @@ import { AuthService } from '@auth/auth.service'
     }),
     PrismaModule,
   ],
-  providers: [KakaoStrategy, AuthService],
+  providers: [
+    KakaoStrategy,
+    JwtStrategy,
+    AuthService,
+    JwtAuthGuard,
+    OptionalJwtAuthGuard,
+  ],
   controllers: [AuthController],
+  exports: [JwtAuthGuard, OptionalJwtAuthGuard],
 })
 export class AuthModule {}

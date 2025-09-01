@@ -25,14 +25,15 @@ export class AuthController {
     const cookieName = this.config.get<string>('JWT_COOKIE_NAME') || 'token'
     const isProd =
       (this.config.get<string>('NODE_ENV') || 'development') === 'production'
-    const cookieDomain = this.config.get<string>('COOKIE_DOMAIN') || '.joodang.com'
+    const cookieDomain =
+      this.config.get<string>('COOKIE_DOMAIN') || '.joodang.com'
     const maxAgeMs = 7 * 24 * 60 * 60 * 1000 // 7 days
 
     res.cookie(cookieName, jwt, {
       httpOnly: true,
       secure: isProd,
       sameSite: isProd ? 'none' : 'lax',
-      domain: cookieDomain || undefined,
+      domain: isProd ? cookieDomain : 'localhost',
       path: '/',
       maxAge: maxAgeMs,
     })

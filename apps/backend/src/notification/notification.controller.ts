@@ -3,7 +3,6 @@ import {
   Get,
   Patch,
   Delete,
-  Param,
   Query,
   Req,
   DefaultValuePipe,
@@ -12,8 +11,13 @@ import {
   Body,
 } from '@nestjs/common'
 import { CreatePushSubscriptionDto } from './dto/create-push-subscription.dto'
+import { UseGuards } from '@nestjs/common'
+import { JwtAuthGuard } from '@auth/jwt.guard'
+import { Public } from '@auth/public.decorator'
 import { NotificationService } from './notification.service'
+import type { Request } from 'express'
 
+@UseGuards(JwtAuthGuard)
 @Controller('notification')
 export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
@@ -23,6 +27,7 @@ export class NotificationController {
    */
   @Get()
   async getNotifications(
+    @Req() req: Request,
     @Query('cursor') cursor: number | null,
     @Query('take', new DefaultValuePipe(8))
     take: number,
@@ -30,7 +35,7 @@ export class NotificationController {
     isRead: boolean | null,
   ) {
     return await this.notificationService.getNotifications(
-      1,
+      req.user.id,
       cursor,
       take,
       isRead,
@@ -41,8 +46,8 @@ export class NotificationController {
    * 모든 알림을 읽음으로 표시합니다.
    */
   @Patch('read-all')
-  async markAllAsRead() {
-    return await this.notificationService.markAllAsRead(1)
+  async markAllAsRead(@Req() req: Request) {
+    return await this.notificationService.markAllAsRead(req.user.id)
   }
 
   /**
@@ -50,22 +55,33 @@ export class NotificationController {
    * endpoint가 제공되지 않으면 해당 사용자의 모든 subscription을 삭제합니다
    */
   @Delete('/push-subscription')
-  async deletePushSubscription(@Query('endpoint') endpoint?: string) {
-    return this.notificationService.deletePushSubscription(1, endpoint)
+  async deletePushSubscription(
+    @Req() req: Request,
+    @Query('endpoint') endpoint?: string,
+  ) {
+    return this.notificationService.deletePushSubscription(
+      req.user.id,
+      endpoint,
+    )
   }
 
   /**
    * Push subscription을 생성합니다
    */
   @Post('/push-subscription')
-  async createPushSubscription(@Body() dto: CreatePushSubscriptionDto) {
-    return this.notificationService.createPushSubscription(1, dto)
+  async createPushSubscription(
+    @Req() req: Request,
+    @Body() dto: CreatePushSubscriptionDto,
+  ) {
+    console.log(req.user.id)
+    return this.notificationService.createPushSubscription(req.user.id, dto)
   }
 
   /**
    * VAPID public key를 반환합니다
    */
   @Get('/vapid')
+  @Public()
   async getVapidPublicKey() {
     return this.notificationService.getVapidPublicKey()
   }
