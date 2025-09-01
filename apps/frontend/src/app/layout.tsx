@@ -9,6 +9,7 @@ import Script from "next/script";
 import { IoIosArrowDown } from "react-icons/io";
 import { Footer } from "./components/Footer";
 import "./globals.css";
+import { Header } from "./components/Header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -247,17 +248,7 @@ export default function RootLayout({
       </head>
       <body>
         <header>
-          <div className="fixed left-0 right-0 top-0 w-full px-5 flex bg-white h-[68px] items-end ">
-            <DropdownMenu>
-              <DropdownMenuTrigger className="flex gap-1 items-center">
-                <span className="text-xl font-semibold">성균관대학교</span>
-                <IoIosArrowDown className="h-4 w-4" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>성균관대학교</DropdownMenuLabel>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          <Header />
         </header>
         <Script
           type="text/javascript"
