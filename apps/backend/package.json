@@ -19,7 +19,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "db:seed": "prisma db seed",
-    "typecheck": "tsc -p tsconfig.build.json --noEmit"
+    "typecheck": "tsc -p tsconfig.build.json --noEmit",
+    "db:start": "docker compose up -d"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
@@ -33,9 +34,11 @@
     "@prisma/client": "^6.14.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
+    "cookie-parser": "^1.4.7",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.1",
     "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
     "passport-kakao": "^1.0.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",

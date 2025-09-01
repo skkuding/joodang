@@ -12,7 +12,9 @@ model Store {
   name           String
   phone          String
   description    String?
-  organizer      String   @unique
+  organizer      String?
+  owner          User     @relation(fields: [ownerId], references: [id])
+  ownerId        Int      @map("owner_id")
   instagramId    String?  @map("instagram_id")
   startTime      DateTime @map("start_time")
   endTime        DateTime @map("end_time")
@@ -27,7 +29,7 @@ model Store {
   menus       Menu[]
   timeSlots   TimeSlot[]
   Reservation Reservation[]
-  User        User[]
+  staffs      StoreStaff[]
 
   @@map("store")
 }
@@ -60,22 +62,41 @@ model Menu {
 }
 
 model User {
-  id                Int    @id @default(autoincrement())
-  kakaoId           String @unique @map("kakao_id")
+  id                Int       @id @default(autoincrement())
+  kakaoId           String    @unique @map("kakao_id")
   name              String
-  studentId         String? @unique @map("student_id")
+  studentId         String?   @unique @map("student_id")
   college           String?
   major             String?
-  profileImageUrl   String? @map("profile_image_url")
-
-  storeId         Int?     @map("store_id")
-  store           Store? @relation(fields: [storeId], references: [id], onDelete: SetNull)
+  profileImageUrl   String?   @map("profile_image_url")
 
   reservations         Reservation[]
   NotificationRecord   NotificationRecord[]
   PushSubscription     PushSubscription[]
 
+  storeStaffs   StoreStaff[]
+  Store         Store[]
+
   @@map("user")
+}
+
+enum Role {
+  OWNER
+  STAFF
+}
+
+model StoreStaff {
+  id      Int       @id @default(autoincrement())
+  role    Role      @default(STAFF)
+  
+  user    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  Int
+  
+  store   Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  storeId Int
+
+  @@unique([userId, storeId])
+  @@map("store_staff")
 }
 
 model TimeSlot {

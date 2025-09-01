@@ -1,19 +1,76 @@
-import { PrismaClient, MenuCategory } from '@prisma/client';
+import { PrismaClient, MenuCategory, Role } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 async function main() {
+  const user1 = await prisma.user.create({
+    data: {
+      kakaoId: 'kakao_2020123456',
+      studentId: '2020123456',
+      college: '성균관대학교',
+      major: '소프트웨어학과',
+      name: '성민규',
+    },
+  })
+
+  const user2 = await prisma.user.create({
+    data: {
+      kakaoId: 'kakao_2020456789',
+      studentId: '2020456789',
+      college: '성균관대학교',
+      major: '문헌정보학과',
+      name: '방승현',
+    },
+  })
+
+  const user3 = await prisma.user.create({
+    data: {
+      kakaoId: 'kakao_2022789012',
+      studentId: '2022789012',
+      college: '성균관대학교',
+      major: '기계공학과',
+      name: '신보민',
+    },
+  })
+
+  const user4 = await prisma.user.create({
+    data: {
+      kakaoId: 'kakao_2020987654',
+      studentId: '2020987654',
+      college: '성균관대학교',
+      major: '연기예술학과',
+      name: '김우주',
+    },
+  })
+
+  const user5 = await prisma.user.create({
+    data: {
+      kakaoId: 'kakao_2020777777',
+      studentId: '2020777777',
+      college: '성균관대학교',
+      major: '글로벌경제학과',
+      name: '송준혁',
+    },
+  })
+
   const store1 = await prisma.store.create({
     data: {
       name: '소주당',
       description: '소주와 안주',
       phone: '010-1234-5678',
       organizer: '스꾸딩',
+      ownerId: user1.id,
       instagramId: 'skkuding',
       startTime: new Date('2026-01-01T18:00:00.000Z'),
       endTime: new Date('2026-01-04T23:00:00.000Z'),
       reservationFee: 10000,
       college: '성균관대학교',
+      staffs: {
+        create: {
+          userId: user1.id,
+          role: Role.OWNER,
+        },
+      },
     },
   });
 
@@ -23,11 +80,18 @@ async function main() {
       description: '시원한 맥주',
       phone: '010-2222-3333',
       organizer: '소프트웨어학과',
+      ownerId: user1.id,
       instagramId: 'skku_software',
       startTime: new Date('2026-01-02T18:00:00.000Z'),
       endTime: new Date('2026-01-03T23:00:00.000Z'),
       reservationFee: 20000,
       college: '성균관대학교',
+      staffs: {
+        create: {
+          userId: user1.id,
+          role: Role.OWNER,
+        },
+      },
     },
   });
 
@@ -37,11 +101,18 @@ async function main() {
       description: '분위기 있는 와인바',
       phone: '010-3333-4444',
       organizer: '신소재공학부',
+      ownerId: user1.id,
       instagramId: 'skku_amse',
       startTime: new Date('2026-01-03T17:00:00.000Z'),
       endTime: new Date('2026-01-03T22:00:00.000Z'),
       reservationFee: 15000,
       college: '성균관대학교',
+      staffs: {
+        create: {
+          userId: user1.id,
+          role: Role.OWNER,
+        },
+      },
     },
   });
 
@@ -51,11 +122,18 @@ async function main() {
       description: '바삭한 치킨과 맥주',
       phone: '010-4444-5555',
       organizer: '전자전기공학부',
+      ownerId: user1.id,
       instagramId: 'skku_electrical',
       startTime: new Date('2026-01-04T18:00:00.000Z'),
       endTime: new Date('2026-01-04T23:00:00.000Z'),
       reservationFee: 12000,
       college: '성균관대학교',
+      staffs: {
+        create: {
+          userId: user1.id,
+          role: Role.OWNER,
+        },
+      },
     },
   });
 
@@ -65,11 +143,18 @@ async function main() {
       description: '과자와 음료가 가득한 스낵바',
       phone: '010-5555-6666',
       organizer: '화학과',
+      ownerId: user1.id,
       instagramId: 'skku_chem',
       startTime: new Date('2026-01-05T18:00:00.000Z'),
       endTime: new Date('2026-01-05T23:00:00.000Z'),
       reservationFee: 5000,
       college: '성균관대학교',
+      staffs: {
+        create: {
+          userId: user1.id,
+          role: Role.OWNER,
+        },
+      },
     },
   });
 
@@ -88,57 +173,7 @@ async function main() {
         category: MenuCategory.Maroon5,
       },
     ],
-  });
-
-  const user1 = await prisma.user.create({
-    data: {
-      kakaoId: 'kakao_2020123456',
-      studentId: '2020123456',
-      college: '성균관대학교',
-      major: '소프트웨어학과',
-      name: '성민규',
-    },
-  });
-
-  const user2 = await prisma.user.create({
-    data: {
-      kakaoId: 'kakao_2020456789',
-      studentId: '2020456789',
-      college: '성균관대학교',
-      major: '문헌정보학과',
-      name: '방승현',
-    },
-  });
-
-  const user3 = await prisma.user.create({
-    data: {
-      kakaoId: 'kakao_2022789012',
-      studentId: '2022789012',
-      college: '성균관대학교',
-      major: '기계공학과',
-      name: '신보민',
-    },
-  });
-
-  const user4 = await prisma.user.create({
-    data: {
-      kakaoId: 'kakao_2020987654',
-      studentId: '2020987654',
-      college: '성균관대학교',
-      major: '연기예술학과',
-      name: '김우주',
-    },
-  });
-
-  const user5 = await prisma.user.create({
-    data: {
-      kakaoId: 'kakao_2020777777',
-      studentId: '2020777777',
-      college: '성균관대학교',
-      major: '글로벌경제학과',
-      name: '송준혁',
-    },
-  });
+  })
 
   const store1Slots = await prisma.$transaction([
     prisma.timeSlot.create({
@@ -177,7 +212,7 @@ async function main() {
         storeId: store1.id,
       },
     }),
-  ]);
+  ])
 
   const store2Slots = await prisma.$transaction([
     prisma.timeSlot.create({
@@ -216,16 +251,11 @@ async function main() {
         storeId: store2.id,
       },
     }),
-  ]);
+  ])
 
   await prisma.$transaction([
     prisma.reservation.create({
-      data: {
-        headcount: 2,
-        userId: user1.id,
-        storeId: store1.id,
-        timeSlotId: store1Slots[0].id,
-      },
+      data: { headcount: 2, userId: user2.id, storeId: store1.id, timeSlotId: store1Slots[0].id },
     }),
     prisma.timeSlot.update({
       where: { id: store1Slots[0].id },
@@ -233,12 +263,7 @@ async function main() {
     }),
 
     prisma.reservation.create({
-      data: {
-        headcount: 3,
-        userId: user2.id,
-        storeId: store1.id,
-        timeSlotId: store1Slots[0].id,
-      },
+      data: { headcount: 3, userId: user3.id, storeId: store1.id, timeSlotId: store1Slots[0].id },
     }),
     prisma.timeSlot.update({
       where: { id: store1Slots[0].id },
@@ -246,12 +271,7 @@ async function main() {
     }),
 
     prisma.reservation.create({
-      data: {
-        headcount: 2,
-        userId: user3.id,
-        storeId: store1.id,
-        timeSlotId: store1Slots[0].id,
-      },
+      data: { headcount: 2, userId: user4.id, storeId: store1.id, timeSlotId: store1Slots[0].id },
     }),
     prisma.timeSlot.update({
       where: { id: store1Slots[0].id },
@@ -259,40 +279,17 @@ async function main() {
     }),
 
     prisma.reservation.create({
-      data: {
-        headcount: 3,
-        userId: user4.id,
-        storeId: store1.id,
-        timeSlotId: store1Slots[0].id,
-      },
+      data: { headcount: 3, userId: user5.id, storeId: store1.id, timeSlotId: store1Slots[0].id },
     }),
     prisma.timeSlot.update({
       where: { id: store1Slots[0].id },
       data: { availableSeats: { decrement: 3 } },
     }),
-
-    prisma.reservation.create({
-      data: {
-        headcount: 2,
-        userId: user5.id,
-        storeId: store1.id,
-        timeSlotId: store1Slots[0].id,
-      },
-    }),
-    prisma.timeSlot.update({
-      where: { id: store1Slots[0].id },
-      data: { availableSeats: { decrement: 2 } },
-    }),
   ]);
 
   await prisma.$transaction([
     prisma.reservation.create({
-      data: {
-        headcount: 2,
-        userId: user1.id,
-        storeId: store2.id,
-        timeSlotId: store2Slots[0].id,
-      },
+      data: { headcount: 2, userId: user2.id, storeId: store2.id, timeSlotId: store2Slots[0].id },
     }),
     prisma.timeSlot.update({
       where: { id: store2Slots[0].id },
@@ -300,12 +297,7 @@ async function main() {
     }),
 
     prisma.reservation.create({
-      data: {
-        headcount: 4,
-        userId: user2.id,
-        storeId: store2.id,
-        timeSlotId: store2Slots[0].id,
-      },
+      data: { headcount: 4, userId: user3.id, storeId: store2.id, timeSlotId: store2Slots[0].id },
     }),
     prisma.timeSlot.update({
       where: { id: store2Slots[0].id },
@@ -313,51 +305,28 @@ async function main() {
     }),
 
     prisma.reservation.create({
-      data: {
-        headcount: 2,
-        userId: user3.id,
-        storeId: store2.id,
-        timeSlotId: store2Slots[0].id,
-      },
+      data: { headcount: 2, userId: user4.id, storeId: store2.id, timeSlotId: store2Slots[0].id },
     }),
     prisma.timeSlot.update({
       where: { id: store2Slots[0].id },
       data: { availableSeats: { decrement: 2 } },
     }),
-
+    
     prisma.reservation.create({
-      data: {
-        headcount: 4,
-        userId: user4.id,
-        storeId: store2.id,
-        timeSlotId: store2Slots[0].id,
-      },
+      data: { headcount: 4, userId: user5.id, storeId: store2.id, timeSlotId: store2Slots[0].id },
     }),
     prisma.timeSlot.update({
       where: { id: store2Slots[0].id },
       data: { availableSeats: { decrement: 4 } },
-    }),
-
-    prisma.reservation.create({
-      data: {
-        headcount: 2,
-        userId: user5.id,
-        storeId: store2.id,
-        timeSlotId: store2Slots[0].id,
-      },
-    }),
-    prisma.timeSlot.update({
-      where: { id: store2Slots[0].id },
-      data: { availableSeats: { decrement: 2 } },
     }),
   ]);
 }
 
 main()
   .then(async () => {
-    await prisma.$disconnect();
+    await prisma.$disconnect()
   })
   .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  });
+    console.error(e)
+    process.exit(1)
+  })

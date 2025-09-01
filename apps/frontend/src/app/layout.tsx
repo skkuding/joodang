@@ -3,6 +3,8 @@ import Script from "next/script";
 import { Footer } from "./components/Footer";
 import "./globals.css";
 import { Header } from "./components/Header";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -241,8 +243,20 @@ export default function RootLayout({
       </head>
       <body>
         <header>
-          <Header />
+          <div className="fixed left-0 right-0 top-0 w-full px-5 flex bg-white h-[68px] items-end ">
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex gap-1 items-center">
+                <span className="text-xl font-semibold">성균관대학교</span>
+                <IoIosArrowDown className="h-4 w-4" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>성균관대학교</DropdownMenuLabel>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </header>
+        <Analytics />
+        <SpeedInsights />
         <Script
           type="text/javascript"
           src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.NEXT_PUBLIC_NAVER_ID}&submodules=geocoder`}

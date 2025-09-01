@@ -1,11 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
-import { CreateStoreDto } from './dto/create-store.dto'
-import { UpdateStoreDto } from './dto/update-store.dto'
-import { PrismaService } from '@prisma/prisma.service'
-import { GetStoresDto } from './dto/get-stores.dto'
-import { Prisma } from '@prisma/client'
+import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { CreateStoreDto } from './dto/create-store.dto';
+import { UpdateStoreDto } from './dto/update-store.dto';
+import { PrismaService } from 'prisma/prisma.service';
+import { GetStoresDto } from './dto/get-stores.dto';
+import { Prisma, Role } from '@prisma/client';
+import { AddStaffDto } from './dto/add-staff.dto';
 
-export type StoreSortFilter = 'popular' | 'fee' | 'seats'
+export type StoreSortFilter = 'popular' | 'fee' | 'seats';
 
 @Injectable()
 export class StoreService {
@@ -144,23 +145,44 @@ export class StoreService {
     }
   }
 
-  async createStore(createStoreDto: CreateStoreDto) {
+  async createStore(
+    userId: number, 
+    createStoreDto: CreateStoreDto
+  ) {
     const { timeSlots, ...storeData } = createStoreDto
 
     return await this.prisma.store.create({
       data: {
         ...storeData,
+        ownerId: userId,
         timeSlots: {
           create: timeSlots.map((timeslot) => ({
             ...timeslot,
             availableSeats: timeslot.totalCapacity,
           })),
         },
+        staffs: {
+          create: {
+            userId: userId,
+            role: Role.OWNER,
+          },
+        },
       },
     })
   }
 
-  async updateStore(id: number, updateStoreDto: UpdateStoreDto) {
+  async updateStore(
+    userId: number,
+    id: number, 
+    updateStoreDto: UpdateStoreDto
+  ) {
+    const staffInfo = await this.prisma.storeStaff.findUnique({
+      where: { userId_storeId: { userId, storeId: id } },
+    })
+    if (!staffInfo) {
+      throw new ForbiddenException('가게를 수정할 권한이 없습니다.');
+    }
+
     const existingStore = await this.prisma.store.findUnique({
       where: { id },
     })
@@ -183,7 +205,7 @@ export class StoreService {
     const result = await this.prisma.$transaction(async (tx) => {
       await tx.timeSlot.deleteMany({ where: { storeId: id } })
 
-      const updated = await tx.store.update({
+      return await tx.store.update({
         where: { id },
         data: {
           ...partialData,
@@ -196,29 +218,64 @@ export class StoreService {
         },
         include: { timeSlots: true },
       })
-
-      return updated
     })
 
     return result
   }
 
-  async removeStore(id: number) {
+  async removeStore(
+    userId: number,
+    id: number,
+  ) {
+    const staffInfo = await this.prisma.storeStaff.findUnique({
+        where: { userId_storeId: { userId, storeId: id } },
+    })
+    if (!staffInfo || staffInfo.role !== Role.OWNER) {
+        throw new ForbiddenException('가게를 삭제할 권한이 없습니다.')
+    }
+
     const existing = await this.prisma.store.findUnique({ where: { id } })
     if (!existing) {
       throw new NotFoundException('해당 가게를 찾을 수 없습니다.')
     }
 
-    const result = await this.prisma.$transaction(async (tx) => {
-      await tx.reservation.deleteMany({ where: { storeId: id } })
+    return await this.prisma.store.delete({ where: { id } })
+  }
 
-      const deleted = await tx.store.delete({
-        where: { id },
-      })
-
-      return deleted
+  async addStaff(
+    userId: number,
+    id: number, 
+    addStaffDto: AddStaffDto
+  ) {
+    const staffInfo = await this.prisma.storeStaff.findUnique({
+      where: { userId_storeId: { userId, storeId: id } },
     })
+    if (!staffInfo || staffInfo.role !== Role.OWNER) {
+      throw new ForbiddenException('스탭을 추가할 권한이 없습니다.')
+    }
 
-    return result
+    if (!staffInfo || staffInfo.role !== Role.OWNER) {
+      throw new ForbiddenException('스탭을 추가할 권한이 없습니다.');
+    }
+
+    const userToAdd = await this.prisma.user.findUnique({
+      where: { kakaoId: addStaffDto.kakaoId },
+    })
+    if (!userToAdd) {
+      throw new NotFoundException(
+        `카카오 아이디 '${addStaffDto.kakaoId}'에 해당하는 유저를 찾을 수 없습니다.`,
+      )
+    }
+    
+    const existingStaff = await this.prisma.storeStaff.findUnique({
+      where: { userId_storeId: { userId: userToAdd.id, storeId: id } },
+    })
+    if (existingStaff) {
+      throw new ConflictException('이미 해당 가게의 스탭 또는 소유자입니다.');
+    }
+
+    return this.prisma.storeStaff.create({
+      data: { storeId: id, userId: userToAdd.id, role: Role.STAFF },
+    })
   }
 }

@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer'
+import { Type } from 'class-transformer';
 import {
   IsArray,
   IsDate,
@@ -9,8 +9,8 @@ import {
   IsString,
   IsLatitude,
   IsLongitude,
-  ValidateNested,
-} from 'class-validator'
+  ValidateNested
+} from 'class-validator';
 
 export class TimeSlotInput {
   @Type(() => Date)
@@ -39,8 +39,8 @@ export class CreateStoreDto {
   description?: string
 
   @IsString()
-  @IsNotEmpty()
-  organizer: string
+  @IsOptional()
+  organizer?: string
 
   @IsString()
   @IsOptional()
