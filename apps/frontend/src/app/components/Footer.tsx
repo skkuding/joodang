@@ -13,7 +13,7 @@ export function Footer() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const onClickBeer = async () => {
+  const onClickReservationCheck = async () => {
     try {
       await requestPermissionAndSubscribe();
     } catch (e) {
@@ -67,6 +67,7 @@ export function Footer() {
           <div
             onClick={() => {
               router.push("/reservation-check-page");
+              onClickReservationCheck();
             }}
             className="w-[60px] h-[54px] flex flex-col items-center"
           >
