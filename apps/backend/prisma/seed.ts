@@ -59,6 +59,9 @@ async function main() {
       description: '소주와 안주',
       phone: '010-1234-5678',
       organizer: '스꾸딩',
+      bankCode: '088',
+      accountNumber: '1101234567890',
+      accountHolder: user1.name,
       ownerId: user1.id,
       instagramId: 'skkuding',
       startTime: new Date('2026-01-01T18:00:00.000Z'),
@@ -71,7 +74,7 @@ async function main() {
           role: Role.OWNER,
         },
       },
-    },
+    } as any,
   });
 
   const store2 = await prisma.store.create({
@@ -80,6 +83,9 @@ async function main() {
       description: '시원한 맥주',
       phone: '010-2222-3333',
       organizer: '소프트웨어학과',
+      bankCode: '088',
+      accountNumber: '1101234567891',
+      accountHolder: user1.name,
       ownerId: user1.id,
       instagramId: 'skku_software',
       startTime: new Date('2026-01-02T18:00:00.000Z'),
@@ -92,7 +98,7 @@ async function main() {
           role: Role.OWNER,
         },
       },
-    },
+    } as any,
   });
 
   const store3 = await prisma.store.create({
@@ -101,6 +107,9 @@ async function main() {
       description: '분위기 있는 와인바',
       phone: '010-3333-4444',
       organizer: '신소재공학부',
+      bankCode: '088',
+      accountNumber: '1101234567892',
+      accountHolder: user1.name,
       ownerId: user1.id,
       instagramId: 'skku_amse',
       startTime: new Date('2026-01-03T17:00:00.000Z'),
@@ -113,7 +122,7 @@ async function main() {
           role: Role.OWNER,
         },
       },
-    },
+    } as any,
   });
 
   const store4 = await prisma.store.create({
@@ -122,6 +131,9 @@ async function main() {
       description: '바삭한 치킨과 맥주',
       phone: '010-4444-5555',
       organizer: '전자전기공학부',
+      bankCode: '088',
+      accountNumber: '1101234567893',
+      accountHolder: user1.name,
       ownerId: user1.id,
       instagramId: 'skku_electrical',
       startTime: new Date('2026-01-04T18:00:00.000Z'),
@@ -134,7 +146,7 @@ async function main() {
           role: Role.OWNER,
         },
       },
-    },
+    } as any,
   });
 
   const store5 = await prisma.store.create({
@@ -143,6 +155,9 @@ async function main() {
       description: '과자와 음료가 가득한 스낵바',
       phone: '010-5555-6666',
       organizer: '화학과',
+      bankCode: '088',
+      accountNumber: '1101234567894',
+      accountHolder: user1.name,
       ownerId: user1.id,
       instagramId: 'skku_chem',
       startTime: new Date('2026-01-05T18:00:00.000Z'),
@@ -155,7 +170,7 @@ async function main() {
           role: Role.OWNER,
         },
       },
-    },
+    } as any,
   });
 
   await prisma.menu.createMany({
@@ -255,7 +270,7 @@ async function main() {
 
   await prisma.$transaction([
     prisma.reservation.create({
-      data: { headcount: 2, userId: user2.id, storeId: store1.id, timeSlotId: store1Slots[0].id },
+  data: { reservationNum: 1001, headcount: 2, userId: user2.id, storeId: store1.id, timeSlotId: store1Slots[0].id } as any,
     }),
     prisma.timeSlot.update({
       where: { id: store1Slots[0].id },
@@ -263,7 +278,7 @@ async function main() {
     }),
 
     prisma.reservation.create({
-      data: { headcount: 3, userId: user3.id, storeId: store1.id, timeSlotId: store1Slots[0].id },
+  data: { reservationNum: 1002, headcount: 3, userId: user3.id, storeId: store1.id, timeSlotId: store1Slots[0].id } as any,
     }),
     prisma.timeSlot.update({
       where: { id: store1Slots[0].id },
@@ -271,7 +286,7 @@ async function main() {
     }),
 
     prisma.reservation.create({
-      data: { headcount: 2, userId: user4.id, storeId: store1.id, timeSlotId: store1Slots[0].id },
+  data: { reservationNum: 1003, headcount: 2, userId: user4.id, storeId: store1.id, timeSlotId: store1Slots[0].id } as any,
     }),
     prisma.timeSlot.update({
       where: { id: store1Slots[0].id },
@@ -279,7 +294,7 @@ async function main() {
     }),
 
     prisma.reservation.create({
-      data: { headcount: 3, userId: user5.id, storeId: store1.id, timeSlotId: store1Slots[0].id },
+  data: { reservationNum: 1004, headcount: 3, userId: user5.id, storeId: store1.id, timeSlotId: store1Slots[0].id } as any,
     }),
     prisma.timeSlot.update({
       where: { id: store1Slots[0].id },
@@ -289,7 +304,7 @@ async function main() {
 
   await prisma.$transaction([
     prisma.reservation.create({
-      data: { headcount: 2, userId: user2.id, storeId: store2.id, timeSlotId: store2Slots[0].id },
+  data: { reservationNum: 2001, headcount: 2, userId: user2.id, storeId: store2.id, timeSlotId: store2Slots[0].id } as any,
     }),
     prisma.timeSlot.update({
       where: { id: store2Slots[0].id },
@@ -297,7 +312,7 @@ async function main() {
     }),
 
     prisma.reservation.create({
-      data: { headcount: 4, userId: user3.id, storeId: store2.id, timeSlotId: store2Slots[0].id },
+  data: { reservationNum: 2002, headcount: 4, userId: user3.id, storeId: store2.id, timeSlotId: store2Slots[0].id } as any,
     }),
     prisma.timeSlot.update({
       where: { id: store2Slots[0].id },
@@ -305,7 +320,7 @@ async function main() {
     }),
 
     prisma.reservation.create({
-      data: { headcount: 2, userId: user4.id, storeId: store2.id, timeSlotId: store2Slots[0].id },
+  data: { reservationNum: 2003, headcount: 2, userId: user4.id, storeId: store2.id, timeSlotId: store2Slots[0].id } as any,
     }),
     prisma.timeSlot.update({
       where: { id: store2Slots[0].id },
@@ -313,7 +328,7 @@ async function main() {
     }),
     
     prisma.reservation.create({
-      data: { headcount: 4, userId: user5.id, storeId: store2.id, timeSlotId: store2Slots[0].id },
+  data: { reservationNum: 2004, headcount: 4, userId: user5.id, storeId: store2.id, timeSlotId: store2Slots[0].id } as any,
     }),
     prisma.timeSlot.update({
       where: { id: store2Slots[0].id },

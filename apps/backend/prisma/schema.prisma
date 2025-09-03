@@ -12,6 +12,7 @@ model Store {
   name           String
   phone          String
   description    String?
+  college        String
   organizer      String?
   owner          User     @relation(fields: [ownerId], references: [id])
   ownerId        Int      @map("owner_id")
@@ -20,26 +21,29 @@ model Store {
   endTime        DateTime @map("end_time")
   isAvailable    Boolean  @default(true) @map("is_available")
   reservationFee Int      @map("reservation_fee")
-  college        String
+
+  bankCode      String @map("bank_code")
+  accountNumber String @map("account_number")
+  accountHolder String @map("account_holder")
 
   location  String @default("디도 앞 잔디밭")
   latitude  Float  @default(37.2931959)
   longitude Float  @default(126.9745929)
 
-  menus       Menu[]
-  timeSlots   TimeSlot[]
+  menus        Menu[]
+  timeSlots    TimeSlot[]
   reservations Reservation[]
-  staffs      StoreStaff[]
+  staffs       StoreStaff[]
 
   @@map("store")
 }
 
 enum MenuCategory {
-  Tang    @map("tang") // 탕/전골
-  Tuiguim @map("tuiguim") // 튀김
-  Bap     @map("bap") // 밥/식사
-  Fruit   @map("fruit") // 과일
-  Maroon5 @map("maroon5") // 마른 안주
+  Tang     @map("tang") // 탕/전골
+  Tuiguim  @map("tuiguim") // 튀김
+  Bap      @map("bap") // 밥/식사
+  Fruit    @map("fruit") // 과일
+  Maroon5  @map("maroon5") // 마른 안주
   Beverage @map("beverage") // 음료
 
   @@map("menu_category")
@@ -52,7 +56,7 @@ model Menu {
   price    Int
   category MenuCategory
 
-  storeId Int           @map("store_id")
+  storeId Int   @map("store_id")
   store   Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
 
   reservations Reservation[]
@@ -62,20 +66,20 @@ model Menu {
 }
 
 model User {
-  id                Int       @id @default(autoincrement())
-  kakaoId           String    @unique @map("kakao_id")
-  name              String
-  studentId         String?   @unique @map("student_id")
-  college           String?
-  major             String?
-  profileImageUrl   String?   @map("profile_image_url")
+  id              Int     @id @default(autoincrement())
+  kakaoId         String  @unique @map("kakao_id")
+  name            String
+  studentId       String? @unique @map("student_id")
+  college         String?
+  major           String?
+  profileImageUrl String? @map("profile_image_url")
 
-  reservations         Reservation[]
-  notificationRecords  NotificationRecord[]
-  pushSubscriptions    PushSubscription[]
+  reservations        Reservation[]
+  notificationRecords NotificationRecord[]
+  pushSubscriptions   PushSubscription[]
 
-  storeStaffs   StoreStaff[]
-  stores        Store[]
+  storeStaffs StoreStaff[]
+  stores      Store[]
 
   @@map("user")
 }
@@ -86,13 +90,13 @@ enum Role {
 }
 
 model StoreStaff {
-  id      Int       @id @default(autoincrement())
-  role    Role      @default(STAFF)
-  
-  user    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId  Int
-  
-  store   Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  id   Int  @id @default(autoincrement())
+  role Role @default(STAFF)
+
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+
+  store   Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
   storeId Int
 
   @@unique([userId, storeId])
@@ -106,7 +110,7 @@ model TimeSlot {
   totalCapacity  Int      @map("total_capacity")
   availableSeats Int      @map("available_seats")
 
-  storeId Int            @map("store_id")
+  storeId Int   @map("store_id")
   store   Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
 
   reservations Reservation[]
@@ -115,18 +119,20 @@ model TimeSlot {
 }
 
 model Reservation {
-  id        Int @id @default(autoincrement())
-  headcount Int
+  id             Int @id @default(autoincrement())
+  headcount      Int
+  reservationNum Int @map("reservation_num")
 
-  userId     Int @map("user_id")
+  userId     Int      @map("user_id")
   user       User     @relation(fields: [userId], references: [id])
-  storeId    Int @map("store_id")
+  storeId    Int      @map("store_id")
   store      Store    @relation(fields: [storeId], references: [id])
-  timeSlotId Int @map("time_slot_id")
+  timeSlotId Int      @map("time_slot_id")
   timeSlot   TimeSlot @relation(fields: [timeSlotId], references: [id])
 
-  isDone Boolean @default(false) @map("is_done")
-  menus  Menu[]
+  isConfirmed Boolean @default(false) @map("is_confirmed")
+  isDone      Boolean @default(false) @map("is_done")
+  menus       Menu[]
 
   @@unique([userId, timeSlotId])
   @@map("reservation")
@@ -139,7 +145,7 @@ model Notification {
   url     String?
   type    String  @default("Other")
 
-  createTime         DateTime             @default(now()) @map("create_time")
+  createTime          DateTime             @default(now()) @map("create_time")
   notificationRecords NotificationRecord[]
 
   @@map("notification")
