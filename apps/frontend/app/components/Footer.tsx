@@ -24,25 +24,25 @@ export function Footer() {
   return (
     <footer>
       <div
-        className="fixed left-0 right-0 bottom-0 z-50 w-full bg-white h-20 flex items-center justify-center"
+        className="fixed bottom-0 left-0 right-0 z-50 flex h-20 w-full items-center justify-center bg-white"
         style={{ boxShadow: "0 -2px 8px rgba(0,0,0,0.1)" }}
       >
-        <div className="flex flex-row justify-center gap-[60px] -mt-2">
+        <div className="-mt-2 flex flex-row justify-center gap-[60px]">
           <div
             onClick={() => {
               router.push("/");
             }}
-            className="w-[60px] h-[54px] flex flex-col items-center"
+            className="flex h-[54px] w-[60px] flex-col items-center"
           >
             {pathname === "/" ? (
               <>
                 <Image src={BlackHouse} alt="검은 집" width={32} height={32} />
-                <p className="text-black text-xs">홈</p>
+                <p className="text-xs text-black">홈</p>
               </>
             ) : (
               <>
                 <Image src={GrayHouse} alt="회색 집" width={32} height={32} />
-                <p className="text-[#9B9B9B] text-xs">홈</p>
+                <p className="text-xs text-[#9B9B9B]">홈</p>
               </>
             )}
           </div>
@@ -50,17 +50,17 @@ export function Footer() {
             onClick={() => {
               router.push("/bar-page");
             }}
-            className="w-[60px] h-[54px] flex flex-col items-center"
+            className="flex h-[54px] w-[60px] flex-col items-center"
           >
             {pathname === "/bar-page" ? (
               <>
                 <Image src={BlackBeer} alt="검은 맥주" width={34} height={34} />
-                <p className="text-black text-xs">주점 찾기</p>
+                <p className="text-xs text-black">주점 찾기</p>
               </>
             ) : (
               <>
                 <Image src={GrayBeer} alt="회색 맥주" width={34} height={34} />
-                <p className="text-[#9B9B9B] text-xs">주점 찾기</p>
+                <p className="text-xs text-[#9B9B9B]">주점 찾기</p>
               </>
             )}
           </div>
@@ -69,12 +69,12 @@ export function Footer() {
               router.push("/reservation-check-page");
               onClickReservationCheck();
             }}
-            className="w-[60px] h-[54px] flex flex-col items-center"
+            className="flex h-[54px] w-[60px] flex-col items-center"
           >
             {pathname === "/reservation-check-page" ? (
               <>
                 <Image src={BlackReserv} alt="예약" width={32} height={32} />
-                <p className="text-black text-xs">예약 내역</p>
+                <p className="text-xs text-black">예약 내역</p>
               </>
             ) : (
               <>
@@ -84,7 +84,7 @@ export function Footer() {
                   width={32}
                   height={32}
                 />
-                <p className="text-[#9B9B9B] text-xs">예약 내역</p>
+                <p className="text-xs text-[#9B9B9B]">예약 내역</p>
               </>
             )}
           </div>
