@@ -1,8 +1,8 @@
 "use client";
-import Location from "@/icons/icon_location.svg";
-import Clock from "@/icons/orangeClock.svg";
-import Money from "@/icons/orangeMoney.svg";
-import OrangeDot from "@/icons/orange_dot.svg";
+import Location from "@/public/icons/icon_location.svg";
+import Clock from "@/public/icons/orangeClock.svg";
+import Money from "@/public/icons/orangeMoney.svg";
+import OrangeDot from "@/public/icons/orange_dot.svg";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { DetailHeader } from "../../../components/DetailHeader";

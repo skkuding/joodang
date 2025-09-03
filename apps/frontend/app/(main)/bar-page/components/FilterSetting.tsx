@@ -1,6 +1,6 @@
 "use client";
 // FilterSheet.tsx
-import OrangeDot from "@/icons/orange_dot.svg";
+import OrangeDot from "@/public/icons/orange_dot.svg";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useId, useRef, useState } from "react";

@@ -1,6 +1,6 @@
 "use client";
-import minusIcon from "@/assets/icon_minus.svg";
-import plusIcon from "@/assets/icon_plus.svg";
+import minusIcon from "@/public/icons/icon_minus.svg";
+import plusIcon from "@/public/icons/icon_plus.svg";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import Image from "next/image";

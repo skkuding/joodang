@@ -1,6 +1,6 @@
-import clockIcon from "@/assets/icon_clock.svg";
-import locationIcon from "@/assets/icon_location.svg";
-import moneyIcon from "@/assets/icon_money.svg";
+import clockIcon from "@/public/icons/icon_clock.svg";
+import locationIcon from "@/public/icons/icon_location.svg";
+import moneyIcon from "@/public/icons/icon_money.svg";
 import Image from "next/image";
 import { dateFormatter } from "../../../lib/utils";
 import { StoreDetail } from "../../type";

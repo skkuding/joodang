@@ -1,6 +1,6 @@
-import foodIcon from "@/assets/graphic_food.svg";
-import animalIcon from "@/assets/icon_aninal.svg";
-import heartIcon from "@/assets/icon_heart.svg";
+import foodIcon from "@/public/icons/graphic_food.svg";
+import animalIcon from "@/public/icons/icon_aninal.svg";
+import heartIcon from "@/public/icons/icon_heart.svg";
 
 import { dateFormatter, safeFetcher } from "../../lib/utils";
 import { Carousel, CarouselContent, CarouselItem } from "../../ui/carousel";

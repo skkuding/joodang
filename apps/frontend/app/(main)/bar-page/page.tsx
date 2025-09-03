@@ -1,8 +1,8 @@
 "use client";
 
-import smallLoc from "@/icons/icon_location copy.svg";
-import IconLocation from "@/icons/icon_location.svg";
-import OrangeDot from "@/icons/orange_dot.svg";
+import smallLoc from "@/public/icons/icon_location copy.svg";
+import IconLocation from "@/public/icons/icon_location.svg";
+import OrangeDot from "@/public/icons/orange_dot.svg";
 import Image from "next/image";
 import { useState } from "react";
 import BarCard from "./components/BarCard";

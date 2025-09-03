@@ -1,10 +1,10 @@
 "use client";
 
-import Arrow from "@/icons/icon_arrow.svg";
-import Location from "@/icons/icon_location.svg";
-import Clock from "@/icons/orangeClock.svg";
-import Money from "@/icons/orangeMoney.svg";
-import Macju from "@/picture/drinkMacju.png";
+import Arrow from "@/public/icons/icon_arrow.svg";
+import Location from "@/public/icons/icon_location.svg";
+import Clock from "@/public/icons/orangeClock.svg";
+import Money from "@/public/icons/orangeMoney.svg";
+import Macju from "@/public/pictures/drinkMacju.png";
 import Image from "next/image";
 
 export default function BarCard() {

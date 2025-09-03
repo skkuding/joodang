@@ -1,10 +1,10 @@
 "use client";
-import BlackBeer from "@/icons/blackBeer.png";
-import BlackHouse from "@/icons/blackHouse.png";
-import BlackReserv from "@/icons/blackReserv.svg";
-import GrayBeer from "@/icons/grayBeer.png";
-import GrayHouse from "@/icons/grayHouse.png";
-import GrayReserv from "@/icons/reserv.svg";
+import BlackBeer from "@/public/icons/blackBeer.png";
+import BlackHouse from "@/public/icons/blackHouse.png";
+import BlackReserv from "@/public/icons/blackReserv.svg";
+import GrayBeer from "@/public/icons/grayBeer.png";
+import GrayHouse from "@/public/icons/grayHouse.png";
+import GrayReserv from "@/public/icons/reserv.svg";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { requestPermissionAndSubscribe } from "../../lib/push-subscription";

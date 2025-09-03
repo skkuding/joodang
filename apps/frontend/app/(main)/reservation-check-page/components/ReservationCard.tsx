@@ -1,9 +1,9 @@
 "use client";
 
-import Arrow from "@/icons/icon_arrow.svg";
-import Location from "@/icons/icon_location.svg";
-import Calendar from "@/icons/orangeCalendar.svg";
-import Clock from "@/icons/orangeClock.svg";
+import Arrow from "@/public/icons/icon_arrow.svg";
+import Location from "@/public/icons/icon_location.svg";
+import Calendar from "@/public/icons/orangeCalendar.svg";
+import Clock from "@/public/icons/orangeClock.svg";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 

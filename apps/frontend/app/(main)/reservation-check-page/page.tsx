@@ -1,4 +1,4 @@
-import Checkbox from "@/icons/orangeCheckbox.svg";
+import Checkbox from "@/public/icons/orangeCheckbox.svg";
 import Image from "next/image";
 import ReservationCard from "./components/ReservationCard";
 

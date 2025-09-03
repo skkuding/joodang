@@ -1,17 +1,14 @@
-import cheerImg from "@/assets/cheers.png";
-import bowlIcon from "@/assets/icon_bowl.svg";
-import chipIcon from "@/assets/icon_chip.svg";
-import { Menu, StoreDetail } from "../../type";
-
-import drinkIcon from "@/assets/icon_drink.svg";
-
-import riceIcon from "@/assets/icon_rice.svg";
-import { Button } from "../../../ui/button";
-import { Carousel, CarouselContent, CarouselItem } from "../../../ui/carousel";
-
+import bowlIcon from "@/public/icons/icon_bowl.svg";
+import chipIcon from "@/public/icons/icon_chip.svg";
+import drinkIcon from "@/public/icons/icon_drink.svg";
+import riceIcon from "@/public/icons/icon_rice.svg";
+import cheerImg from "@/public/pictures/cheers.png";
 import Image from "next/image";
 import Link from "next/link";
 import { safeFetcher } from "../../../lib/utils";
+import { Button } from "../../../ui/button";
+import { Carousel, CarouselContent, CarouselItem } from "../../../ui/carousel";
+import { Menu, StoreDetail } from "../../type";
 import { renderStoreSummary } from "../components/store";
 
 export default async function Page({
