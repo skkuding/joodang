@@ -28,7 +28,7 @@ model Store {
 
   menus       Menu[]
   timeSlots   TimeSlot[]
-  Reservation Reservation[]
+  reservations Reservation[]
   staffs      StoreStaff[]
 
   @@map("store")
@@ -71,11 +71,11 @@ model User {
   profileImageUrl   String?   @map("profile_image_url")
 
   reservations         Reservation[]
-  NotificationRecord   NotificationRecord[]
-  PushSubscription     PushSubscription[]
+  notificationRecords  NotificationRecord[]
+  pushSubscriptions    PushSubscription[]
 
   storeStaffs   StoreStaff[]
-  Store         Store[]
+  stores        Store[]
 
   @@map("user")
 }
@@ -140,7 +140,7 @@ model Notification {
   type    String  @default("Other")
 
   createTime         DateTime             @default(now()) @map("create_time")
-  NotificationRecord NotificationRecord[]
+  notificationRecords NotificationRecord[]
 
   @@map("notification")
 }
