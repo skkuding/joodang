@@ -6,41 +6,55 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  Req,
 } from '@nestjs/common'
 import { ReservationService } from './reservation.service'
 import { CreateReservationDto } from './dto/create-reservation.dto'
+import type { Request } from 'express'
 
 @Controller('reservation')
 export class ReservationController {
   constructor(private readonly reservationService: ReservationService) {}
 
   @Post()
-  createReservation(@Body() createReservationDto: CreateReservationDto) {
-    return this.reservationService.createReservation(createReservationDto)
+  createReservation(
+    @Body() createReservationDto: CreateReservationDto,
+    @Req() req: Request,
+  ) {
+    return this.reservationService.createReservation(
+      createReservationDto,
+      req.user.id,
+    )
   }
 
   @Post('/call/:id')
-  callReservation(@Param('id', ParseIntPipe) id: number) {
-    return this.reservationService.callReservation(id)
+  callReservation(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
+    return this.reservationService.callReservation(id, req.user.id)
   }
 
   @Get()
-  getReservations() {
-    return this.reservationService.getReservations(1)
+  getReservations(@Req() req: Request) {
+    return this.reservationService.getReservations(req.user.id)
   }
 
   @Get('/store/:storeId')
-  getStoreReservations(@Param('storeId', ParseIntPipe) storeId: number) {
-    return this.reservationService.getStoreReservations(storeId)
+  getStoreReservations(
+    @Param('storeId', ParseIntPipe) storeId: number,
+    @Req() req: Request,
+  ) {
+    return this.reservationService.getStoreReservations(storeId, req.user.id)
   }
 
   @Get(':id')
-  getReservation(@Param('id', ParseIntPipe) id: number) {
-    return this.reservationService.getReservation(id)
+  getReservation(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
+    return this.reservationService.getReservation(id, req.user.id)
   }
 
   @Delete(':id')
-  removeReservation(@Param('id', ParseIntPipe) id: number) {
-    return this.reservationService.removeReservation(id)
+  removeReservation(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: Request,
+  ) {
+    return this.reservationService.removeReservation(id, req.user.id)
   }
 }

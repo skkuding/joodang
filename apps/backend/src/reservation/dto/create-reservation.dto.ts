@@ -7,10 +7,6 @@ export class CreateReservationDto {
 
   @IsInt()
   @Min(1)
-  userId: number
-
-  @IsInt()
-  @Min(1)
   storeId: number
 
   @IsInt()
