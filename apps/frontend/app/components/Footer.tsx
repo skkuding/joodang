@@ -48,11 +48,11 @@ export function Footer() {
           </div>
           <div
             onClick={() => {
-              router.push("/bar-page");
+              router.push("/find");
             }}
             className="flex h-[54px] w-[60px] flex-col items-center"
           >
-            {pathname === "/bar-page" ? (
+            {pathname === "/find" ? (
               <>
                 <Image src={BlackBeer} alt="검은 맥주" width={34} height={34} />
                 <p className="text-xs text-black">주점 찾기</p>
