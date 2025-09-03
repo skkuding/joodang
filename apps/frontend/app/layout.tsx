@@ -1,7 +1,6 @@
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -242,12 +241,8 @@ export default function RootLayout({
       <body>
         <Analytics />
         <SpeedInsights />
-        <Script
-          type="text/javascript"
-          src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.NEXT_PUBLIC_NAVER_ID}&submodules=geocoder`}
-        />
         <main
-          className={`${geistSans.variable} ${geistMono.variable} antialiased pt-[48px] pb-20`}
+          className={`${geistSans.variable} ${geistMono.variable} pb-20 pt-[48px] antialiased`}
         >
           {children}
         </main>
