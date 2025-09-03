@@ -13,7 +13,7 @@ export default function Home() {
   const [stores, setStores] = useState<Store[]>([]);
   const fetchStores = async () => {
     const stores: Store[] = await safeFetcher("store").json();
-    setStores(stores);
+    setStores(stores.slice(0, 8));
   };
   useEffect(() => {
     fetchStores();
@@ -68,7 +68,7 @@ export default function Home() {
 
   function StoreLocation() {
     return (
-      <Section title="주점 위치를 알아볼까요?" route="/location">
+      <Section title="주점 위치를 알아볼까요?" route="/map">
         <div className="">
           {<NaverMap />}
           <Carousel opts={{ align: "start" }}>
