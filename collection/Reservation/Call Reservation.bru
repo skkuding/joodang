@@ -5,7 +5,11 @@ meta {
 }
 
 post {
-  url: {{baseUrl}}/reservation/call/1
+  url: {{baseUrl}}/reservation/call/:reservationId
   body: none
   auth: inherit
+}
+
+params:path {
+  reservationId: 1
 }
