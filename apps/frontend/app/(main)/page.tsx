@@ -1,28 +1,32 @@
-import foodIcon from "@/public/icons/graphic_food.svg";
-import animalIcon from "@/public/icons/icon_aninal.svg";
-import heartIcon from "@/public/icons/icon_heart.svg";
-
-import { dateFormatter, safeFetcher } from "../../lib/utils";
+"use client";
+import { useEffect, useState } from "react";
+import { IoIosRefresh } from "react-icons/io";
+import { formatDateWithDay, safeFetcher } from "../../lib/utils";
 import { Carousel, CarouselContent, CarouselItem } from "../../ui/carousel";
-
-import Image from "next/image";
-import Link from "next/link";
-import { FaLocationDot } from "react-icons/fa6";
-import { IoIosArrowForward, IoIosRefresh } from "react-icons/io";
 import NaverMap from "../components/NaverMap";
 import { Store } from "../type";
+import { Section } from "./components/Section";
+import { Separator } from "./components/Separator";
+import { StoreCard } from "./components/StoreCard";
 
-export default async function Home() {
-  const stores: Store[] = await safeFetcher("store").json();
+export default function Home() {
+  const [stores, setStores] = useState<Store[]>([]);
+  const fetchStores = async () => {
+    const stores: Store[] = await safeFetcher("store").json();
+    setStores(stores);
+  };
+  useEffect(() => {
+    fetchStores();
+  }, []);
 
-  function renderHeader() {
+  function Banner() {
     return (
-      <div className="bg-white h-[139px] p-5 mb-[10px] rounded-b-xl ">
-        <div className="px-5 py-4 flex flex-col bg-color-neutral-20 rounded-md">
+      <div className="h-[139px] p-5">
+        <div className="bg-color-neutral-20 flex flex-col rounded-md px-5 py-4">
           <span className="text-primary-normal text-xs font-normal">
-            2025. 01. 01
+            {formatDateWithDay(new Date())}
           </span>
-          <span className="text-lg font-medium text-color-common-100">
+          <span className="text-color-common-100 text-lg font-medium">
             성균관대학교 대동제
           </span>
           <span className="text-color-neutral-80 text-sm font-normal">
@@ -33,17 +37,17 @@ export default async function Home() {
     );
   }
 
-  function renderRecommendation() {
+  function StoreList() {
     return (
-      <Section title="오늘의 주점" route="/recommendation">
+      <Section title="오늘의 인기 주점" route="/find">
         <div className="flex flex-col">
-          <div className="text-sm font-normal text-color-neutral-60 flex items-center gap-1">
-            <span>2025. 01. 01 (목)</span>
-            <IoIosRefresh className="w-3.5 h-3.5" />
+          <div className="text-color-neutral-60 flex items-center gap-1 text-sm font-normal">
+            {formatDateWithDay(new Date())}
+            <IoIosRefresh className="h-3.5 w-3.5" onClick={fetchStores} />
           </div>
           <Carousel opts={{ align: "start" }}>
-            <CarouselContent className="-ml-2 sm:-ml-4 my-[14px]">
-              {stores.map((store) => (
+            <CarouselContent className="my-[14px] -ml-2 sm:-ml-4">
+              {stores.map(store => (
                 <CarouselItem className="basis-auto" key={store.id}>
                   <StoreCard
                     id={store.id}
@@ -62,35 +66,14 @@ export default async function Home() {
     );
   }
 
-  function renderStaticNotice() {
-    return (
-      <div className="relative px-5 py-3 bg-primary-normal h-[108px] mt-5 mb-5">
-        <span className="px-1.5 py-0.5 text-white bg-black text-[10px] rounded-sm font-medium">
-          Commit
-        </span>
-        <p className="text-white text-lg font-medium">
-          이세계 음식점에 놀러오세요!
-        </p>
-        <p className="text-sm font-normal text-white/70">
-          이곳에서만 맛볼 수 있는 특별한 메뉴
-        </p>
-        <Image
-          src={foodIcon}
-          alt="food"
-          className="absolute right-5 top-1/2 -translate-y-1/2 w-[84px] h-[84px]"
-        />
-      </div>
-    );
-  }
-
-  function renderLocation() {
+  function StoreLocation() {
     return (
       <Section title="주점 위치를 알아볼까요?" route="/location">
         <div className="">
           {<NaverMap />}
           <Carousel opts={{ align: "start" }}>
-            <CarouselContent className="-ml-2 sm:-ml-4 my-[14px]">
-              {stores.map((store) => (
+            <CarouselContent className="my-[14px] -ml-2 sm:-ml-4">
+              {stores.map(store => (
                 <CarouselItem className="basis-auto" key={store.id}>
                   <StoreCard
                     id={store.id}
@@ -110,98 +93,13 @@ export default async function Home() {
     );
   }
 
-  interface StoreCardProps {
-    id: number;
-    clubName: string;
-    storeName: string;
-    location?: string;
-    startTime: Date;
-    endTime: Date;
-    size: "medium" | "large";
-  }
-
-  function StoreCard({
-    id,
-    clubName,
-    storeName,
-    location,
-    startTime,
-    endTime,
-    size = "large",
-  }: StoreCardProps) {
-    return size === "large" ? (
-      <Link href={`/${id}`} className="block">
-        <div className="flex justify-between flex-col w-[170px] h-[180px] p-[14px] rounded-md shadow-[0px_0px_20px_0px_rgba(0,0,0,0.12)]">
-          <div className="flex justify-end">
-            <Image
-              src={id % 2 === 0 ? animalIcon : heartIcon}
-              alt={`index-${id}`}
-              className="w-[48.60px] h-[40.50px]"
-            />
-          </div>
-
-          <div>
-            <h3 className="text-[13px] font-medium text-primary-normal">
-              {clubName}
-            </h3>
-            <h3 className="text-sm font-normal mb-1 text-color-neutral-50 overflow-hidden text-ellipsis whitespace-nowrap">
-              {storeName}
-            </h3>
-            <p>
-              {dateFormatter(startTime, "YYYY.MM.DD")} -{" "}
-              {dateFormatter(endTime, "DD")}
-            </p>
-          </div>
-        </div>
-      </Link>
-    ) : (
-      <Link href={`/${id}`} className="block">
-        <div className="flex justify-between flex-col w-[220px] h-[103px] p-[14px] rounded-md shadow-[0px_0px_20px_0px_rgba(0,0,0,0.12)]">
-          <div>
-            <h3 className="text-[13px] font-medium text-primary-normal">
-              {clubName}
-            </h3>
-            <h3 className="text-sm font-normal mb-1 text-color-neutral-50 overflow-hidden text-ellipsis whitespace-nowrap">
-              {storeName}
-            </h3>
-            <div className="flex items-center p-1 text-sm font-normal text-color-neutral-40 bg-color-neutral-99">
-              <FaLocationDot className="w-4 h-4 text-color-neutral-80" />
-              {location}
-            </div>
-          </div>
-        </div>
-      </Link>
-    );
-  }
-
-  interface SectionProps {
-    title: string;
-    route: string;
-    children: React.ReactNode;
-  }
-  function Section({ title, route, children }: SectionProps) {
-    return (
-      <div className="bg-white px-5 py-[30px] rounded-xl">
-        <div className="flex justify-between mb-5">
-          <h2 className="text-xl font-medium">{title}</h2>
-          <Link href={route} className="flex items-center gap-[2px]">
-            <span className=" text-xs font-normal text-color-neutral-40">
-              더보기
-            </span>
-            <IoIosArrowForward className="w-[13px] h-[13px] text-color-neutral-40" />
-          </Link>
-        </div>
-        {children}
-      </div>
-    );
-  }
-
   return (
-    <div className="flex flex-col">
-      {renderHeader()}
-      {renderRecommendation()}
-      {renderStaticNotice()}
-      {renderLocation()}
+    <div className="flex flex-col pt-8">
+      <Banner />
+      <Separator />
+      <StoreList />
+      <Separator />
+      <StoreLocation />
     </div>
   );
 }

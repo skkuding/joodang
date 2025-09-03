@@ -29,10 +29,21 @@ export const convertToLetter = (n: number) => {
 
 export const dateFormatter = (date: string | Date, format: string) => {
   return dayjs(
-    new Date(date).toLocaleString("en-US", { timeZone: "Asia/Seoul" }),
+    new Date(date).toLocaleString("en-US", { timeZone: "Asia/Seoul" })
   ).format(format);
 };
 
 export function formatWithComma(num: number): string {
   return num.toLocaleString();
+}
+
+export function formatDateWithDay(date: string | Date): string {
+  const dayNames = ["일", "월", "화", "수", "목", "금", "토"];
+  const dateObj = new Date(date);
+  const year = dateObj.getFullYear();
+  const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+  const day = String(dateObj.getDate()).padStart(2, "0");
+  const dayOfWeek = dayNames[dateObj.getDay()];
+
+  return `${year}. ${month}. ${day} (${dayOfWeek})`;
 }

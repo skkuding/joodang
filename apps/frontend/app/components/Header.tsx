@@ -13,7 +13,7 @@ import {
 export function Header() {
   const router = useRouter();
   return (
-    <div className="z-1 fixed left-0 right-0 top-0 flex h-[78px] w-full justify-between bg-white px-5 pb-1 pt-[50px]">
+    <div className="z-1 fixed left-0 right-0 top-0 flex h-[78px] w-full justify-between bg-white px-5 pt-[50px]">
       <DropdownMenu>
         <DropdownMenuTrigger className="flex items-center gap-1">
           <span className="text-xl font-semibold">성균관대학교</span>
