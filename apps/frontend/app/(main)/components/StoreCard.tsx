@@ -37,11 +37,11 @@ export function StoreCard({
           />
         </div>
         <div>
-          <p className="text-primary-normal text-[13px] font-medium">
+          <p className="text-primary-normal text-[13px] font-semibold">
             {clubName}
           </p>
-          <p className="truncate text-lg font-medium">{storeName}</p>
-          <span className="text-sm font-normal">
+          <p className="truncate text-lg font-semibold">{storeName}</p>
+          <span className="text-sm font-medium">
             {dateFormatter(startTime, "YYYY.MM.DD")} -{" "}
             {dateFormatter(endTime, "DD")}
           </span>
@@ -52,13 +52,13 @@ export function StoreCard({
     <Link href={`/${id}`}>
       <div className="flex h-[103px] w-[220px] flex-col justify-between rounded-md p-[14px] shadow-[0px_0px_20px_0px_rgba(0,0,0,0.12)]">
         <div>
-          <h3 className="text-primary-normal text-[13px] font-medium">
+          <h3 className="text-primary-normal text-[13px] font-semibold">
             {clubName}
           </h3>
-          <h3 className="text-color-neutral-50 mb-1 overflow-hidden text-ellipsis whitespace-nowrap text-sm font-normal">
+          <h3 className="text-color-neutral-50 mb-1 overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium">
             {storeName}
           </h3>
-          <div className="text-color-neutral-40 bg-color-neutral-99 flex items-center p-1 text-sm font-normal">
+          <div className="text-color-neutral-40 bg-color-neutral-99 flex items-center p-1 text-sm font-medium">
             <FaLocationDot className="text-color-neutral-80 h-4 w-4" />
             {location}
           </div>

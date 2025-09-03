@@ -10,9 +10,9 @@ export function Section({ title, route, children }: SectionProps) {
   return (
     <div className="p-5">
       <div className="flex justify-between">
-        <span className="text-xl font-medium">{title}</span>
+        <span className="text-xl font-semibold">{title}</span>
         <Link href={route} className="flex items-center gap-[2px]">
-          <span className="text-color-neutral-40 text-xs font-normal">
+          <span className="text-color-neutral-40 text-xs font-medium">
             더보기
           </span>
           <IoIosArrowForward className="text-color-neutral-40 h-[13px] w-[13px]" />
