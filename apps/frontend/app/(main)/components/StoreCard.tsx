@@ -55,10 +55,10 @@ export function StoreCard({
           <h3 className="text-primary-normal text-[13px] font-semibold">
             {clubName}
           </h3>
-          <h3 className="text-color-neutral-50 mb-1 overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium">
+          <h3 className="mb-1 overflow-hidden text-ellipsis whitespace-nowrap text-base font-semibold">
             {storeName}
           </h3>
-          <div className="text-color-neutral-40 bg-color-neutral-99 flex items-center p-1 text-sm font-medium">
+          <div className="text-color-neutral-40 bg-color-neutral-99 flex items-center gap-1 p-1 text-sm font-medium">
             <FaLocationDot className="text-color-neutral-80 h-4 w-4" />
             {location}
           </div>

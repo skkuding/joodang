@@ -69,7 +69,7 @@ export default function Home() {
   function StoreLocation() {
     return (
       <Section title="주점 위치를 알아볼까요?" route="/map">
-        <div className="">
+        <div className="mt-3">
           {<NaverMap />}
           <Carousel opts={{ align: "start" }}>
             <CarouselContent className="my-[14px] -ml-2 sm:-ml-4">

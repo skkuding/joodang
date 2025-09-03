@@ -22,17 +22,29 @@ export default function NaverMap() {
       gl: true,
       center: new naver.maps.LatLng(37.2931959, 126.9745929),
       zoom: 14,
-      customStyleId: "6dc0faab-a12d-4291-8a87-35ce639bca0b",
+      customStyleId: "5ebaa70e-0bc8-4f24-b7a3-6247c307974c",
     });
 
     new naver.maps.Marker({
       position: new naver.maps.LatLng(37.2931959, 126.9745929),
       map,
+
       icon: {
-        url: "/icons/icon_location.svg",
+        content: `<div style="display: flex; width: fit-content; flex-direction: column; align-items: center; gap: 4px;  padding: 8px; border-radius: 8px; color: white;">
+                    <span style="background-color: rgba(255,255,255,0.1); padding: 4px 12px; font-size: 14px; font-weight: 600;">
+                      모태솔로지만 연애는 하고싶어
+                    </span>
+                    <img
+                      src="/icons/icon_location.svg"
+                      alt="pin"
+                      width="22"
+                      height="35"
+                    />
+                  </div>`,
+        anchor: new naver.maps.Point(100, 50),
       },
     });
-  }, []);
+  });
 
   return (
     <>
