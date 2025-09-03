@@ -1,0 +1,23 @@
+meta {
+  name: Upload Store Image (Presigned)
+  type: http
+  seq: 30
+}
+
+post {
+  url: {{storageUrl}}/joodang-assets
+  body: multipartForm
+  auth: none
+}
+
+body:multipart-form {
+  Content-Type: image/jpeg
+  bucket: joodang-assets
+  X-Amz-Algorithm: AWS4-HMAC-SHA256
+  X-Amz-Credential: minioadmin/20250903/ap-northeast-2/s3/aws4_request
+  X-Amz-Date: 20250903T151011Z
+  key: public/store/1/1.jpg
+  Policy: eyJleHBpcmF0aW9uIjoiMjAyNS0wOS0wM1QxNToxMToxMVoiLCJjb25kaXRpb25zIjpbWyJjb250ZW50LWxlbmd0aC1yYW5nZSIsMCw1MjQyODgwXSxbInN0YXJ0cy13aXRoIiwiJENvbnRlbnQtVHlwZSIsImltYWdlLyJdLHsiQ29udGVudC1UeXBlIjoiaW1hZ2UvanBlZyJ9LHsiYnVja2V0Ijoiam9vZGFuZy1hc3NldHMifSx7IlgtQW16LUFsZ29yaXRobSI6IkFXUzQtSE1BQy1TSEEyNTYifSx7IlgtQW16LUNyZWRlbnRpYWwiOiJtaW5pb2FkbWluLzIwMjUwOTAzL2FwLW5vcnRoZWFzdC0yL3MzL2F3czRfcmVxdWVzdCJ9LHsiWC1BbXotRGF0ZSI6IjIwMjUwOTAzVDE1MTAxMVoifSx7ImtleSI6InB1YmxpYy9zdG9yZS8xLzIuanBnIn1dfQ==
+  X-Amz-Signature: 7af324f9ac16f579593926bee6c46bbb6c639cd161b38a58010be446f39efd41
+  file: @file(/Users/space/Downloads/0dd24cbca2f3b73d7e30df8043310c11.jpg)
+}

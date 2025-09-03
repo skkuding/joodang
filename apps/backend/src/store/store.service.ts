@@ -1,16 +1,45 @@
-import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateStoreDto } from './dto/create-store.dto';
-import { UpdateStoreDto } from './dto/update-store.dto';
-import { PrismaService } from 'prisma/prisma.service';
-import { GetStoresDto } from './dto/get-stores.dto';
-import { Prisma, Role } from '@prisma/client';
-import { AddStaffDto } from './dto/add-staff.dto';
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
+import { CreateStoreDto } from './dto/create-store.dto'
+import { UpdateStoreDto } from './dto/update-store.dto'
+import { PrismaService } from '@prisma/prisma.service'
+import { GetStoresDto } from './dto/get-stores.dto'
+import { Prisma, Role } from '@prisma/client'
+import { AddStaffDto } from './dto/add-staff.dto'
+import { ConfigService } from '@nestjs/config'
+import {
+  S3Client,
+  ListObjectsV2Command,
+  DeleteObjectsCommand,
+} from '@aws-sdk/client-s3'
+import { createPresignedPost } from '@aws-sdk/s3-presigned-post'
 
-export type StoreSortFilter = 'popular' | 'fee' | 'seats';
+export type StoreSortFilter = 'popular' | 'fee' | 'seats'
 
 @Injectable()
 export class StoreService {
-  constructor(private readonly prisma: PrismaService) {}
+  private s3: S3Client
+  private bucket: string
+
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly config: ConfigService,
+  ) {
+    this.bucket = this.config.get<string>('S3_BUCKET')!
+    this.s3 = new S3Client({
+      endpoint: this.config.get<string>('S3_ENDPOINT'),
+      region: this.config.get<string>('S3_REGION') || 'us-east-1',
+      credentials: {
+        accessKeyId: this.config.get<string>('S3_ACCESS_KEY')!,
+        secretAccessKey: this.config.get<string>('S3_SECRET_KEY')!,
+      },
+      forcePathStyle: this.config.get<string>('S3_FORCE_PATH_STYLE') === 'true',
+    })
+  }
 
   /**
    * 정렬 필터에 따라 가게 목록을 조회합니다.
@@ -145,10 +174,7 @@ export class StoreService {
     }
   }
 
-  async createStore(
-    userId: number, 
-    createStoreDto: CreateStoreDto
-  ) {
+  async createStore(userId: number, createStoreDto: CreateStoreDto) {
     const { timeSlots, ...storeData } = createStoreDto
 
     return await this.prisma.store.create({
@@ -173,14 +199,14 @@ export class StoreService {
 
   async updateStore(
     userId: number,
-    id: number, 
-    updateStoreDto: UpdateStoreDto
+    id: number,
+    updateStoreDto: UpdateStoreDto,
   ) {
     const staffInfo = await this.prisma.storeStaff.findUnique({
       where: { userId_storeId: { userId, storeId: id } },
     })
     if (!staffInfo) {
-      throw new ForbiddenException('가게를 수정할 권한이 없습니다.');
+      throw new ForbiddenException('가게를 수정할 권한이 없습니다.')
     }
 
     const existingStore = await this.prisma.store.findUnique({
@@ -223,15 +249,12 @@ export class StoreService {
     return result
   }
 
-  async removeStore(
-    userId: number,
-    id: number,
-  ) {
+  async removeStore(userId: number, id: number) {
     const staffInfo = await this.prisma.storeStaff.findUnique({
-        where: { userId_storeId: { userId, storeId: id } },
+      where: { userId_storeId: { userId, storeId: id } },
     })
     if (!staffInfo || staffInfo.role !== Role.OWNER) {
-        throw new ForbiddenException('가게를 삭제할 권한이 없습니다.')
+      throw new ForbiddenException('가게를 삭제할 권한이 없습니다.')
     }
 
     const existing = await this.prisma.store.findUnique({ where: { id } })
@@ -239,14 +262,49 @@ export class StoreService {
       throw new NotFoundException('해당 가게를 찾을 수 없습니다.')
     }
 
-    return await this.prisma.store.delete({ where: { id } })
+    const deletedStore = await this.prisma.store.delete({ where: { id } })
+
+    try {
+      await this.deleteStoreAssetsPrefix(id)
+    } catch (err) {
+      console.warn('[S3] Failed to delete store assets prefix', {
+        storeId: id,
+        error: (err as Error)?.message,
+      })
+    }
+
+    return deletedStore
   }
 
-  async addStaff(
-    userId: number,
-    id: number, 
-    addStaffDto: AddStaffDto
-  ) {
+  private async deleteStoreAssetsPrefix(storeId: number) {
+    const prefix = `public/store/${storeId}/`
+    let continuationToken: string | undefined
+    do {
+      const resp = await this.s3.send(
+        new ListObjectsV2Command({
+          Bucket: this.bucket,
+          Prefix: prefix,
+          ContinuationToken: continuationToken,
+        }),
+      )
+      const toDelete = (resp.Contents ?? [])
+        .filter((o) => !!o.Key)
+        .map((o) => ({ Key: o.Key! }))
+      if (toDelete.length) {
+        await this.s3.send(
+          new DeleteObjectsCommand({
+            Bucket: this.bucket,
+            Delete: { Objects: toDelete, Quiet: true },
+          }),
+        )
+      }
+      continuationToken = resp.IsTruncated
+        ? resp.NextContinuationToken
+        : undefined
+    } while (continuationToken)
+  }
+
+  async addStaff(userId: number, id: number, addStaffDto: AddStaffDto) {
     const staffInfo = await this.prisma.storeStaff.findUnique({
       where: { userId_storeId: { userId, storeId: id } },
     })
@@ -255,7 +313,7 @@ export class StoreService {
     }
 
     if (!staffInfo || staffInfo.role !== Role.OWNER) {
-      throw new ForbiddenException('스탭을 추가할 권한이 없습니다.');
+      throw new ForbiddenException('스탭을 추가할 권한이 없습니다.')
     }
 
     const userToAdd = await this.prisma.user.findUnique({
@@ -266,16 +324,78 @@ export class StoreService {
         `카카오 아이디 '${addStaffDto.kakaoId}'에 해당하는 유저를 찾을 수 없습니다.`,
       )
     }
-    
+
     const existingStaff = await this.prisma.storeStaff.findUnique({
       where: { userId_storeId: { userId: userToAdd.id, storeId: id } },
     })
     if (existingStaff) {
-      throw new ConflictException('이미 해당 가게의 스탭 또는 소유자입니다.');
+      throw new ConflictException('이미 해당 가게의 스탭 또는 소유자입니다.')
     }
 
     return this.prisma.storeStaff.create({
       data: { storeId: id, userId: userToAdd.id, role: Role.STAFF },
     })
+  }
+
+  /**
+   * 이미지 업로드용 Presigned POST 생성
+   */
+  async createStoreImagePresign(
+    userId: number,
+    storeId: number,
+    fileIdx: string,
+    contentType: string,
+  ) {
+    const staffInfo = await this.prisma.store.findUnique({
+      where: { id: storeId },
+      select: { ownerId: true },
+    })
+    if (!staffInfo) {
+      throw new NotFoundException('해당 가게를 찾을 수 없습니다.')
+    }
+
+    if (staffInfo.ownerId !== userId) {
+      throw new ForbiddenException('가게에 대한 업로드 권한이 없습니다.')
+    }
+
+    const extensionMap: Record<string, string> = {
+      'image/png': 'png',
+      'image/jpeg': 'jpg',
+      'image/jpg': 'jpg',
+      'image/heic': 'heic',
+      'image/heif': 'heif',
+      'image/webp': 'webp',
+    }
+    const ext = extensionMap[contentType]
+    if (!ext) {
+      throw new Error('Invalid image content-type')
+    }
+
+    const safePostfix = fileIdx.replace(/[^a-zA-Z0-9-_]/g, '-')
+    const key = `public/store/${storeId}/${safePostfix}.${ext}`
+
+    const maxSize = 5 * 1024 * 1024
+
+    const { url, fields } = await createPresignedPost(this.s3, {
+      Bucket: this.bucket,
+      Key: key,
+      Conditions: [
+        ['content-length-range', 0, maxSize],
+        ['starts-with', '$Content-Type', 'image/'],
+      ],
+      Fields: {
+        'Content-Type': contentType,
+      },
+      Expires: 60, // 초
+    })
+
+    return {
+      url,
+      fields,
+      key,
+      publicUrl: `${this.config.get('S3_PUBLIC_BASE') || this.config.get('S3_ENDPOINT')}/${this.bucket}/${key}`,
+      maxSize,
+      contentType,
+    }
   }
 }

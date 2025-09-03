@@ -1,0 +1,24 @@
+meta {
+  name: Get Image Presigned URL
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/store/:id/image/presign?fileIdx=1&contentType=image/jpeg
+  body: none
+  auth: none
+}
+
+params:query {
+  fileIdx: 1
+  contentType: image/jpeg
+}
+
+params:path {
+  id: 1
+}
+
+settings {
+  encodeUrl: true
+}
