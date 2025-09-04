@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://joodang.com
+
+# Sitemaps
+Sitemap: https://joodang.com/sitemap.xml
