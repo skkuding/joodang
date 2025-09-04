@@ -1,0 +1,44 @@
+meta {
+  name: Create Store
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/store
+  body: json
+  auth: bearer
+}
+
+body:json {
+  {
+    "name": "양주당",
+    "phone": "010-1234-5678",
+    "description": "최고의 양주 주점!",
+    "organizer": "기계공학과",
+    "instagramId": "skku_me",
+    "startTime": "2026-01-10T10:00:00.000Z",
+    "endTime": "2026-01-10T15:00:00.000Z",
+    "reservationFee": 15000,
+    "college": "공과대학",
+    "timeSlots": [
+      {
+        "startTime": "2026-01-10T10:00:00.000Z",
+        "endTime": "2026-01-10T12:00:00.000Z",
+        "totalCapacity": 20
+      },
+      {
+        "startTime": "2026-01-10T13:00:00.000Z",
+        "endTime": "2026-01-10T15:00:00.000Z",
+        "totalCapacity": 20
+      }
+    ]
+  }
+}
+
+docs {
+  ## 새로운 주점 생성
+  
+  새로운 주점 정보를 생성합니다.
+  성공적으로 생성되면, 요청을 보낸 사용자는 해당 주점의 소유자(OWNER)로 자동 등록됩니다.
+}
