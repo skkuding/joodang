@@ -48,9 +48,9 @@ export class NotificationService {
     const title = reservationInfo.store.name ?? 'Reservation'
     const message = `오래 기다리셨습니다. 지금 방문해주세요!`
 
-    await this.saveNotification(receivers, title, message, '', '')
+    await this.saveNotification(receivers, title, message, 'Reservation', `/reservation-check-page/${reservationId}`)
 
-    await this.sendPushNotification(receivers, title, message, '')
+    await this.sendPushNotification(receivers, title, message, `/reservation-check-page/${reservationId}`)
   }
 
   private async saveNotification(
@@ -190,22 +190,22 @@ export class NotificationService {
 
     if (!reservation) return
 
-    const title = '예약 확정 알림'
-    const message = `${reservation.store.name} 예약이 확정되었습니다.`
+    const title = reservation.store.name ?? '예약 확정 알림'
+    const message = `예약이 확정되었습니다.`
 
     await this.saveNotification(
       [reservation.userId],
       title,
       message,
       'Reservation',
-      `/reservation/${reservation.id}`,
+      `/reservation-check-page/${reservationId}`,
     )
 
     await this.sendPushNotification(
       [reservation.userId],
       title,
       message,
-      `/reservation/${reservation.id}`,
+      `/reservation-check-page/${reservationId}`,
     )
   }
 
