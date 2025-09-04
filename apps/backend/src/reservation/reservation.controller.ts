@@ -7,11 +7,15 @@ import {
   Delete,
   ParseIntPipe,
   Req,
+  Patch,
+  UseGuards,
 } from '@nestjs/common'
 import { ReservationService } from './reservation.service'
 import { CreateReservationDto } from './dto/create-reservation.dto'
 import type { Request } from 'express'
+import { JwtAuthGuard } from '@app/auth/jwt.guard'
 
+@UseGuards(JwtAuthGuard)
 @Controller('reservation')
 export class ReservationController {
   constructor(private readonly reservationService: ReservationService) {}
@@ -56,5 +60,13 @@ export class ReservationController {
     @Req() req: Request,
   ) {
     return this.reservationService.removeReservation(id, req.user.id)
+  }
+
+  @Patch(':id/confirm')
+  confirmReservation(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: Request,
+  ) {
+    return this.reservationService.confirmReservation(id, req.user.id)
   }
 }

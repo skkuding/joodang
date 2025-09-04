@@ -1,0 +1,28 @@
+meta {
+  name: Remove Store
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/store/1
+  body: none
+  auth: bearer
+}
+
+docs {
+  ## 주점 삭제
+  
+  주점 정보를 삭제합니다.
+  주점과 관련된 메뉴, 타임슬롯, 예약 등 모든 하위 데이터가 함께 삭제됩니다.
+
+  ### Auth
+  
+  - 반드시 해당 주점의 **소유자(OWNER)** 계정의 토큰이어야 합니다.
+
+  ### Path
+  
+  | 이름 | 타입 | 설명 |
+  |-----|-----|-----|
+  |id|Integer|삭제할 Store(주점)의 ID|
+}

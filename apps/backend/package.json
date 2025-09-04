@@ -39,6 +39,7 @@
     "cookie-parser": "^1.4.7",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.1",
+    "nanoid": "^5.1.5",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "passport-kakao": "^1.0.1",

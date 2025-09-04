@@ -21,42 +21,68 @@ export class ReservationService {
   ) {
     const { menuIds, timeSlotId, ...rest } = createReservationDto
 
-    const timeSlot = await this.prisma.timeSlot.findUnique({
-      where: { id: timeSlotId },
-    })
+    return await this.prisma.$transaction(async (tx) => {
+      const timeSlot = await tx.timeSlot.findUnique({
+        where: { id: timeSlotId },
+      })
 
-    if (
-      (timeSlot?.availableSeats ?? 0 < 1) ||
-      (timeSlot?.availableSeats ?? 0 < rest.headcount)
-    ) {
-      throw new UnprocessableEntityException('No available seats')
-    }
+      if (!timeSlot) {
+        throw new NotFoundException('Time slot not found')
+      }
 
-    const processedReservation = await this.prisma.reservation.create({
-      data: {
-        ...rest,
-        userId,
-        timeSlotId,
-        ...(menuIds?.length
-          ? { menus: { connect: menuIds.map((id) => ({ id })) } }
-          : {}),
-      },
-      include: {
-        menus: true,
-        user: true,
-        store: true,
-        timeSlot: true,
-      },
-    })
+      if (
+        timeSlot.availableSeats < 1 ||
+        timeSlot.availableSeats < rest.headcount
+      ) {
+        throw new UnprocessableEntityException('No available seats')
+      }
 
-    await this.prisma.timeSlot.update({
-      where: { id: timeSlotId },
-      data: {
-        availableSeats: { increment: -rest.headcount },
-      },
-    })
+      // 해당 타임슬롯 날짜(당일) 기준으로 매장 내 예약 번호 산정
+      const dayStart = new Date(timeSlot.startTime)
+      dayStart.setHours(0, 0, 0, 0)
+      const dayEnd = new Date(timeSlot.startTime)
+      dayEnd.setHours(23, 59, 59, 999)
 
-    return processedReservation
+      const todayCount = await tx.reservation.count({
+        where: {
+          storeId: rest.storeId,
+          timeSlot: {
+            startTime: {
+              gte: dayStart,
+              lte: dayEnd,
+            },
+          },
+        },
+      })
+      const reservationNum = todayCount + 1
+
+      const processedReservation = await tx.reservation.create({
+        data: {
+          ...rest,
+          userId,
+          timeSlotId,
+          reservationNum,
+          ...(menuIds?.length
+            ? { menus: { connect: menuIds.map((id) => ({ id })) } }
+            : {}),
+        },
+        include: {
+          menus: true,
+          user: true,
+          store: true,
+          timeSlot: true,
+        },
+      })
+
+      await tx.timeSlot.update({
+        where: { id: timeSlotId },
+        data: {
+          availableSeats: { increment: -rest.headcount },
+        },
+      })
+
+      return processedReservation
+    }, { isolationLevel: 'Serializable' })
   }
 
   async getReservations(userId: number) {
@@ -159,6 +185,34 @@ export class ReservationService {
     })
 
     this.eventEmitter.emit('come.to.store', {
+      reservationId: reservation.id,
+    })
+
+    return reservation
+  }
+
+  async confirmReservation(id: number, userId: number) {
+    const isStaff = await this.prisma.reservation.findFirst({
+      where: {
+        id,
+        store: { staffs: { some: { userId } } },
+      },
+      select: { id: true },
+    })
+
+    if (!isStaff) {
+      throw new ForbiddenException('You are not a staff of this store')
+    }
+
+    const reservation = await this.prisma.reservation.update({
+      where: { id },
+      data: {
+        isConfirmed: true,
+      },
+    })
+
+
+    this.eventEmitter.emit('reservation.confirmed', {
       reservationId: reservation.id,
     })
 
