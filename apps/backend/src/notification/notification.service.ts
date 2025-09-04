@@ -178,6 +178,36 @@ export class NotificationService {
       createTime: record.createTime,
     }))
   }
+  async notifyReservationConfirmed(reservationId: number) {
+    const reservation = await this.prisma.reservation.findUnique({
+      where: { id: reservationId },
+      select: {
+        id: true,
+        userId: true,
+        store: { select: { name: true } },
+      },
+    })
+
+    if (!reservation) return
+
+    const title = '예약 확정 알림'
+    const message = `${reservation.store.name} 예약이 확정되었습니다.`
+
+    await this.saveNotification(
+      [reservation.userId],
+      title,
+      message,
+      'Reservation',
+      `/reservation/${reservation.id}`,
+    )
+
+    await this.sendPushNotification(
+      [reservation.userId],
+      title,
+      message,
+      `/reservation/${reservation.id}`,
+    )
+  }
 
   /**
    * 사용자의 모든 알림을 읽음으로 표시합니다

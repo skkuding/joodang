@@ -65,6 +65,7 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'http://localhost:3000',
+      'http://localhost:5525',
       'https://joodang-frontend.vercel.app',
       'https://joodang.com',
     ],
