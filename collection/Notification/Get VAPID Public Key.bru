@@ -18,3 +18,7 @@ tests {
     expect(res.getBody().publicKey.length).to.be.greaterThan(0);
   });
 }
+
+headers {
+  Cookie: {{user1}}
+}
