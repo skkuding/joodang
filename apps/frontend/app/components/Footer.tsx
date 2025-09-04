@@ -1,17 +1,30 @@
 "use client";
-import BlackBeer from "@/public/icons/blackBeer.png";
-import BlackHouse from "@/public/icons/blackHouse.png";
-import BlackReserv from "@/public/icons/blackReserv.svg";
-import GrayBeer from "@/public/icons/grayBeer.png";
-import GrayHouse from "@/public/icons/grayHouse.png";
-import GrayReserv from "@/public/icons/reserv.svg";
+import GrayBeer from "@/public/icons/icon_gray_beer.svg";
+import GrayHouse from "@/public/icons/icon_gray_house.svg";
+import GrayReservation from "@/public/icons/icon_gray_reservation.svg";
+import OrangeBeer from "@/public/icons/icon_orange_beer.svg";
+import OrangeHouse from "@/public/icons/icon_orange_house.svg";
+import OrangeReservation from "@/public/icons/icon_orange_reservation.svg";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { requestPermissionAndSubscribe } from "../../lib/push-subscription";
 
 export function Footer() {
   const router = useRouter();
   const pathname = usePathname();
+  const [curPos, setCurPos] = useState<string>("/");
+
+  useEffect(() => {
+    if (!pathname) return;
+
+    const secondSlashIdx = pathname.indexOf("/", 1);
+    if (secondSlashIdx === -1) {
+      setCurPos(pathname);
+    } else {
+      setCurPos(pathname.slice(0, secondSlashIdx));
+    }
+  }, [pathname]);
 
   const onClickReservationCheck = async () => {
     try {
@@ -34,10 +47,15 @@ export function Footer() {
             }}
             className="flex h-[54px] w-[60px] flex-col items-center"
           >
-            {pathname === "/" ? (
+            {curPos === "/" ? (
               <>
-                <Image src={BlackHouse} alt="검은 집" width={32} height={32} />
-                <p className="text-xs text-black">홈</p>
+                <Image
+                  src={OrangeHouse}
+                  alt="오렌지 집"
+                  width={32}
+                  height={32}
+                />
+                <p className="text-xs text-[#FF5940]">홈</p>
               </>
             ) : (
               <>
@@ -52,10 +70,15 @@ export function Footer() {
             }}
             className="flex h-[54px] w-[60px] flex-col items-center"
           >
-            {pathname === "/find" ? (
+            {curPos === "/find" ? (
               <>
-                <Image src={BlackBeer} alt="검은 맥주" width={34} height={34} />
-                <p className="text-xs text-black">주점 찾기</p>
+                <Image
+                  src={OrangeBeer}
+                  alt="오렌지 맥주"
+                  width={34}
+                  height={34}
+                />
+                <p className="text-xs text-[#FF5940]">주점 찾기</p>
               </>
             ) : (
               <>
@@ -71,15 +94,20 @@ export function Footer() {
             }}
             className="flex h-[54px] w-[60px] flex-col items-center"
           >
-            {pathname === "/reservation-check-page" ? (
+            {curPos === "/reservation-check-page" ? (
               <>
-                <Image src={BlackReserv} alt="예약" width={32} height={32} />
-                <p className="text-xs text-black">예약 내역</p>
+                <Image
+                  src={OrangeReservation}
+                  alt="오렌지 예약"
+                  width={32}
+                  height={32}
+                />
+                <p className="text-xs text-[#FF5940]">예약 내역</p>
               </>
             ) : (
               <>
                 <Image
-                  src={GrayReserv}
+                  src={GrayReservation}
                   alt="회색 예약"
                   width={32}
                   height={32}

@@ -42,3 +42,7 @@ ALTER TABLE "public"."store_staff" ADD CONSTRAINT "store_staff_userId_fkey" FORE
 
 -- AddForeignKey
 ALTER TABLE "public"."store_staff" ADD CONSTRAINT "store_staff_storeId_fkey" FOREIGN KEY ("storeId") REFERENCES "public"."store"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "time_slot"
+  ADD CONSTRAINT "available_seats_non_negative"
+  CHECK ("available_seats" >= 0);

@@ -5,9 +5,13 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/reservation/store/1
+  url: {{baseUrl}}/reservation/store/:storeId
   body: none
   auth: inherit
+}
+
+params:path {
+  storeId: 1
 }
 
 settings {

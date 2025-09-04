@@ -11,6 +11,7 @@ import {
   ValidationPipe,
   UseGuards,
   Req,
+  BadRequestException,
 } from '@nestjs/common'
 import { StoreService } from './store.service'
 import { GetStoresDto } from './dto/get-stores.dto'
@@ -38,9 +39,7 @@ export class StoreController {
   }
 
   @Get(':id')
-  async getStore(
-    @Param('id', ParseIntPipe) id: number
-  ) {
+  async getStore(@Param('id', ParseIntPipe) id: number) {
     return this.storeService.getStore(id)
   }
 
@@ -67,7 +66,7 @@ export class StoreController {
   @UseGuards(JwtAuthGuard)
   async removeStore(
     @Req() req: Request,
-    @Param('id', ParseIntPipe) id: number
+    @Param('id', ParseIntPipe) id: number,
   ) {
     return this.storeService.removeStore(req.user.id, id)
   }
@@ -87,6 +86,24 @@ export class StoreController {
     @Req() req: Request,
     @Body() acceptInvitationDto: AcceptInvitationDto,
   ) {
-    return this.storeService.acceptStaffInvitation(req.user.id, acceptInvitationDto.code);
+    return this.storeService.acceptStaffInvitation(req.user.id, acceptInvitationDto.code)
+  }
+
+  @Post(':id/image/presign')
+  @UseGuards(JwtAuthGuard)
+  async createImagePresign(
+    @Req() req: Request,
+    @Param('id', ParseIntPipe) id: number,
+    @Query('fileIdx') fileIdx: string,
+    @Query('contentType') contentType: string,
+  ) {
+    if (!fileIdx) throw new BadRequestException('fileIdx is required')
+    if (!contentType) throw new BadRequestException('contentType is required')
+    return this.storeService.createStoreImagePresign(
+      req.user.id,
+      id,
+      fileIdx,
+      contentType,
+    )
   }
 }

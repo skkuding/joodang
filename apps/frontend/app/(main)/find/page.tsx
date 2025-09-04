@@ -1,7 +1,6 @@
 "use client";
 
-import smallLoc from "@/public/icons/icon_location copy.svg";
-import IconLocation from "@/public/icons/icon_location.svg";
+import locationIcon from "@/public/icons/icon_location.svg";
 import OrangeDot from "@/public/icons/orange_dot.svg";
 import Image from "next/image";
 import { useState } from "react";
@@ -17,45 +16,29 @@ export default function BarPage() {
 
   return (
     <div>
-      <div className="p-5 mt-[48px]">
+      <div className="mt-[48px] p-5">
         <FilterSetting open={open} onClose={() => setOpen(false)} />
         <div>
-          <Image src={IconLocation} alt="주황위치" width={24} height={24} />
+          <Image src={locationIcon} alt="주황위치" width={24} height={24} />
           <div className="flex flex-row justify-between">
-            <div className="text-color-common-0 text-xl font-sans leading-[140%] font-medium tracking-[-0.6px] mt-1">
+            <div className="text-color-common-0 mt-1 font-sans text-xl font-medium leading-[140%] tracking-[-0.6px]">
               주점을 찾아볼까요?
             </div>
-            <button className="w-[95px] h-[25px] bg-[#FF594014] flex flex-row justify-item item-center rounded-1 px-2 py-1">
-              <Image src={smallLoc} alt="지도버튼" width={12} height={12} />
-              <p
-                className="text-[#FF5940]
-                font-sans
-                text-xs
-                font-normal
-                leading-[140%]
-                tracking-[-0.36px]"
-              >
+            <button className="justify-item item-center rounded-1 flex h-[25px] w-[95px] flex-row bg-[#FF594014] px-2 py-1">
+              <Image src={locationIcon} alt="지도버튼" width={12} height={12} />
+              <p className="font-sans text-xs font-normal leading-[140%] tracking-[-0.36px] text-[#FF5940]">
                 지도에서 찾기
               </p>
             </button>
           </div>
 
-          <div
-            className="text-color-neutral-40
-            font-sans
-            text-[14px]
-            font-normal
-            leading-[150%]
-            tracking-[-0.42px]
-            mt-3
-            mb-5"
-          >
+          <div className="text-color-neutral-40 mb-5 mt-3 font-sans text-[14px] font-normal leading-[150%] tracking-[-0.42px]">
             <p>필터를 설정하면 알맞는 주점을</p>
             <p>주당이 찾아드려요!</p>
           </div>
         </div>
         <div
-          className="h-[149px] w-full bg-color-common-100 p-5 rounded-[6px]"
+          className="bg-color-common-100 h-[149px] w-full rounded-[6px] p-5"
           style={{ boxShadow: "0 0 20px 0 rgba(0, 0, 0, 0.12)" }}
         >
           <div className="mb-[13px]">
@@ -67,40 +50,15 @@ export default function BarPage() {
                 height={6}
                 className="mr-2"
               />
-              <p
-                className="text-color-neutral-30
-                font-sans
-                text-base
-                font-normal
-                leading-[150%]
-                tracking-[-0.48px]"
-              >
+              <p className="text-color-neutral-30 font-sans text-base font-normal leading-[150%] tracking-[-0.48px]">
                 최대 입장료
               </p>
               {!isFilterSet ? (
-                <p
-                  className="text-color-neutral-70
-                font-sans
-                text-base
-                not-italic
-                font-medium
-                leading-[140%]
-                tracking-[-0.48px]
-                ml-auto"
-                >
+                <p className="text-color-neutral-70 ml-auto font-sans text-base font-medium not-italic leading-[140%] tracking-[-0.48px]">
                   10 원
                 </p>
               ) : (
-                <p
-                  className="text-color-common-0
-              font-sans
-              text-base
-              not-italic
-              font-medium
-              leading-[140%]
-              tracking-[-0.48px]
-              ml-auto"
-                >
+                <p className="text-color-common-0 ml-auto font-sans text-base font-medium not-italic leading-[140%] tracking-[-0.48px]">
                   10 원
                 </p>
               )}
@@ -113,55 +71,23 @@ export default function BarPage() {
                 height={6}
                 className="mr-2"
               />
-              <p
-                className="text-color-neutral-30
-                font-sans
-                text-base
-                font-normal
-                leading-[150%]
-                tracking-[-0.48px]"
-              >
+              <p className="text-color-neutral-30 font-sans text-base font-normal leading-[150%] tracking-[-0.48px]">
                 시간대
               </p>
               {!isFilterSet ? (
-                <p
-                  className="text-color-neutral-70
-                font-sans
-                text-base
-                not-italic
-                font-medium
-                leading-[140%]
-                tracking-[-0.48px]
-                ml-auto"
-                >
+                <p className="text-color-neutral-70 ml-auto font-sans text-base font-medium not-italic leading-[140%] tracking-[-0.48px]">
                   00:00 ~ 00:00
                 </p>
               ) : (
-                <p
-                  className="text-color-common-0
-                font-sans
-                text-base
-                not-italic
-                font-medium
-                leading-[140%]
-                tracking-[-0.48px]
-                ml-auto"
-                >
+                <p className="text-color-common-0 ml-auto font-sans text-base font-medium not-italic leading-[140%] tracking-[-0.48px]">
                   00:00 ~ 00:00
                 </p>
               )}
             </div>
           </div>
-          <button
-            className="w-full h-10 bg-[#FF5940] text-color-common-100 rounded-md 
-             flex items-center justify-center"
-          >
+          <button className="text-color-common-100 flex h-10 w-full items-center justify-center rounded-md bg-[#FF5940]">
             <p
-              className="font-sans
-                text-[14px]
-                font-medium
-                leading-[140%]
-                tracking-[-0.42px]"
+              className="font-sans text-[14px] font-medium leading-[140%] tracking-[-0.42px]"
               onClick={() => {
                 setOpen(true);
                 return;
@@ -174,10 +100,10 @@ export default function BarPage() {
       </div>
       <div>
         <div className="bg-color-common-100 rounded-[12px] px-5 py-[30px]">
-          <div className="flex flex-row gap-1 mb-4">
+          <div className="mb-4 flex flex-row gap-1">
             {selOrder === "popular" ? (
               <div
-                className="flex px-[14px] py-[8px] justify-center items-center gap-[10px] text-color-common-100 bg-color-common-0 rounded-full"
+                className="text-color-common-100 bg-color-common-0 flex items-center justify-center gap-[10px] rounded-full px-[14px] py-[8px]"
                 onClick={() => {
                   SetSelOrder("popular");
                   return;
@@ -187,7 +113,7 @@ export default function BarPage() {
               </div>
             ) : (
               <div
-                className="flex px-[14px] py-[8px] justify-center items-center gap-[10px] text-color-neutral-70 bg-color-common-100 rounded-full border border-[var(--Line-Normal,#D8D8D8)] bg-[var(--Common-100,#FFF)]"
+                className="text-color-neutral-70 bg-color-common-100 flex items-center justify-center gap-[10px] rounded-full border border-[var(--Line-Normal,#D8D8D8)] bg-[var(--Common-100,#FFF)] px-[14px] py-[8px]"
                 onClick={() => {
                   SetSelOrder("popular");
                   return;
@@ -198,7 +124,7 @@ export default function BarPage() {
             )}
             {selOrder === "fee" ? (
               <div
-                className="flex px-[14px] py-[8px] justify-center items-center gap-[10px] text-color-common-100 bg-color-common-0 rounded-full"
+                className="text-color-common-100 bg-color-common-0 flex items-center justify-center gap-[10px] rounded-full px-[14px] py-[8px]"
                 onClick={() => {
                   SetSelOrder("fee");
                   return;
@@ -208,7 +134,7 @@ export default function BarPage() {
               </div>
             ) : (
               <div
-                className="flex px-[14px] py-[8px] justify-center items-center gap-[10px] text-color-neutral-70 bg-color-common-100 rounded-full border border-[var(--Line-Normal,#D8D8D8)] bg-[var(--Common-100,#FFF)]"
+                className="text-color-neutral-70 bg-color-common-100 flex items-center justify-center gap-[10px] rounded-full border border-[var(--Line-Normal,#D8D8D8)] bg-[var(--Common-100,#FFF)] px-[14px] py-[8px]"
                 onClick={() => {
                   SetSelOrder("fee");
                   return;
@@ -219,7 +145,7 @@ export default function BarPage() {
             )}
             {selOrder === "seats" ? (
               <div
-                className="flex px-[14px] py-[8px] justify-center items-center gap-[10px] text-color-common-100 bg-color-common-0 rounded-full"
+                className="text-color-common-100 bg-color-common-0 flex items-center justify-center gap-[10px] rounded-full px-[14px] py-[8px]"
                 onClick={() => {
                   SetSelOrder("seats");
                   return;
@@ -229,7 +155,7 @@ export default function BarPage() {
               </div>
             ) : (
               <div
-                className="flex px-[14px] py-[8px] justify-center items-center gap-[10px] text-color-neutral-70 bg-color-common-100 rounded-full border border-[var(--Line-Normal,#D8D8D8)] bg-[var(--Common-100,#FFF)]"
+                className="text-color-neutral-70 bg-color-common-100 flex items-center justify-center gap-[10px] rounded-full border border-[var(--Line-Normal,#D8D8D8)] bg-[var(--Common-100,#FFF)] px-[14px] py-[8px]"
                 onClick={() => {
                   SetSelOrder("seats");
                   return;
@@ -239,7 +165,7 @@ export default function BarPage() {
               </div>
             )}
           </div>
-          <div className="flex flex-col gap-2 items-center ">
+          <div className="flex flex-col items-center gap-2">
             {arr.map((item, idx) => (
               <div key={idx}>
                 <BarCard />

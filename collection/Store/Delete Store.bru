@@ -1,0 +1,15 @@
+meta {
+  name: Delete Store
+  type: http
+  seq: 6
+}
+
+delete {
+  url: {{baseUrl}}/store/:storeId
+  body: none
+  auth: inherit
+}
+
+params:path {
+  storeId: 5
+}
