@@ -1,0 +1,28 @@
+meta {
+  name: Remove Staff from Store
+  type: http
+  seq: 8
+}
+
+delete {
+  url: {{baseUrl}}/store/1/staff/2
+  body: none
+  auth: bearer
+}
+
+docs {
+  ## 주점에서 스태프 삭제
+  
+  OWNER가 자신의 주점에서 특정 스태프를 삭제합니다.
+
+  ### Auth
+  
+  - 반드시 해당 주점의 **소유자(OWNER)** 계정의 토큰을 사용해야 합니다.
+
+  ### Path
+  
+  | 이름 | 타입 | 설명 |
+  |-----|-----|-----|
+  |storeId|Integer|스태프를 삭제할 Store(주점)의 ID|
+  |userId|Integer|삭제될 스태프의 사용자(User) ID|
+}

@@ -89,6 +89,16 @@ export class StoreController {
     return this.storeService.acceptStaffInvitation(req.user.id, acceptInvitationDto.code)
   }
 
+  @Delete(':id/staff/:userId')
+  @UseGuards(JwtAuthGuard)
+  async removeStaff(
+    @Req() req: Request,
+    @Param('id', ParseIntPipe) storeId: number,
+    @Param('userId', ParseIntPipe) userId: number,
+  ) {
+    return this.storeService.removeStaff(req.user.id, storeId, userId);
+  }
+
   @Post(':id/image/presign')
   @UseGuards(JwtAuthGuard)
   async createImagePresign(

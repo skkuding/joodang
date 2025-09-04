@@ -369,6 +369,29 @@ export class StoreService {
     })
   }
 
+  async removeStaff(ownerId: number, storeId: number, userId: number) {
+    const ownerInfo = await this.prisma.storeStaff.findUnique({
+      where: { userId_storeId: { userId: ownerId, storeId } },
+    })
+    if (!ownerInfo || ownerInfo.role !== Role.OWNER) {
+      throw new ForbiddenException('스태프를 삭제할 권한이 없습니다.')
+    }
+    if (ownerId === userId) {
+      throw new ForbiddenException('본인을 스스로를 스태프에서 삭제할 수 없습니다. 주점 삭제 기능을 이용해주세요.')
+    }
+
+    const storeStaffToRemove = await this.prisma.storeStaff.findUnique({
+      where: { userId_storeId: { userId, storeId } },
+    })
+    if (!storeStaffToRemove) {
+      throw new NotFoundException('주점에서 해당 스태프를 찾을 수 없습니다.')
+    }
+
+    return this.prisma.storeStaff.delete({
+      where: { userId_storeId: { userId, storeId } },
+    })
+  }
+
   /**
    * 이미지 업로드용 Presigned POST 생성
    */
