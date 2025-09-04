@@ -1,4 +1,4 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 import type { Request, Response } from 'express'
 import { ConfigService } from '@nestjs/config'
@@ -42,5 +42,14 @@ export class AuthController {
     const redirectBase =
       this.config.get<string>('KAKAO_REDIRECT_URL') || fallback
     return res.redirect(redirectBase)
+  }
+
+  @Post('kakao/signin/test')
+  async signInForTest(@Body() userPayload: KakaoUserPayload) {
+    const jwt = await this.authService.signInWithKakao(userPayload);
+    return {
+      message: 'Test sign-in successful. Use this accessToken for other APIs.',
+      accessToken: jwt,
+    }
   }
 }

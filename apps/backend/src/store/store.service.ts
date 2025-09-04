@@ -1,16 +1,20 @@
-import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, GoneException, Injectable, NotFoundException } from '@nestjs/common';
+import { nanoid } from 'nanoid';
+import { ConfigService } from '@nestjs/config'
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 import { PrismaService } from 'prisma/prisma.service';
 import { GetStoresDto } from './dto/get-stores.dto';
 import { Prisma, Role } from '@prisma/client';
-import { AddStaffDto } from './dto/add-staff.dto';
 
 export type StoreSortFilter = 'popular' | 'fee' | 'seats';
 
 @Injectable()
 export class StoreService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly config: ConfigService,
+  ) {}
 
   /**
    * 정렬 필터에 따라 가게 목록을 조회합니다.
@@ -242,40 +246,67 @@ export class StoreService {
     return await this.prisma.store.delete({ where: { id } })
   }
 
-  async addStaff(
-    userId: number,
-    id: number, 
-    addStaffDto: AddStaffDto
-  ) {
+  async createStaffInvitation(ownerId: number, storeId: number) {
     const staffInfo = await this.prisma.storeStaff.findUnique({
-      where: { userId_storeId: { userId, storeId: id } },
+      where: { userId_storeId: { userId: ownerId, storeId } },
     })
     if (!staffInfo || staffInfo.role !== Role.OWNER) {
-      throw new ForbiddenException('스탭을 추가할 권한이 없습니다.')
+      throw new ForbiddenException('스태프를 초대할 권한이 없습니다.')
     }
 
-    if (!staffInfo || staffInfo.role !== Role.OWNER) {
-      throw new ForbiddenException('스탭을 추가할 권한이 없습니다.');
-    }
+    const inviteCode: string = nanoid(6) // 6자리 초대 코드
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24시간 후 만료
 
-    const userToAdd = await this.prisma.user.findUnique({
-      where: { kakaoId: addStaffDto.kakaoId },
+    await this.prisma.staffInvitation.create({
+      data: {
+        code: inviteCode,
+        storeId: storeId,
+        expiresAt: expiresAt,
+      },
     })
-    if (!userToAdd) {
-      throw new NotFoundException(
-        `카카오 아이디 '${addStaffDto.kakaoId}'에 해당하는 유저를 찾을 수 없습니다.`,
-      )
+    
+    const frontendBase = this.config.get<string>('FRONTEND_BASE_URL') || 'http://localhost:3000'
+    const url = new URL('/staff/invitation', frontendBase)
+    url.searchParams.set('code', inviteCode)
+    const invitationLink = url.toString()
+    
+    return {
+      message: '초대 링크가 생성되었습니다. 24시간 안에 수락해야 합니다.',
+      invitationLink,
+      inviteCode,
+      expiresAt,
+    }
+  }
+
+  async acceptStaffInvitation(userId: number, code: string) {
+    const invitation = await this.prisma.staffInvitation.findUnique({
+      where: { code },
+    })
+    if (!invitation) {
+      throw new NotFoundException('유효하지 않은 초대 코드입니다.')
     }
     
+    if (new Date() > invitation.expiresAt) {
+      await this.prisma.staffInvitation.delete({ where: { id: invitation.id } })
+      throw new GoneException('초대 코드가 만료되었습니다.')
+    }
+
+    const { storeId } = invitation
+
     const existingStaff = await this.prisma.storeStaff.findUnique({
-      where: { userId_storeId: { userId: userToAdd.id, storeId: id } },
+      where: { userId_storeId: { userId, storeId } },
     })
     if (existingStaff) {
-      throw new ConflictException('이미 해당 가게의 스탭 또는 소유자입니다.');
+      await this.prisma.staffInvitation.delete({ where: { id: invitation.id } })
+      throw new ConflictException('이미 해당 가게의 스태프입니다.')
     }
 
     return this.prisma.storeStaff.create({
-      data: { storeId: id, userId: userToAdd.id, role: Role.STAFF },
+      data: {
+        userId: userId,
+        storeId: storeId,
+        role: Role.STAFF,
+      },
     })
   }
 }
