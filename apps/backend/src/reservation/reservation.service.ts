@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -21,68 +22,79 @@ export class ReservationService {
   ) {
     const { menuIds, timeSlotId, ...rest } = createReservationDto
 
-    return await this.prisma.$transaction(async (tx) => {
-      const timeSlot = await tx.timeSlot.findUnique({
-        where: { id: timeSlotId },
-      })
+    const alreadyBooked = await this.prisma.reservation.findUnique({
+      where: { userId_timeSlotId: { userId, timeSlotId } },
+    })
 
-      if (!timeSlot) {
-        throw new NotFoundException('Time slot not found')
-      }
+    if (alreadyBooked) {
+      throw new ConflictException('You have already booked this time slot')
+    }
 
-      if (
-        timeSlot.availableSeats < 1 ||
-        timeSlot.availableSeats < rest.headcount
-      ) {
-        throw new UnprocessableEntityException('No available seats')
-      }
+    return await this.prisma.$transaction(
+      async (tx) => {
+        const timeSlot = await tx.timeSlot.findUnique({
+          where: { id: timeSlotId },
+        })
 
-      // 해당 타임슬롯 날짜(당일) 기준으로 매장 내 예약 번호 산정
-      const dayStart = new Date(timeSlot.startTime)
-      dayStart.setHours(0, 0, 0, 0)
-      const dayEnd = new Date(timeSlot.startTime)
-      dayEnd.setHours(23, 59, 59, 999)
+        if (!timeSlot) {
+          throw new NotFoundException('Time slot not found')
+        }
 
-      const todayCount = await tx.reservation.count({
-        where: {
-          storeId: rest.storeId,
-          timeSlot: {
-            startTime: {
-              gte: dayStart,
-              lte: dayEnd,
+        if (
+          timeSlot.availableSeats < 1 ||
+          timeSlot.availableSeats < rest.headcount
+        ) {
+          throw new UnprocessableEntityException('No available seats')
+        }
+
+        // 해당 타임슬롯 날짜(당일) 기준으로 매장 내 예약 번호 산정
+        const dayStart = new Date(timeSlot.startTime)
+        dayStart.setHours(0, 0, 0, 0)
+        const dayEnd = new Date(timeSlot.startTime)
+        dayEnd.setHours(23, 59, 59, 999)
+
+        const todayCount = await tx.reservation.count({
+          where: {
+            storeId: rest.storeId,
+            timeSlot: {
+              startTime: {
+                gte: dayStart,
+                lte: dayEnd,
+              },
             },
           },
-        },
-      })
-      const reservationNum = todayCount + 1
+        })
+        const reservationNum = todayCount + 1
 
-      const processedReservation = await tx.reservation.create({
-        data: {
-          ...rest,
-          userId,
-          timeSlotId,
-          reservationNum,
-          ...(menuIds?.length
-            ? { menus: { connect: menuIds.map((id) => ({ id })) } }
-            : {}),
-        },
-        include: {
-          menus: true,
-          user: true,
-          store: true,
-          timeSlot: true,
-        },
-      })
+        const processedReservation = await tx.reservation.create({
+          data: {
+            ...rest,
+            userId,
+            timeSlotId,
+            reservationNum,
+            ...(menuIds?.length
+              ? { menus: { connect: menuIds.map((id) => ({ id })) } }
+              : {}),
+          },
+          include: {
+            menus: true,
+            user: true,
+            store: true,
+            timeSlot: true,
+          },
+        })
 
-      await tx.timeSlot.update({
-        where: { id: timeSlotId },
-        data: {
-          availableSeats: { increment: -rest.headcount },
-        },
-      })
+        await tx.timeSlot.update({
+          where: { id: timeSlotId },
+          data: {
+            availableSeats: { increment: -rest.headcount },
+          },
+        })
 
-      return processedReservation
-    }, { isolationLevel: 'Serializable' })
+        return processedReservation
+      },
+      { isolationLevel: 'Serializable' },
+    )
   }
 
   async getReservations(userId: number) {
@@ -210,7 +222,6 @@ export class ReservationService {
         isConfirmed: true,
       },
     })
-
 
     this.eventEmitter.emit('reservation.confirmed', {
       reservationId: reservation.id,
