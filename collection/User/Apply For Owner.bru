@@ -1,0 +1,21 @@
+meta {
+  name: Apply For Owner
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/user/owner-application
+  body: json
+  auth: inherit
+}
+
+headers {
+  Cookie: {{user1}}
+}
+
+body:json {
+  {
+    "phone": "010-1234-5678"
+  }
+}

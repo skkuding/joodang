@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config'
 import * as webpush from 'web-push'
 import { PrismaService } from '../../prisma/prisma.service'
 import { CreatePushSubscriptionDto } from './dto/create-push-subscription.dto'
+import { Role } from '@prisma/client'
 
 @Injectable()
 export class NotificationService {
@@ -48,9 +49,20 @@ export class NotificationService {
     const title = reservationInfo.store.name ?? 'Reservation'
     const message = `오래 기다리셨습니다. 지금 방문해주세요!`
 
-    await this.saveNotification(receivers, title, message, 'Reservation', `/reservation-check-page/${reservationId}`)
+    await this.saveNotification(
+      receivers,
+      title,
+      message,
+      'Reservation',
+      `/reservation-check-page/${reservationId}`,
+    )
 
-    await this.sendPushNotification(receivers, title, message, `/reservation-check-page/${reservationId}`)
+    await this.sendPushNotification(
+      receivers,
+      title,
+      message,
+      `/reservation-check-page/${reservationId}`,
+    )
   }
 
   private async saveNotification(
@@ -102,8 +114,8 @@ export class NotificationService {
     const payload = JSON.stringify({
       title,
       body: message,
-      icon: '/logos/transparent.png',
-      badge: '/logos/codedang-badge.png',
+      icon: '/transparent.png',
+      badge: '/joodang-badge.png',
       data: { url },
     })
 
@@ -207,6 +219,53 @@ export class NotificationService {
       message,
       `/reservation-check-page/${reservationId}`,
     )
+  }
+
+  async notifyOwnerApplied() {
+    const admins = await this.prisma.user.findMany({
+      where: { role: Role.ADMIN },
+    })
+
+    const title = '관리자 알림'
+    const message = '새로운 점주 신청이 도착했습니다. 확인해주세요.'
+    const receivers = admins.map((admin) => admin.id)
+
+    await this.saveNotification(
+      receivers,
+      title,
+      message,
+      'OwnerApplication',
+      '/admin/owner-applications',
+    )
+
+    await this.sendPushNotification(
+      receivers,
+      title,
+      message,
+      '/admin/owner-applications',
+    )
+  }
+
+  async notifyOwnerConfirmed(userId: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, name: true },
+    })
+
+    if (!user) return
+
+    const title = '점주 승인 알림'
+    const message = `${user.name}님, 점주 신청이 승인되었습니다.`
+
+    await this.saveNotification(
+      [userId],
+      title,
+      message,
+      'OwnerApplication',
+      '/',
+    )
+
+    await this.sendPushNotification([userId], title, message, '/')
   }
 
   /**

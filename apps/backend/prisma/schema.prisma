@@ -70,24 +70,41 @@ model User {
   id              Int     @id @default(autoincrement())
   kakaoId         String  @unique @map("kakao_id")
   name            String
+  phone           String?
   studentId       String? @unique @map("student_id")
   college         String?
   major           String?
   profileImageUrl String? @map("profile_image_url")
+  role            Role    @default(USER)
 
   reservations        Reservation[]
   notificationRecords NotificationRecord[]
   pushSubscriptions   PushSubscription[]
 
-  storeStaffs StoreStaff[]
-  stores      Store[]
+  storeStaffs      StoreStaff[]
+  stores           Store[]
+  OwnerApplication OwnerApplication[]
 
   @@map("user")
 }
 
 enum Role {
+  ADMIN
   OWNER
   STAFF
+  USER
+}
+
+model OwnerApplication {
+  id          Int      @id @default(autoincrement())
+  userId      Int      @map("user_id")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phone       String
+  isConfirmed Boolean  @default(false) @map("is_confirmed")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("owner_application")
 }
 
 model StoreStaff {
