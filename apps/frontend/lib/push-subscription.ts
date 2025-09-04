@@ -34,8 +34,8 @@ export async function requestPermissionAndSubscribe() {
   }
 
   // 서버에서 VAPID 퍼블릭키 받기
-  const { publicKey } = await fetch(`${baseUrl}/notification/vapid`).then((r) =>
-    r.json(),
+  const { publicKey } = await fetch(`${baseUrl}/notification/vapid`).then(r =>
+    r.json()
   );
 
   // 이미 구독이 있으면 재사용
@@ -52,5 +52,6 @@ export async function requestPermissionAndSubscribe() {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(sub.toJSON()),
+    credentials: "include",
   });
 }
