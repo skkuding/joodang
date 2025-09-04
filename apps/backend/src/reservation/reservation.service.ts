@@ -135,8 +135,8 @@ export class ReservationService {
   }
 
   async getReservation(id: number, userId: number) {
-    return await this.prisma.reservation.findFirstOrThrow({
-      where: { id, userId },
+    const reservation = await this.prisma.reservation.findUnique({
+      where: { id },
       include: {
         menus: true,
         user: true,
@@ -144,6 +144,17 @@ export class ReservationService {
         timeSlot: true,
       },
     })
+    if (!reservation) {
+      throw new NotFoundException('Reservation not found')
+    }
+
+    if (reservation.userId !== userId) {
+      throw new ForbiddenException(
+        'You are not allowed to access this reservation',
+      )
+    }
+
+    return reservation
   }
 
   async removeReservation(id: number, userId: number) {
