@@ -26,10 +26,11 @@ model Store {
   latitude  Float  @default(37.2931959)
   longitude Float  @default(126.9745929)
 
-  menus       Menu[]
-  timeSlots   TimeSlot[]
-  Reservation Reservation[]
-  staffs      StoreStaff[]
+  menus           Menu[]
+  timeSlots       TimeSlot[]
+  Reservation     Reservation[]
+  staffs          StoreStaff[]
+  staffInvitation StaffInvitation[]
 
   @@map("store")
 }
@@ -97,6 +98,17 @@ model StoreStaff {
 
   @@unique([userId, storeId])
   @@map("store_staff")
+}
+
+model StaffInvitation {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique // 6자리 초대 코드
+  storeId   Int      @map("store_id")
+  store     Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  expiresAt DateTime @map("expires_at") // 만료 시간 (24시간)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("staff_invitation")
 }
 
 model TimeSlot {
