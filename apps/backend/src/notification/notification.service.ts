@@ -35,6 +35,7 @@ export class NotificationService {
       select: {
         store: {
           select: {
+            id: true,
             name: true,
           },
         },
@@ -49,13 +50,14 @@ export class NotificationService {
     const title = reservationInfo.store.name ?? 'Reservation'
     const message = `오래 기다리셨습니다. 지금 방문해주세요!`
 
-    await this.saveNotification(
-      receivers,
+    await this.saveNotification({
+      userIds: receivers,
       title,
       message,
-      'Reservation',
-      `/reservation-check-page/${reservationId}`,
-    )
+      storeId: reservationInfo.store.id,
+      type: 'Reservation',
+      url: `/reservation-check-page/${reservationId}`,
+    })
 
     await this.sendPushNotification(
       receivers,
@@ -65,13 +67,21 @@ export class NotificationService {
     )
   }
 
-  private async saveNotification(
-    userIds: number[],
-    title: string,
-    message: string,
-    type: string = 'Other',
-    url?: string,
-  ) {
+  private async saveNotification({
+    userIds,
+    title,
+    message,
+    storeId,
+    type = 'Other',
+    url,
+  }: {
+    userIds: number[]
+    title: string
+    message: string
+    storeId?: number
+    type?: string
+    url?: string
+  }) {
     if (userIds.length === 0) {
       return
     }
@@ -82,6 +92,7 @@ export class NotificationService {
         message,
         url,
         type,
+        storeId,
       },
     })
 
@@ -196,7 +207,7 @@ export class NotificationService {
       select: {
         id: true,
         userId: true,
-        store: { select: { name: true } },
+        store: { select: {id: true, name: true } },
       },
     })
 
@@ -205,13 +216,14 @@ export class NotificationService {
     const title = reservation.store.name ?? '예약 확정 알림'
     const message = `예약이 확정되었습니다.`
 
-    await this.saveNotification(
-      [reservation.userId],
+    await this.saveNotification({
+      userIds: [reservation.userId],
       title,
       message,
-      'Reservation',
-      `/reservation-check-page/${reservationId}`,
-    )
+      storeId: reservation.store.id,
+      type: 'Reservation',
+      url: `/reservation-check-page/${reservationId}`,
+    })
 
     await this.sendPushNotification(
       [reservation.userId],
@@ -230,13 +242,13 @@ export class NotificationService {
     const message = '새로운 점주 신청이 도착했습니다. 확인해주세요.'
     const receivers = admins.map((admin) => admin.id)
 
-    await this.saveNotification(
-      receivers,
+    await this.saveNotification({
+      userIds: receivers,
       title,
       message,
-      'OwnerApplication',
-      '/admin/owner-applications',
-    )
+      type: 'OwnerApplication',
+      url: '/admin/owner-applications',
+    })
 
     await this.sendPushNotification(
       receivers,
@@ -258,12 +270,13 @@ export class NotificationService {
     const message = `${user.name}님, 점주 신청이 승인되었습니다.`
 
     await this.saveNotification(
-      [userId],
-      title,
-      message,
-      'OwnerApplication',
-      '/',
-    )
+      {
+        userIds: [userId],
+        title,
+        message,
+        type: 'OwnerApplication',
+        url: '/',
+      })
 
     await this.sendPushNotification([userId], title, message, '/')
   }

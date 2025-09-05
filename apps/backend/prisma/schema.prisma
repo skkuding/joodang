@@ -35,6 +35,7 @@ model Store {
   Reservation     Reservation[]
   staffs          StoreStaff[]
   staffInvitation StaffInvitation[]
+  Notification    Notification[]
 
   @@map("store")
 }
@@ -168,11 +169,14 @@ model Reservation {
 }
 
 model Notification {
-  id      Int     @id @default(autoincrement())
+  id      Int    @id @default(autoincrement())
   title   String
   message String
-  url     String?
-  type    String  @default("Other")
+  storeId Int?
+  store   Store? @relation(fields: [storeId], references: [id], onDelete: SetNull)
+
+  url  String?
+  type String  @default("Other")
 
   createTime          DateTime             @default(now()) @map("create_time")
   notificationRecords NotificationRecord[]
