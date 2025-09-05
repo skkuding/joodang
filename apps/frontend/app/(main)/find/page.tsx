@@ -1,9 +1,11 @@
 "use client";
 
+import { Store } from "@/app/type";
+import { safeFetcher } from "@/lib/utils";
 import locationIcon from "@/public/icons/icon_location.svg";
 import OrangeDot from "@/public/icons/orange_dot.svg";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BarCard from "./components/BarCard";
 import FilterSetting from "./components/FilterSetting";
 
@@ -12,12 +14,21 @@ export default function BarPage() {
   const [isFilterSet, SetIsFilterSet] = useState(false);
   const [selOrder, SetSelOrder] = useState("popular");
 
-  const [open, setOpen] = useState(false);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [stores, setStores] = useState<Store[]>([]);
+
+  useEffect(() => {
+    async function fetchStores() {
+      const stores: Store[] = await safeFetcher("store").json();
+      setStores(stores);
+    }
+    fetchStores();
+  }, []);
 
   return (
     <div>
       <div className="mt-[48px] p-5">
-        <FilterSetting open={open} onClose={() => setOpen(false)} />
+        <FilterSetting open={filterOpen} onClose={() => setFilterOpen(false)} />
         <div>
           <Image src={locationIcon} alt="주황위치" width={24} height={24} />
           <div className="flex flex-row justify-between">
@@ -89,7 +100,7 @@ export default function BarPage() {
             <p
               className="font-sans text-[14px] font-medium leading-[140%] tracking-[-0.42px]"
               onClick={() => {
-                setOpen(true);
+                setFilterOpen(true);
                 return;
               }}
             >
@@ -166,11 +177,20 @@ export default function BarPage() {
             )}
           </div>
           <div className="flex flex-col items-center gap-2">
-            {arr.map((item, idx) => (
-              <div key={idx}>
-                <BarCard />
-              </div>
-            ))}
+            {stores.map((item, idx) => {
+              return (
+                <BarCard
+                  key={idx}
+                  id={item.id}
+                  organizer={item.organizer}
+                  name={item.name}
+                  location={item.location}
+                  startTime={item.startTime}
+                  endTime={item.endTime}
+                  reservationFee={item.reservationFee}
+                />
+              );
+            })}
           </div>
         </div>
       </div>

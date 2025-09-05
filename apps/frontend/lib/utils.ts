@@ -33,6 +33,11 @@ export const dateFormatter = (date: string | Date, format: string) => {
   ).format(format);
 };
 
+/**
+ *
+ * @param num
+ * @returns 세 자리마다 ,를 찍어서 반환합니다. ex) 15000 -> 15,000
+ */
 export const formatWithComma = (num: number): string => {
   return num.toLocaleString();
 };
@@ -69,3 +74,15 @@ export const getDateRange = (start: string, end: string) => {
   }
   return dates;
 };
+
+/**
+ *
+ * @param isoString
+ * @returns isoString에서 HH:MM을 추출합니다.
+ */
+export function formatToHHMM(isoString: string): string {
+  const date = new Date(isoString);
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  return `${hours}:${minutes}`;
+}
