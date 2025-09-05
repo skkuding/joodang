@@ -338,11 +338,11 @@ export default function StoreInfoForm() {
         </div>
       </div>
 
-      <div className="pt-5">
+      <div className="fixed bottom-0 left-0 right-0 z-20 flex h-[84px] bg-white px-5 py-4">
         <button
           type="submit"
           className={cn(
-            "w-full rounded-md py-[14px]",
+            "w-full rounded-md",
             isValid
               ? "bg-primary-normal text-white"
               : "bg-color-neutral-95 text-color-neutral-70"

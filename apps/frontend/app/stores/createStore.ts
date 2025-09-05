@@ -19,7 +19,11 @@ interface FormData {
   latitude: number;
   longitude: number;
   menus: Menu[];
-  timeSlots: TimeSlot[];
+  timeSlots: {
+    id: string;
+    startTime: Date;
+    endTime: Date;
+  }[];
 }
 
 interface CreateStoreStore {

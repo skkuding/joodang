@@ -3,6 +3,7 @@
 import { Progress } from "@/components/ui/progress";
 import { useCreateStoreStore } from "@/app/stores/createStore";
 import StoreInfoForm from "./_components/StoreInfoForm";
+import TimeSlotForm from "./_components/TimeSlotForm";
 import { DetailHeader } from "../../../components/DetailHeader";
 
 export default function Page() {
@@ -20,7 +21,7 @@ export default function Page() {
       <div className="mt-[10px] px-5 py-4">
         <div className="z-1 fixed left-0 right-0 w-full bg-white px-5 py-4">
           <div className="text-color-neutral-60 mb-2 text-right text-xs">
-            {modalPage + 1} / 3
+            {modalPage + 1} / 4
           </div>
           <Progress
             value={((modalPage + 1) / 4) * 100}
@@ -29,9 +30,9 @@ export default function Page() {
         </div>
         <div className="mt-[80px]">
           {modalPage === 0 && <StoreInfoForm />}
-          {/* {modalPage === 1 && <TimeSlotForm />}
-          {modalPage === 2 && <LocationForm />}
-          {modalPage === 3 && <MenuForm />} */}
+          {modalPage === 1 && <TimeSlotForm />}
+          {/* {modalPage === 2 && <LocationForm />}
+           {modalPage === 3 && <MenuForm />} */}
         </div>
       </div>
     </div>
