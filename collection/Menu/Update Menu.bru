@@ -10,17 +10,18 @@ patch {
   auth: inherit
 }
 
-headers {
-  Cookie: {{user1}}
-}
-
 params:path {
   id: 1
+}
+
+headers {
+  Cookie: {{user1}}
 }
 
 body:json {
   {
     "name": "감자탕 (대)",
+    "imageUrl": "https://joodang.com/logo.png",
     "price": 15000
   }
 }
