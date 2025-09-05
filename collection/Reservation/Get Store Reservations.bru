@@ -10,12 +10,18 @@ get {
   auth: inherit
 }
 
-headers {
-  Cookie: {{user1}}
+params:query {
+  ~toBeConfirmed: true
+  ~isConfirmed: false
+  ~isWalkIn: true
 }
 
 params:path {
   storeId: 1
+}
+
+headers {
+  Cookie: {{user1}}
 }
 
 settings {

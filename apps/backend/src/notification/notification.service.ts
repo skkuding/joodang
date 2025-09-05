@@ -44,6 +44,7 @@ export class NotificationService {
     })
 
     if (!reservationInfo) return
+    if (!reservationInfo.userId) return
 
     const receivers = reservationInfo ? [reservationInfo.userId] : []
 
@@ -212,6 +213,7 @@ export class NotificationService {
     })
 
     if (!reservation) return
+    if (!reservation.userId) return
 
     const title = reservation.store.name ?? '예약 확정 알림'
     const message = `예약이 확정되었습니다.`
@@ -244,6 +246,7 @@ export class NotificationService {
     })
 
     if (!reservation) return
+    if (!reservation.userId) return
 
     const title = reservation.store.name ?? '예약 취소 알림'
     const message = `예약이 취소되었습니다.`

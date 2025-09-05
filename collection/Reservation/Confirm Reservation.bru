@@ -5,9 +5,13 @@ meta {
 }
 
 patch {
-  url: {{baseUrl}}/reservation/:reservationId/confirm
+  url: {{baseUrl}}/reservation/:reservationId/confirm?isConfirmed=true
   body: none
   auth: none
+}
+
+params:query {
+  isConfirmed: true
 }
 
 params:path {

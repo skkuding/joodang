@@ -10,13 +10,14 @@ datasource db {
 model Store {
   id             Int      @id @default(autoincrement())
   name           String
-  phone          String
   description    String?
-  college        String
+  college        String   @default("성균관대학교") // 추후 대학교 입력 필드 생길 예정
   organizer      String?
   owner          User     @relation(fields: [ownerId], references: [id])
   ownerId        Int      @map("owner_id")
-  instagramId    String?  @map("instagram_id")
+  icon           Int      @default(1)
+  totalCapacity  Int      @default(50) @map("total_capacity")
+  contactInfo    String?  @map("contact_info")
   startTime      DateTime @map("start_time")
   endTime        DateTime @map("end_time")
   isAvailable    Boolean  @default(true) @map("is_available")
@@ -153,12 +154,13 @@ model Reservation {
   headcount      Int
   reservationNum Int @map("reservation_num")
 
-  userId     Int      @map("user_id")
-  user       User     @relation(fields: [userId], references: [id])
+  userId     Int?     @map("user_id")
+  user       User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phone      String?
   storeId    Int      @map("store_id")
-  store      Store    @relation(fields: [storeId], references: [id])
+  store      Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
   timeSlotId Int      @map("time_slot_id")
-  timeSlot   TimeSlot @relation(fields: [timeSlotId], references: [id])
+  timeSlot   TimeSlot @relation(fields: [timeSlotId], references: [id], onDelete: Cascade)
 
   isConfirmed Boolean? @map("is_confirmed")
   isDone      Boolean  @default(false) @map("is_done")

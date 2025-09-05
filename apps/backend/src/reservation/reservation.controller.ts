@@ -13,9 +13,13 @@ import {
   ParseBoolPipe,
 } from '@nestjs/common'
 import { ReservationService } from './reservation.service'
-import { CreateReservationDto } from './dto/create-reservation.dto'
+import {
+  CreateReservationDto,
+  CreateWalkInReservationDto,
+} from './dto/create-reservation.dto'
 import type { Request } from 'express'
 import { JwtAuthGuard } from '@app/auth/jwt.guard'
+import { OptionalJwtAuthGuard } from '@app/auth/optional-jwt.guard'
 
 @UseGuards(JwtAuthGuard)
 @Controller('reservation')
@@ -45,10 +49,22 @@ export class ReservationController {
 
   @Get('/store/:storeId')
   getStoreReservations(
-    @Param('storeId', ParseIntPipe) storeId: number,
     @Req() req: Request,
+    @Param('storeId', ParseIntPipe) storeId: number,
+    @Query('isConfirmed', new ParseBoolPipe({ optional: true }))
+    isConfirmed?: boolean,
+    @Query('toBeConfirmed', new ParseBoolPipe({ optional: true }))
+    toBeConfirmed?: boolean,
+    @Query('isWalkIn', new ParseBoolPipe({ optional: true }))
+    isWalkIn?: boolean,
   ) {
-    return this.reservationService.getStoreReservations(storeId, req.user.id)
+    return this.reservationService.getStoreReservations({
+      storeId,
+      userId: req.user.id,
+      isConfirmed,
+      toBeConfirmed,
+      isWalkIn,
+    })
   }
 
   @Get(':id')
@@ -74,6 +90,18 @@ export class ReservationController {
       id,
       req.user.id,
       isConfirm,
+    )
+  }
+
+  @Post('/walkin')
+  @UseGuards(OptionalJwtAuthGuard)
+  walkinReservation(
+    @Body() createWalkInReservationDto: CreateWalkInReservationDto,
+    @Req() req: Request,
+  ) {
+    return this.reservationService.createWalkInReservation(
+      createWalkInReservationDto,
+      req.user?.id,
     )
   }
 }

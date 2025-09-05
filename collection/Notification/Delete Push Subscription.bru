@@ -1,0 +1,19 @@
+meta {
+  name: Delete Push Subscription
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{baseUrl}}/notification/push-subscription
+  body: none
+  auth: inherit
+}
+
+params:query {
+  endpoint: https://fcm.googleapis.com/fcm/send/example-endpoint-123
+}
+
+headers {
+  Cookie: {{user1}}
+}
