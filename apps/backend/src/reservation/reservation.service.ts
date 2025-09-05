@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -21,42 +22,79 @@ export class ReservationService {
   ) {
     const { menuIds, timeSlotId, ...rest } = createReservationDto
 
-    const timeSlot = await this.prisma.timeSlot.findUnique({
-      where: { id: timeSlotId },
+    const alreadyBooked = await this.prisma.reservation.findUnique({
+      where: { userId_timeSlotId: { userId, timeSlotId } },
     })
 
-    if (
-      (timeSlot?.availableSeats ?? 0 < 1) ||
-      (timeSlot?.availableSeats ?? 0 < rest.headcount)
-    ) {
-      throw new UnprocessableEntityException('No available seats')
+    if (alreadyBooked) {
+      throw new ConflictException('You have already booked this time slot')
     }
 
-    const processedReservation = await this.prisma.reservation.create({
-      data: {
-        ...rest,
-        userId,
-        timeSlotId,
-        ...(menuIds?.length
-          ? { menus: { connect: menuIds.map((id) => ({ id })) } }
-          : {}),
-      },
-      include: {
-        menus: true,
-        user: true,
-        store: true,
-        timeSlot: true,
-      },
-    })
+    return await this.prisma.$transaction(
+      async (tx) => {
+        const timeSlot = await tx.timeSlot.findUnique({
+          where: { id: timeSlotId },
+        })
 
-    await this.prisma.timeSlot.update({
-      where: { id: timeSlotId },
-      data: {
-        availableSeats: { increment: -rest.headcount },
-      },
-    })
+        if (!timeSlot) {
+          throw new NotFoundException('Time slot not found')
+        }
 
-    return processedReservation
+        if (
+          timeSlot.availableSeats < 1 ||
+          timeSlot.availableSeats < rest.headcount
+        ) {
+          throw new UnprocessableEntityException('No available seats')
+        }
+
+        // 해당 타임슬롯 날짜(당일) 기준으로 매장 내 예약 번호 산정
+        const dayStart = new Date(timeSlot.startTime)
+        dayStart.setHours(0, 0, 0, 0)
+        const dayEnd = new Date(timeSlot.startTime)
+        dayEnd.setHours(23, 59, 59, 999)
+
+        const todayCount = await tx.reservation.count({
+          where: {
+            storeId: rest.storeId,
+            timeSlot: {
+              startTime: {
+                gte: dayStart,
+                lte: dayEnd,
+              },
+            },
+          },
+        })
+        const reservationNum = todayCount + 1
+
+        const processedReservation = await tx.reservation.create({
+          data: {
+            ...rest,
+            userId,
+            timeSlotId,
+            reservationNum,
+            ...(menuIds?.length
+              ? { menus: { connect: menuIds.map((id) => ({ id })) } }
+              : {}),
+          },
+          include: {
+            menus: true,
+            user: true,
+            store: true,
+            timeSlot: true,
+          },
+        })
+
+        await tx.timeSlot.update({
+          where: { id: timeSlotId },
+          data: {
+            availableSeats: { increment: -rest.headcount },
+          },
+        })
+
+        return processedReservation
+      },
+      { isolationLevel: 'Serializable' },
+    )
   }
 
   async getReservations(userId: number) {
@@ -97,8 +135,8 @@ export class ReservationService {
   }
 
   async getReservation(id: number, userId: number) {
-    return await this.prisma.reservation.findFirstOrThrow({
-      where: { id, userId },
+    const reservation = await this.prisma.reservation.findUnique({
+      where: { id },
       include: {
         menus: true,
         user: true,
@@ -106,6 +144,17 @@ export class ReservationService {
         timeSlot: true,
       },
     })
+    if (!reservation) {
+      throw new NotFoundException('Reservation not found')
+    }
+
+    if (reservation.userId !== userId) {
+      throw new ForbiddenException(
+        'You are not allowed to access this reservation',
+      )
+    }
+
+    return reservation
   }
 
   async removeReservation(id: number, userId: number) {
@@ -161,6 +210,37 @@ export class ReservationService {
     this.eventEmitter.emit('come.to.store', {
       reservationId: reservation.id,
     })
+
+    return reservation
+  }
+
+  async confirmReservation(id: number, userId: number, isConfirm: boolean) {
+    const isStaff = await this.prisma.reservation.findFirst({
+      where: {
+        id,
+        store: { staffs: { some: { userId } } },
+      },
+      select: { id: true },
+    })
+
+    if (!isStaff) {
+      throw new ForbiddenException('You are not a staff of this store')
+    }
+
+    const reservation = await this.prisma.reservation.update({
+      where: { id },
+      data: {
+        isConfirmed: isConfirm,
+        isDone: !isConfirm,
+      },
+    })
+
+    this.eventEmitter.emit(
+      isConfirm ? 'reservation.confirmed' : 'reservation.declined',
+      {
+        reservationId: reservation.id,
+      },
+    )
 
     return reservation
   }

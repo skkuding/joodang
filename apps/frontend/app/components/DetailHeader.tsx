@@ -5,9 +5,9 @@ import { IoIosArrowBack } from "react-icons/io";
 export function DetailHeader() {
   const router = useRouter();
   return (
-    <div className="fixed left-0 right-0 top-0 w-full px-5 flex bg-white h-[68px] items-end ">
+    <div className="z-1 fixed left-0 right-0 top-0 flex h-[78px] w-full justify-between bg-white px-5 pt-[50px]">
       <IoIosArrowBack
-        className="w-6 h-6"
+        className="h-6 w-6"
         onClick={() => {
           router.back();
         }}

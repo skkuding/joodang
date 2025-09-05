@@ -9,6 +9,7 @@ import { AuthService } from '@auth/auth.service'
 import { JwtStrategy } from '@auth/jwt.strategy'
 import { JwtAuthGuard } from '@auth/jwt.guard'
 import { OptionalJwtAuthGuard } from '@auth/optional-jwt.guard'
+import { AdminGuard } from '@auth/admin.guard'
 
 @Module({
   imports: [
@@ -30,8 +31,9 @@ import { OptionalJwtAuthGuard } from '@auth/optional-jwt.guard'
     AuthService,
     JwtAuthGuard,
     OptionalJwtAuthGuard,
+    AdminGuard,
   ],
   controllers: [AuthController],
-  exports: [JwtAuthGuard, OptionalJwtAuthGuard],
+  exports: [JwtAuthGuard, OptionalJwtAuthGuard, AdminGuard],
 })
 export class AuthModule {}

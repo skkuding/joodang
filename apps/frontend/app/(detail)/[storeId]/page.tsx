@@ -57,14 +57,14 @@ export default async function Page({
   function renderDescription() {
     return (
       <div className="bg-white">
-        <div className="p-5 mt-[10px] text-sm font-normal  text-color-neutral-40">
+        <div className="text-color-neutral-40 mt-[10px] p-5 text-sm font-normal">
           {store.description}
         </div>
         <div className="p-5 text-xl font-medium">
           <p>메뉴</p>
           <Carousel>
-            <CarouselContent className="-ml-2 my-[14px]">
-              {menus.map((menu) => (
+            <CarouselContent className="my-[14px] -ml-2">
+              {menus.map(menu => (
                 <CarouselItem className="basis-auto" key={menu.id}>
                   <MenuCard name={menu.name} id={menu.id} />
                 </CarouselItem>
@@ -74,7 +74,7 @@ export default async function Page({
         </div>
         <div className="p-5">
           <Link href={`/${storeId}/reservation`}>
-            <Button className="w-full  bg-primary-normal h-[50px] px-4 py-[14px] text-base font-medium">
+            <Button className="bg-primary-normal h-[50px] w-full px-4 py-[14px] text-base font-medium">
               예약하기
             </Button>
           </Link>
@@ -90,7 +90,7 @@ export default async function Page({
 
   function MenuCard({ id, name }: MenuCardProps) {
     return (
-      <div className="h-[96px] text-base font-normal flex flex-col items-center justify-between w-[88px] bg-color-neutral-99 py-4">
+      <div className="bg-color-neutral-99 flex h-[96px] w-[88px] flex-col items-center justify-between py-4 text-base font-normal">
         <Image
           src={
             id % 4 === 0
@@ -102,17 +102,22 @@ export default async function Page({
                   : riceIcon
           }
           alt="Menu Item"
-          className="w-8 h-8 "
+          className="h-8 w-8"
         />
         {name}
       </div>
     );
   }
 
+  function StoreImage() {
+    return (
+      <Image src={cheerImg} alt="Description" className="h-[240px] w-full" />
+    );
+  }
+
   return (
-    <div>
-      <div className="h-4 bg-white" />
-      <Image src={cheerImg} alt="Description" className="w-full h-[257px]" />
+    <div className="pt-10">
+      <StoreImage />
       {renderStoreSummary({ store })}
       {renderDescription()}
     </div>

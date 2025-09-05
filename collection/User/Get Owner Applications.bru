@@ -1,0 +1,19 @@
+meta {
+  name: Get Owner Applications
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/user/owner-application
+  body: none
+  auth: inherit
+}
+
+params:query {
+  isConfirmed: false
+}
+
+headers {
+  Cookie: {{user1}}
+}

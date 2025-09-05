@@ -9,11 +9,13 @@ import { PrismaModule } from '@prisma/prisma.module'
 import { EventEmitterModule } from '@nestjs/event-emitter'
 import { ConfigModule } from '@nestjs/config'
 import { AuthModule } from '@auth/auth.module'
+import { UserModule } from './user/user.module'
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: `.env.${process.env.NODE_ENV}`,
     }),
     EventEmitterModule.forRoot(),
     StoreModule,
@@ -22,6 +24,7 @@ import { AuthModule } from '@auth/auth.module'
     MenuModule,
     PrismaModule,
     AuthModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

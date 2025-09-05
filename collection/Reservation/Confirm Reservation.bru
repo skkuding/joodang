@@ -1,0 +1,19 @@
+meta {
+  name: Confirm Reservation
+  type: http
+  seq: 7
+}
+
+patch {
+  url: {{baseUrl}}/reservation/:reservationId/confirm
+  body: none
+  auth: none
+}
+
+params:path {
+  reservationId: 1
+}
+
+headers {
+  Cookie: {{user1}}
+}

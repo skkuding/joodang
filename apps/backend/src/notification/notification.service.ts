@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config'
 import * as webpush from 'web-push'
 import { PrismaService } from '../../prisma/prisma.service'
 import { CreatePushSubscriptionDto } from './dto/create-push-subscription.dto'
+import { Role } from '@prisma/client'
 
 @Injectable()
 export class NotificationService {
@@ -34,6 +35,7 @@ export class NotificationService {
       select: {
         store: {
           select: {
+            id: true,
             name: true,
           },
         },
@@ -48,18 +50,38 @@ export class NotificationService {
     const title = reservationInfo.store.name ?? 'Reservation'
     const message = `오래 기다리셨습니다. 지금 방문해주세요!`
 
-    await this.saveNotification(receivers, title, message, '', '')
+    await this.saveNotification({
+      userIds: receivers,
+      title,
+      message,
+      storeId: reservationInfo.store.id,
+      type: 'Reservation',
+      url: `/reservation-check-page/${reservationId}`,
+    })
 
-    await this.sendPushNotification(receivers, title, message, '')
+    await this.sendPushNotification(
+      receivers,
+      title,
+      message,
+      `/reservation-check-page/${reservationId}`,
+    )
   }
 
-  private async saveNotification(
-    userIds: number[],
-    title: string,
-    message: string,
-    type: string = 'Other',
-    url?: string,
-  ) {
+  private async saveNotification({
+    userIds,
+    title,
+    message,
+    storeId,
+    type = 'Other',
+    url,
+  }: {
+    userIds: number[]
+    title: string
+    message: string
+    storeId?: number
+    type?: string
+    url?: string
+  }) {
     if (userIds.length === 0) {
       return
     }
@@ -70,6 +92,7 @@ export class NotificationService {
         message,
         url,
         type,
+        storeId,
       },
     })
 
@@ -102,8 +125,8 @@ export class NotificationService {
     const payload = JSON.stringify({
       title,
       body: message,
-      icon: '/logos/transparent.png',
-      badge: '/logos/codedang-badge.png',
+      icon: '/transparent.png',
+      badge: '/joodang-badge.png',
       data: { url },
     })
 
@@ -177,6 +200,116 @@ export class NotificationService {
       isRead: record.isRead,
       createTime: record.createTime,
     }))
+  }
+  async notifyReservationConfirmed(reservationId: number) {
+    const reservation = await this.prisma.reservation.findUnique({
+      where: { id: reservationId },
+      select: {
+        id: true,
+        userId: true,
+        store: { select: { id: true, name: true } },
+      },
+    })
+
+    if (!reservation) return
+
+    const title = reservation.store.name ?? '예약 확정 알림'
+    const message = `예약이 확정되었습니다.`
+
+    await this.saveNotification({
+      userIds: [reservation.userId],
+      title,
+      message,
+      storeId: reservation.store.id,
+      type: 'Reservation',
+      url: `/reservation-check-page/${reservationId}`,
+    })
+
+    await this.sendPushNotification(
+      [reservation.userId],
+      title,
+      message,
+      `/reservation-check-page/${reservationId}`,
+    )
+  }
+
+  async notifyReservationDeclined(reservationId: number) {
+    const reservation = await this.prisma.reservation.findUnique({
+      where: { id: reservationId },
+      select: {
+        id: true,
+        userId: true,
+        store: { select: { id: true, name: true } },
+      },
+    })
+
+    if (!reservation) return
+
+    const title = reservation.store.name ?? '예약 취소 알림'
+    const message = `예약이 취소되었습니다.`
+
+    await this.saveNotification({
+      userIds: [reservation.userId],
+      title,
+      message,
+      storeId: reservation.store.id,
+      type: 'Reservation',
+      url: `/reservation-check-page/${reservationId}`,
+    })
+
+    await this.sendPushNotification(
+      [reservation.userId],
+      title,
+      message,
+      `/reservation-check-page/${reservationId}`,
+    )
+  }
+
+  async notifyOwnerApplied() {
+    const admins = await this.prisma.user.findMany({
+      where: { role: Role.ADMIN },
+    })
+
+    const title = '관리자 알림'
+    const message = '새로운 점주 신청이 도착했습니다. 확인해주세요.'
+    const receivers = admins.map((admin) => admin.id)
+
+    await this.saveNotification({
+      userIds: receivers,
+      title,
+      message,
+      type: 'OwnerApplication',
+      url: '/admin/owner-applications',
+    })
+
+    await this.sendPushNotification(
+      receivers,
+      title,
+      message,
+      '/admin/owner-applications',
+    )
+  }
+
+  async notifyOwnerConfirmed(userId: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, name: true },
+    })
+
+    if (!user) return
+
+    const title = '점주 승인 알림'
+    const message = `${user.name}님, 점주 신청이 승인되었습니다.`
+
+    await this.saveNotification({
+      userIds: [userId],
+      title,
+      message,
+      type: 'OwnerApplication',
+      url: '/',
+    })
+
+    await this.sendPushNotification([userId], title, message, '/')
   }
 
   /**

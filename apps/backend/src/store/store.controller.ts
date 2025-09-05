@@ -17,7 +17,7 @@ import { StoreService } from './store.service'
 import { GetStoresDto } from './dto/get-stores.dto'
 import { CreateStoreDto } from './dto/create-store.dto'
 import { UpdateStoreDto } from './dto/update-store.dto'
-import { AddStaffDto } from './dto/add-staff.dto'
+import { AcceptInvitationDto } from './dto/accept-invitation.dto'
 import { JwtAuthGuard } from '@app/auth/jwt.guard'
 import type { Request } from 'express'
 
@@ -71,14 +71,32 @@ export class StoreController {
     return this.storeService.removeStore(req.user.id, id)
   }
 
-  @Post(':id/staff')
+  @Post(':id/staff/invitation')
   @UseGuards(JwtAuthGuard)
-  async addStaff(
+  async createStaffInvitation(
     @Req() req: Request,
-    @Param('id') id: number,
-    @Body() addStaffDto: AddStaffDto,
+    @Param('id', ParseIntPipe) storeId: number,
   ) {
-    return this.storeService.addStaff(req.user.id, id, addStaffDto)
+    return this.storeService.createStaffInvitation(req.user.id, storeId);
+  }
+
+  @Post('staff/invitation/accept')
+  @UseGuards(JwtAuthGuard)
+  async acceptStaffInvitation(
+    @Req() req: Request,
+    @Body() acceptInvitationDto: AcceptInvitationDto,
+  ) {
+    return this.storeService.acceptStaffInvitation(req.user.id, acceptInvitationDto.code)
+  }
+
+  @Delete(':id/staff/:userId')
+  @UseGuards(JwtAuthGuard)
+  async removeStaff(
+    @Req() req: Request,
+    @Param('id', ParseIntPipe) storeId: number,
+    @Param('userId', ParseIntPipe) userId: number,
+  ) {
+    return this.storeService.removeStaff(req.user.id, storeId, userId);
   }
 
   @Post(':id/image/presign')

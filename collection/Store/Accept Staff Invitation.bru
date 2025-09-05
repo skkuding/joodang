@@ -1,0 +1,38 @@
+meta {
+  name: Accept Staff Invitation
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/store/staff/invitation/accept
+  body: json
+  auth: bearer
+}
+
+headers {
+  Cookie: {{user1}}
+}
+
+body:json {
+  {
+    "code": "ABC123"
+  }
+}
+
+docs {
+  ## 스태프 초대 수락
+  
+  초대받은 사용자가 전달받은 초대 코드를 제출하여 해당 주점의 스태프(STAFF)가 됩니다.
+  성공 시, 해당 사용자는 주점의 스태프로 등록됩니다.
+
+  ### Auth
+  
+  - 반드시 초대를 **수락할 사용자**의 계정으로 로그인하여 발급받은 토큰을 사용해야 합니다.
+
+  ### Body
+  
+  | 이름 | 타입 | 설명 |
+  |-----|-----|-----|
+  |code|String|전달받은 6자리 초대 코드|
+}

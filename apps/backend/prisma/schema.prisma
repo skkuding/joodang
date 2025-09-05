@@ -30,10 +30,12 @@ model Store {
   latitude  Float  @default(37.2931959)
   longitude Float  @default(126.9745929)
 
-  menus        Menu[]
-  timeSlots    TimeSlot[]
-  reservations Reservation[]
-  staffs       StoreStaff[]
+  menus           Menu[]
+  timeSlots       TimeSlot[]
+  Reservation     Reservation[]
+  staffs          StoreStaff[]
+  staffInvitation StaffInvitation[]
+  Notification    Notification[]
 
   @@map("store")
 }
@@ -69,24 +71,41 @@ model User {
   id              Int     @id @default(autoincrement())
   kakaoId         String  @unique @map("kakao_id")
   name            String
+  phone           String?
   studentId       String? @unique @map("student_id")
   college         String?
   major           String?
   profileImageUrl String? @map("profile_image_url")
+  role            Role    @default(USER)
 
   reservations        Reservation[]
   notificationRecords NotificationRecord[]
   pushSubscriptions   PushSubscription[]
 
-  storeStaffs StoreStaff[]
-  stores      Store[]
+  storeStaffs      StoreStaff[]
+  stores           Store[]
+  OwnerApplication OwnerApplication[]
 
   @@map("user")
 }
 
 enum Role {
+  ADMIN
   OWNER
   STAFF
+  USER
+}
+
+model OwnerApplication {
+  id          Int      @id @default(autoincrement())
+  userId      Int      @map("user_id")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phone       String
+  isConfirmed Boolean  @default(false) @map("is_confirmed")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("owner_application")
 }
 
 model StoreStaff {
@@ -101,6 +120,17 @@ model StoreStaff {
 
   @@unique([userId, storeId])
   @@map("store_staff")
+}
+
+model StaffInvitation {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique // 6자리 초대 코드
+  storeId   Int      @map("store_id")
+  store     Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  expiresAt DateTime @map("expires_at") // 만료 시간 (24시간)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("staff_invitation")
 }
 
 model TimeSlot {
@@ -130,8 +160,8 @@ model Reservation {
   timeSlotId Int      @map("time_slot_id")
   timeSlot   TimeSlot @relation(fields: [timeSlotId], references: [id])
 
-  isConfirmed Boolean @default(false) @map("is_confirmed")
-  isDone      Boolean @default(false) @map("is_done")
+  isConfirmed Boolean? @map("is_confirmed")
+  isDone      Boolean  @default(false) @map("is_done")
   menus       Menu[]
 
   @@unique([userId, timeSlotId])
@@ -139,11 +169,14 @@ model Reservation {
 }
 
 model Notification {
-  id      Int     @id @default(autoincrement())
+  id      Int    @id @default(autoincrement())
   title   String
   message String
-  url     String?
-  type    String  @default("Other")
+  storeId Int?
+  store   Store? @relation(fields: [storeId], references: [id], onDelete: SetNull)
+
+  url  String?
+  type String  @default("Other")
 
   createTime          DateTime             @default(now()) @map("create_time")
   notificationRecords NotificationRecord[]

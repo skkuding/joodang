@@ -7,26 +7,42 @@ meta {
 post {
   url: {{baseUrl}}/store
   body: json
-  auth: inherit
+  auth: bearer
+}
+
+headers {
+  Cookie: {{user1}}
 }
 
 body:json {
   {
-    "name": "새로운 주점",
-    "phone": "010-0000-0000",
-    "description": "설명",
-    "organizer": "주최자",
-    "instagramId": "insta_id",
-    "startTime": "2026-01-02T18:00:00.000Z",
-    "endTime": "2026-01-02T23:00:00.000Z",
-    "reservationFee": 10000,
-    "college": "성균관대학교",
-    "location": "디도 앞 잔디밭",
-    "latitude": 37.2931959,
-    "longitude": 126.9745929,
+    "name": "양주당",
+    "phone": "010-1234-5678",
+    "description": "최고의 양주 주점!",
+    "organizer": "기계공학과",
+    "instagramId": "skku_me",
+    "startTime": "2026-01-10T10:00:00.000Z",
+    "endTime": "2026-01-10T15:00:00.000Z",
+    "reservationFee": 15000,
+    "college": "공과대학",
     "timeSlots": [
-      { "startTime": "2026-01-02T18:00:00.000Z", "endTime": "2026-01-02T20:00:00.000Z", "totalCapacity": 30 },
-      { "startTime": "2026-01-02T20:00:00.000Z", "endTime": "2026-01-02T22:00:00.000Z", "totalCapacity": 30 }
+      {
+        "startTime": "2026-01-10T10:00:00.000Z",
+        "endTime": "2026-01-10T12:00:00.000Z",
+        "totalCapacity": 20
+      },
+      {
+        "startTime": "2026-01-10T13:00:00.000Z",
+        "endTime": "2026-01-10T15:00:00.000Z",
+        "totalCapacity": 20
+      }
     ]
   }
+}
+
+docs {
+  ## 새로운 주점 생성
+  
+  새로운 주점 정보를 생성합니다.
+  성공적으로 생성되면, 요청을 보낸 사용자는 해당 주점의 소유자(OWNER)로 자동 등록됩니다.
 }
