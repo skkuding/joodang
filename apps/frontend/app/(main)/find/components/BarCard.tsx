@@ -19,14 +19,6 @@ interface BarCardProps {
 }
 
 export default function BarCard(information: BarCardProps) {
-  console.log(
-    "id: ",
-    information.id,
-    "start: ",
-    information.startTime,
-    "format start: ",
-    formatToHHMM(information.startTime)
-  );
   return (
     <div
       className="h-[284px] w-[335px] overflow-hidden rounded-[6px]"
