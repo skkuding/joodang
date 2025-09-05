@@ -40,3 +40,9 @@ export interface Menu {
 export interface MenuData {
   Bap: Menu[];
 }
+
+export interface AccountData {
+  bank: string;
+  accountNum: string;
+  owner: string;
+}
