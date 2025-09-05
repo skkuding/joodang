@@ -207,7 +207,7 @@ export class NotificationService {
       select: {
         id: true,
         userId: true,
-        store: { select: {id: true, name: true } },
+        store: { select: { id: true, name: true } },
       },
     })
 
@@ -215,6 +215,38 @@ export class NotificationService {
 
     const title = reservation.store.name ?? '예약 확정 알림'
     const message = `예약이 확정되었습니다.`
+
+    await this.saveNotification({
+      userIds: [reservation.userId],
+      title,
+      message,
+      storeId: reservation.store.id,
+      type: 'Reservation',
+      url: `/reservation-check-page/${reservationId}`,
+    })
+
+    await this.sendPushNotification(
+      [reservation.userId],
+      title,
+      message,
+      `/reservation-check-page/${reservationId}`,
+    )
+  }
+
+  async notifyReservationDeclined(reservationId: number) {
+    const reservation = await this.prisma.reservation.findUnique({
+      where: { id: reservationId },
+      select: {
+        id: true,
+        userId: true,
+        store: { select: { id: true, name: true } },
+      },
+    })
+
+    if (!reservation) return
+
+    const title = reservation.store.name ?? '예약 취소 알림'
+    const message = `예약이 취소되었습니다.`
 
     await this.saveNotification({
       userIds: [reservation.userId],
@@ -269,14 +301,13 @@ export class NotificationService {
     const title = '점주 승인 알림'
     const message = `${user.name}님, 점주 신청이 승인되었습니다.`
 
-    await this.saveNotification(
-      {
-        userIds: [userId],
-        title,
-        message,
-        type: 'OwnerApplication',
-        url: '/',
-      })
+    await this.saveNotification({
+      userIds: [userId],
+      title,
+      message,
+      type: 'OwnerApplication',
+      url: '/',
+    })
 
     await this.sendPushNotification([userId], title, message, '/')
   }

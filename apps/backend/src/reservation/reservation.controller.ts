@@ -9,6 +9,8 @@ import {
   Req,
   Patch,
   UseGuards,
+  Query,
+  ParseBoolPipe,
 } from '@nestjs/common'
 import { ReservationService } from './reservation.service'
 import { CreateReservationDto } from './dto/create-reservation.dto'
@@ -65,8 +67,13 @@ export class ReservationController {
   @Patch(':id/confirm')
   confirmReservation(
     @Param('id', ParseIntPipe) id: number,
+    @Query('isConfirm', ParseBoolPipe) isConfirm: boolean,
     @Req() req: Request,
   ) {
-    return this.reservationService.confirmReservation(id, req.user.id)
+    return this.reservationService.confirmReservation(
+      id,
+      req.user.id,
+      isConfirm,
+    )
   }
 }

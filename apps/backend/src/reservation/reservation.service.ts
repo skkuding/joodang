@@ -214,7 +214,7 @@ export class ReservationService {
     return reservation
   }
 
-  async confirmReservation(id: number, userId: number) {
+  async confirmReservation(id: number, userId: number, isConfirm: boolean) {
     const isStaff = await this.prisma.reservation.findFirst({
       where: {
         id,
@@ -230,13 +230,17 @@ export class ReservationService {
     const reservation = await this.prisma.reservation.update({
       where: { id },
       data: {
-        isConfirmed: true,
+        isConfirmed: isConfirm,
+        isDone: !isConfirm,
       },
     })
 
-    this.eventEmitter.emit('reservation.confirmed', {
-      reservationId: reservation.id,
-    })
+    this.eventEmitter.emit(
+      isConfirm ? 'reservation.confirmed' : 'reservation.declined',
+      {
+        reservationId: reservation.id,
+      },
+    )
 
     return reservation
   }

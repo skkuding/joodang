@@ -160,8 +160,8 @@ model Reservation {
   timeSlotId Int      @map("time_slot_id")
   timeSlot   TimeSlot @relation(fields: [timeSlotId], references: [id])
 
-  isConfirmed Boolean @default(false) @map("is_confirmed")
-  isDone      Boolean @default(false) @map("is_done")
+  isConfirmed Boolean? @map("is_confirmed")
+  isDone      Boolean  @default(false) @map("is_done")
   menus       Menu[]
 
   @@unique([userId, timeSlotId])

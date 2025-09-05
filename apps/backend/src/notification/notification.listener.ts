@@ -16,6 +16,11 @@ export class NotificationListener {
     this.notificationService.notifyReservationConfirmed(payload.reservationId)
   }
 
+  @OnEvent('reservation.declined')
+  async handleReservationDeclined(payload: { reservationId: number }) {
+    this.notificationService.notifyReservationDeclined(payload.reservationId)
+  }
+
   @OnEvent('owner.applied')
   async handleOwnerApplied() {
     this.notificationService.notifyOwnerApplied()
