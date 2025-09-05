@@ -9,7 +9,8 @@ import {
   IsString,
   IsLatitude,
   IsLongitude,
-  ValidateNested
+  ValidateNested,
+  IsIn
 } from 'class-validator';
 
 export class TimeSlotInput {
@@ -20,10 +21,6 @@ export class TimeSlotInput {
   @Type(() => Date)
   @IsDate()
   endTime!: Date
-
-  @IsInt()
-  @IsPositive()
-  totalCapacity!: number
 }
 export class CreateStoreDto {
   @IsString()
@@ -31,40 +28,33 @@ export class CreateStoreDto {
   name: string
 
   @IsString()
-  @IsNotEmpty()
-  phone: string
-
-  @IsString()
   @IsOptional()
   description?: string
-
-  @IsString()
-  @IsOptional()
-  organizer?: string
-
-  @IsString()
-  @IsOptional()
-  instagramId?: string
-
-  @Type(() => Date)
-  @IsDate()
-  startTime: Date
-
-  @Type(() => Date)
-  @IsDate()
-  endTime: Date
-
-  @IsInt()
-  reservationFee: number
 
   @IsString()
   @IsNotEmpty()
   college: string
 
+  @IsString()
+  @IsOptional()
+  organizer?: string
+
+  @Type(() => Number)
+  @IsInt()
+  @IsIn([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+  icon: number
+
   @Type(() => Number)
   @IsInt()
   @IsPositive()
-  ownerId: number
+  totalCapacity: number
+
+  @IsString()
+  @IsOptional()
+  contactInfo?: string
+
+  @IsInt()
+  reservationFee: number
 
   @IsString()
   @IsNotEmpty()

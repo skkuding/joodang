@@ -8,6 +8,7 @@ import {
   CreateBucketCommand,
   PutBucketPolicyCommand,
 } from '@aws-sdk/client-s3'
+import { ValidationPipe } from '@nestjs/common'
 
 async function ensureBucketAndPolicy() {
   const bucket = process.env.S3_BUCKET!
@@ -61,6 +62,12 @@ async function bootstrap() {
 
   app.use(morgan.default('dev'))
   app.use(cookieParser())
+  app.useGlobalPipes(
+    new ValidationPipe({ 
+      whitelist: true, 
+      transform: true, 
+    },
+  ))
 
   app.enableCors({
     origin: [
