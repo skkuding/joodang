@@ -178,14 +178,31 @@ export class StoreService {
   async createStore(userId: number, createStoreDto: CreateStoreDto) {
     const { timeSlots, ...storeData } = createStoreDto
 
+    if (!timeSlots || timeSlots.length === 0) {
+      throw new Error('At least one timeslot is required.')
+    }
+
+    const storeOperatingHours = timeSlots.reduce(
+      (acc, slot) => {
+        const earliestStartTime = acc.startTime < slot.startTime ? acc.startTime : slot.startTime;
+        const latestEndTime = acc.endTime > slot.endTime ? acc.endTime : slot.endTime;
+        
+        return { startTime: earliestStartTime, endTime: latestEndTime }
+      },
+      { startTime: timeSlots[0].startTime, endTime: timeSlots[0].endTime }
+    )
+
     return await this.prisma.store.create({
       data: {
         ...storeData,
         ownerId: userId,
+        startTime: storeOperatingHours.startTime,
+        endTime: storeOperatingHours.endTime,
         timeSlots: {
           create: timeSlots.map((timeslot) => ({
             ...timeslot,
-            availableSeats: timeslot.totalCapacity,
+            totalCapacity: createStoreDto.totalCapacity,
+            availableSeats: createStoreDto.totalCapacity,
           })),
         },
         staffs: {
@@ -217,37 +234,38 @@ export class StoreService {
       throw new NotFoundException('해당 가게를 찾을 수 없습니다.')
     }
 
-    const { timeSlots, ...rest } = updateStoreDto
-    const partialData = Object.fromEntries(
-      Object.entries(rest).filter(([, v]) => v !== undefined),
-    ) as Prisma.StoreUpdateInput
-    if (!timeSlots) {
-      return await this.prisma.store.update({
-        where: { id },
-        data: partialData,
-        include: { timeSlots: true },
-      })
+    const { timeSlots, ...storeData } = updateStoreDto
+    let operatingHoursData = {}
+    if (timeSlots && timeSlots.length > 0) {
+      const storeOperatingHours = timeSlots.reduce(
+        (acc, slot) => {
+          const earliestStartTime = acc.startTime < slot.startTime ? acc.startTime : slot.startTime
+          const latestEndTime = acc.endTime > slot.endTime ? acc.endTime : slot.endTime
+          return { startTime: earliestStartTime, endTime: latestEndTime }
+        },
+        { startTime: timeSlots[0].startTime, endTime: timeSlots[0].endTime }
+      )
+      operatingHoursData = {
+        startTime: storeOperatingHours.startTime,
+        endTime: storeOperatingHours.endTime,
+      }
     }
 
-    const result = await this.prisma.$transaction(async (tx) => {
-      await tx.timeSlot.deleteMany({ where: { storeId: id } })
-
-      return await tx.store.update({
-        where: { id },
-        data: {
-          ...partialData,
-          timeSlots: {
-            create: timeSlots.map((timeslot) => ({
-              ...timeslot,
-              availableSeats: timeslot.totalCapacity,
-            })),
-          },
-        },
-        include: { timeSlots: true },
-      })
+    return await this.prisma.store.update({
+      where: { id },
+      data: {
+        ...storeData,
+        ...operatingHoursData,
+        timeSlots: timeSlots ? {
+          deleteMany: {},
+          create: timeSlots.map((timeslot) => ({
+            ...timeslot,          
+            totalCapacity: storeData.totalCapacity ?? existingStore.totalCapacity,
+            availableSeats: storeData.totalCapacity ?? existingStore.totalCapacity,
+          })),
+        } : undefined,
+      },
     })
-
-    return result
   }
 
   async removeStore(userId: number, id: number) {
