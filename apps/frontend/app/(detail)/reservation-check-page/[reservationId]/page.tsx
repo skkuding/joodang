@@ -1,4 +1,6 @@
 "use client";
+import CopyAccountModal from "@/app/components/CopyAccountModal";
+import { Store } from "@/app/type";
 import Location from "@/public/icons/icon_location.svg";
 import Clock from "@/public/icons/orangeClock.svg";
 import Money from "@/public/icons/orangeMoney.svg";
@@ -10,17 +12,29 @@ import { DetailHeader } from "../../../components/DetailHeader";
 
 export default function ReservationDetail() {
   const router = useRouter();
-  const [isAccountModalVisible, setIsAccountModalVisible] =
-    useState<boolean>(false);
-  // const [account, setAccount] = useState<AccountData>({
-  //   bank: "신한은행",
-  //   accountNum: "000-0000-0000-00",
-  //   owner: "방승현",
-  // });
+  const [store, setStore] = useState<Store>({
+    id: 1,
+    name: "",
+    phone: "010-9971-6958",
+    description: "",
+    college: "",
+    organizer: "",
+    ownerId: 0,
+    instagramId: "",
+    startTime: new Date().toISOString(),
+    endTime: new Date().toISOString(),
+    isAvailable: true,
+    reservationFee: 0,
+    bankCode: "088",
+    accountNumber: "010010101-1001010-0000-01",
+    accountHolder: "방승현",
+    location: "",
+    latitude: 0,
+    longitude: 0,
+  });
 
   return (
     <div className="bg-color-neutral-99 flex min-h-screen flex-col">
-      {/* <CopyAccountModal store={store} /> */}
       <DetailHeader />
       <div className="mb-4" />
 
@@ -88,14 +102,7 @@ export default function ReservationDetail() {
             <Image src={OrangeDot} alt="주황닷" width={6} height={6} />
             <div className="ml-2 flex w-full justify-between">
               <p>입금 계좌</p>
-              <p
-                className="text-[#FF5940]"
-                onClick={() => {
-                  setIsAccountModalVisible(true);
-                }}
-              >
-                <u>자세히 보기</u>
-              </p>
+              <CopyAccountModal store={store} />
             </div>
           </div>
         </div>
