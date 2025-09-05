@@ -1,6 +1,5 @@
-"use client";
+import { Toaster } from "../../../components/ui/sonner";
 import { DetailHeader } from "../../components/DetailHeader";
-
 export default function Layout({
   children,
 }: Readonly<{
@@ -10,6 +9,7 @@ export default function Layout({
     <div>
       <DetailHeader />
       <div>{children}</div>
+      <Toaster />
     </div>
   );
 }

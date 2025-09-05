@@ -9,7 +9,7 @@ import { safeFetcher } from "../../../lib/utils";
 import { Button } from "../../../ui/button";
 import { Carousel, CarouselContent, CarouselItem } from "../../../ui/carousel";
 import { Menu, StoreDetail } from "../../type";
-import { renderStoreSummary } from "../components/store";
+import { StoreInfo } from "../components/StoreInfo";
 
 export default async function Page({
   params,
@@ -118,7 +118,7 @@ export default async function Page({
   return (
     <div className="pt-10">
       <StoreImage />
-      {renderStoreSummary({ store })}
+      <StoreInfo store={store} />
       {renderDescription()}
     </div>
   );
