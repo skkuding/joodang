@@ -11,17 +11,32 @@ patch {
 }
 
 params:path {
-  storeId: 5
+  storeId: 3
 }
 
 body:json {
   {
-    "description": "수정된 설명",
-    "reservationFee": 12000,
-    "location": "수정된 위치",
     "timeSlots": [
-      { "startTime": "2026-01-03T18:00:00.000Z", "endTime": "2026-01-03T20:00:00.000Z", "totalCapacity": 20 },
-      { "startTime": "2026-01-03T20:00:00.000Z", "endTime": "2026-01-03T22:00:00.000Z", "totalCapacity": 25 }
+      {
+        "startTime": "2026-01-02T18:00:00.000Z",
+        "endTime": "2026-01-02T20:00:00.000Z",
+        "totalCapacity": 18
+      },
+      {
+        "startTime": "2026-01-02T20:00:00.000Z",
+        "endTime": "2026-01-02T22:00:00.000Z",
+        "totalCapacity": 30
+      },
+      {
+        "startTime": "2026-01-03T18:00:00.000Z",
+        "endTime": "2026-01-03T20:00:00.000Z",
+        "totalCapacity": 30
+      },
+      {
+        "startTime": "2026-01-03T20:00:00.000Z",
+        "endTime": "2026-01-03T22:00:00.000Z",
+        "totalCapacity": 30
+      }
     ]
   }
 }
