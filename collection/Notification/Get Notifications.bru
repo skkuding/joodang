@@ -1,17 +1,18 @@
 meta {
-  name: Get Owner Applications
+  name: Get Notifications
   type: http
-  seq: 1
+  seq: 2
 }
 
 get {
-  url: {{baseUrl}}/user/owner-application
+  url: {{baseUrl}}/notification
   body: none
   auth: inherit
 }
 
 params:query {
-  ~isConfirmed: true
+  take: 8
+  isRead: false
 }
 
 headers {

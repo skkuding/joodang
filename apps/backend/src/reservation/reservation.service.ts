@@ -5,7 +5,10 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common'
-import { CreateReservationDto } from './dto/create-reservation.dto'
+import {
+  CreateReservationDto,
+  CreateWalkInReservationDto,
+} from './dto/create-reservation.dto'
 import { PrismaService } from 'prisma/prisma.service'
 import { EventEmitter2 } from '@nestjs/event-emitter'
 
@@ -97,6 +100,99 @@ export class ReservationService {
     )
   }
 
+  async createWalkInReservation(
+    createWalkInReservationDto: CreateWalkInReservationDto,
+    userId?: number,
+  ) {
+    const dayStart = new Date()
+    dayStart.setHours(0, 0, 0, 0)
+    const dayEnd = new Date()
+    dayEnd.setHours(23, 59, 59, 999)
+
+    if (userId) {
+      const alreadyBooked = await this.prisma.reservation.findFirst({
+        where: {
+          storeId: createWalkInReservationDto.storeId,
+          timeSlot: {
+            totalCapacity: -1,
+            availableSeats: 0,
+            startTime: dayStart,
+          },
+          userId,
+        },
+      })
+
+      if (alreadyBooked) {
+        throw new ConflictException(
+          'You have already made a walk-in reservation for this store',
+        )
+      }
+    }
+
+    return await this.prisma.$transaction(async (tx) => {
+      // 해당 타임슬롯 날짜(당일) 기준으로 매장 내 예약 번호 산정
+      const todayCount = await tx.reservation.count({
+        where: {
+          storeId: createWalkInReservationDto.storeId,
+          timeSlot: {
+            startTime: {
+              gte: dayStart,
+              lte: dayEnd,
+            },
+          },
+        },
+      })
+      const reservationNum = todayCount + 1
+
+      const timeSlotExist = await tx.timeSlot.findFirst({
+        where: {
+          storeId: createWalkInReservationDto.storeId,
+          totalCapacity: -1,
+          availableSeats: 0,
+          startTime: dayStart,
+        },
+        select: {
+          id: true,
+        },
+      })
+
+      let timeSlotCreated
+      if (!timeSlotExist) {
+        timeSlotCreated = await tx.timeSlot.create({
+          data: {
+            storeId: createWalkInReservationDto.storeId,
+            startTime: dayStart,
+            endTime: dayEnd,
+            totalCapacity: -1,
+            availableSeats: 0,
+          },
+        })
+      }
+
+      const { menuIds, ...rest } = createWalkInReservationDto
+
+      const reservation = await tx.reservation.create({
+        data: {
+          ...rest,
+          userId,
+          timeSlotId: timeSlotExist ? timeSlotExist.id : timeSlotCreated.id,
+          reservationNum,
+          ...(menuIds?.length
+            ? { menus: { connect: menuIds.map((id) => ({ id })) } }
+            : {}),
+        },
+        include: {
+          menus: true,
+          user: true,
+          store: true,
+          timeSlot: true,
+        },
+      })
+
+      return reservation
+    })
+  }
+
   async getReservations(userId: number) {
     return await this.prisma.reservation.findMany({
       where: { userId },
@@ -109,7 +205,19 @@ export class ReservationService {
     })
   }
 
-  async getStoreReservations(storeId: number, userId: number) {
+  async getStoreReservations({
+    storeId,
+    userId,
+    isConfirmed,
+    toBeConfirmed,
+    isWalkIn,
+  }: {
+    storeId: number
+    userId: number
+    isConfirmed?: boolean | null
+    toBeConfirmed?: boolean
+    isWalkIn?: boolean
+  }) {
     const isStaff = await this.prisma.storeStaff.findUnique({
       where: { userId_storeId: { userId, storeId } },
       select: {
@@ -121,17 +229,28 @@ export class ReservationService {
       throw new ForbiddenException('You are not a staff of this store')
     }
 
-    return await this.prisma.reservation.findMany({
-      where: { storeId },
+    const reservations = await this.prisma.reservation.findMany({
+      where: {
+        storeId,
+        ...(toBeConfirmed === undefined
+          ? { isConfirmed }
+          : toBeConfirmed
+            ? { isConfirmed: null }
+            : { isConfirmed: { not: null, equals: isConfirmed } }), // not null + 값 일치
+        ...(isWalkIn === undefined
+          ? {} // 조건 없음
+          : isWalkIn
+            ? { timeSlot: { totalCapacity: -1, availableSeats: 0 } } // walk-in
+            : { NOT: { timeSlot: { totalCapacity: -1, availableSeats: 0 } } }), // walk-in이 아님
+      },
       include: {
         menus: true,
         timeSlot: true,
-        store: {
-          select: {},
-        },
       },
-      orderBy: { id: 'desc' },
+      orderBy: [{ timeSlot: { startTime: 'asc' } }, { id: 'asc' }],
     })
+
+    return reservations
   }
 
   async getReservation(id: number, userId: number) {

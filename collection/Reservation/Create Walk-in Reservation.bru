@@ -1,0 +1,24 @@
+meta {
+  name: Create Walk-in Reservation
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/reservation/walkin
+  body: json
+  auth: inherit
+}
+
+headers {
+  Cookie: {{user1}}
+}
+
+body:json {
+  {
+    "headcount": 2,
+    "storeId": 1,
+    "phone": "01012345678",
+    "menuIds": [1, 2]
+  }
+}
