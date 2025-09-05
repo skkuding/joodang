@@ -22,6 +22,7 @@ import { JwtAuthGuard } from '@app/auth/jwt.guard'
 import type { Request } from 'express'
 import { OwnerGuard } from '@app/auth/owner.guard'
 import { StaffGuard } from '@app/auth/staff.guard'
+import { UploadStoreImageDto } from './dto/upload-store-image.dto'
 
 @Controller('store')
 export class StoreController {
@@ -109,16 +110,12 @@ export class StoreController {
   async createImagePresign(
     @Req() req: Request,
     @Param('id', ParseIntPipe) id: number,
-    @Query('fileIdx') fileIdx: string,
-    @Query('contentType') contentType: string,
+    @Body() uploadStoreImageDto: UploadStoreImageDto,
   ) {
-    if (!fileIdx) throw new BadRequestException('fileIdx is required')
-    if (!contentType) throw new BadRequestException('contentType is required')
     return this.storeService.createStoreImagePresign(
       req.user.id,
       id,
-      fileIdx,
-      contentType,
+      uploadStoreImageDto,
     )
   }
 }
