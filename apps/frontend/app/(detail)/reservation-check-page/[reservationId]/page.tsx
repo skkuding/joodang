@@ -1,6 +1,4 @@
 "use client";
-import CopyAccountModal from "@/app/components/CopyAccountModal";
-import { AccountData } from "@/app/type";
 import Location from "@/public/icons/icon_location.svg";
 import Clock from "@/public/icons/orangeClock.svg";
 import Money from "@/public/icons/orangeMoney.svg";
@@ -14,21 +12,15 @@ export default function ReservationDetail() {
   const router = useRouter();
   const [isAccountModalVisible, setIsAccountModalVisible] =
     useState<boolean>(false);
-  const [account, setAccount] = useState<AccountData>({
-    bank: "신한은행",
-    accountNum: "000-0000-0000-00",
-    owner: "방승현",
-  });
+  // const [account, setAccount] = useState<AccountData>({
+  //   bank: "신한은행",
+  //   accountNum: "000-0000-0000-00",
+  //   owner: "방승현",
+  // });
 
   return (
     <div className="bg-color-neutral-99 flex min-h-screen flex-col">
-      <CopyAccountModal
-        show={isAccountModalVisible}
-        account={account}
-        onClose={() => {
-          setIsAccountModalVisible(false);
-        }}
-      />
+      {/* <CopyAccountModal store={store} /> */}
       <DetailHeader />
       <div className="mb-4" />
 

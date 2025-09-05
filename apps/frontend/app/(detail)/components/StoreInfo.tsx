@@ -1,4 +1,5 @@
 "use client";
+import CopyAccountModal from "@/app/components/CopyAccountModal";
 import { Button } from "@/components/ui/button";
 import clockIcon from "@/public/icons/icon_clock.svg";
 import locationIcon from "@/public/icons/icon_location.svg";
@@ -72,9 +73,7 @@ export function StoreInfo({ store }: senderStoreSummaryProps) {
             <div className="bg-primary-normal h-1.5 w-1.5 rounded-full" />
             <span>입금 계좌</span>
           </div>
-          <Button onClick={handleCopyPhone} variant="ghost" size="sm">
-            <span>{store.phone}</span>
-          </Button>
+          <CopyAccountModal store={store} />
         </div>
       </div>
     </div>
