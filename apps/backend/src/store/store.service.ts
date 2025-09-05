@@ -430,15 +430,12 @@ export class StoreService {
     fileIdx: string,
     contentType: string,
   ) {
-    const staffInfo = await this.prisma.store.findUnique({
-      where: { id: storeId },
-      select: { ownerId: true },
+    const staffInfo = await this.prisma.storeStaff.findUnique({
+      where: { userId_storeId: { userId, storeId } },
+      select: { id: true },
     })
-    if (!staffInfo) {
-      throw new NotFoundException('해당 가게를 찾을 수 없습니다.')
-    }
 
-    if (staffInfo.ownerId !== userId) {
+    if (!staffInfo) {
       throw new ForbiddenException('가게에 대한 업로드 권한이 없습니다.')
     }
 

@@ -21,6 +21,7 @@ import { AcceptInvitationDto } from './dto/accept-invitation.dto'
 import { JwtAuthGuard } from '@app/auth/jwt.guard'
 import type { Request } from 'express'
 import { OwnerGuard } from '@app/auth/owner.guard'
+import { StaffGuard } from '@app/auth/staff.guard'
 
 @Controller('store')
 export class StoreController {
@@ -104,7 +105,7 @@ export class StoreController {
   }
 
   @Post(':id/image/presign')
-  @UseGuards(OwnerGuard)
+  @UseGuards(StaffGuard)
   async createImagePresign(
     @Req() req: Request,
     @Param('id', ParseIntPipe) id: number,
