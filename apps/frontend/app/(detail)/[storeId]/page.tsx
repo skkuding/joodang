@@ -1,15 +1,14 @@
+import { Separator } from "@/app/(main)/components/Separator";
+import { Button } from "@/components/ui/button";
 import bowlIcon from "@/public/icons/icon_bowl.svg";
 import chipIcon from "@/public/icons/icon_chip.svg";
 import drinkIcon from "@/public/icons/icon_drink.svg";
 import riceIcon from "@/public/icons/icon_rice.svg";
 import cheerImg from "@/public/pictures/cheers.png";
 import Image from "next/image";
-import Link from "next/link";
 import { safeFetcher } from "../../../lib/utils";
-import { Button } from "../../../ui/button";
-import { Carousel, CarouselContent, CarouselItem } from "../../../ui/carousel";
 import { Menu, StoreDetail } from "../../type";
-import { renderStoreSummary } from "../components/store";
+import { StoreInfo } from "../components/StoreInfo";
 
 export default async function Page({
   params,
@@ -54,31 +53,18 @@ export default async function Page({
     },
   ];
 
-  function renderDescription() {
+  function StoreDescription() {
     return (
-      <div className="bg-white">
-        <div className="p-5 mt-[10px] text-sm font-normal  text-color-neutral-40">
-          {store.description}
-        </div>
-        <div className="p-5 text-xl font-medium">
-          <p>메뉴</p>
-          <Carousel>
-            <CarouselContent className="-ml-2 my-[14px]">
-              {menus.map((menu) => (
-                <CarouselItem className="basis-auto" key={menu.id}>
-                  <MenuCard name={menu.name} id={menu.id} />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-          </Carousel>
-        </div>
-        <div className="p-5">
-          <Link href={`/${storeId}/reservation`}>
-            <Button className="w-full  bg-primary-normal h-[50px] px-4 py-[14px] text-base font-medium">
-              예약하기
-            </Button>
-          </Link>
-        </div>
+      <div className="text-color-neutral-30 p-5 text-sm font-normal">
+        {store.description}
+      </div>
+    );
+  }
+
+  function ReservationButton() {
+    return (
+      <div className="pb-15 fixed bottom-0 left-0 right-0 bg-white p-5">
+        <Button className="w-full">예약하기</Button>
       </div>
     );
   }
@@ -90,7 +76,7 @@ export default async function Page({
 
   function MenuCard({ id, name }: MenuCardProps) {
     return (
-      <div className="h-[96px] text-base font-normal flex flex-col items-center justify-between w-[88px] bg-color-neutral-99 py-4">
+      <div className="bg-color-neutral-99 flex h-[96px] w-[88px] flex-col items-center justify-between py-4 text-base font-normal">
         <Image
           src={
             id % 4 === 0
@@ -102,19 +88,26 @@ export default async function Page({
                   : riceIcon
           }
           alt="Menu Item"
-          className="w-8 h-8 "
+          className="h-8 w-8"
         />
         {name}
       </div>
     );
   }
 
+  function StoreImage() {
+    return (
+      <Image src={cheerImg} alt="Description" className="h-[240px] w-full" />
+    );
+  }
+
   return (
-    <div>
-      <div className="h-4 bg-white" />
-      <Image src={cheerImg} alt="Description" className="w-full h-[257px]" />
-      {renderStoreSummary({ store })}
-      {renderDescription()}
+    <div className="pt-10">
+      <StoreImage />
+      <StoreInfo store={store} />
+      <Separator />
+      <StoreDescription />
+      <ReservationButton />
     </div>
   );
 }

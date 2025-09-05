@@ -37,7 +37,7 @@ export function Footer() {
   return (
     <footer>
       <div
-        className="fixed bottom-0 left-0 right-0 z-50 flex h-20 w-full items-center justify-center bg-white"
+        className="fixed bottom-0 left-0 right-0 z-10 flex h-20 w-full items-center justify-center bg-white"
         style={{ boxShadow: "0 -2px 8px rgba(0,0,0,0.1)" }}
       >
         <div className="-mt-2 flex flex-row justify-center gap-[60px]">

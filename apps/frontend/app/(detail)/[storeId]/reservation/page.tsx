@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "../../../../ui/dropdown-menu";
 import { MenuData, StoreDetail } from "../../../type";
-import { renderStoreSummary } from "../../components/store";
+import { StoreInfo } from "../../components/StoreInfo";
 
 export default function Page() {
   const { storeId } = useParams();
@@ -28,14 +28,14 @@ export default function Page() {
           .get(`store/${storeId}`)
           .json() as Promise<StoreDetail>;
       },
-    }),
+    })
   );
   const { data: menuData } = useQuery(
     queryOptions({
       queryKey: ["menu", storeId],
       queryFn: () =>
         safeFetcher.get(`menu?storeId=${storeId}`).json() as Promise<MenuData>,
-    }),
+    })
   );
   const [count, setCount] = useState(0);
 
@@ -52,12 +52,12 @@ export default function Page() {
   }) {
     return (
       <div className={`flex ${isRow ? "justify-between" : "flex-col"} gap-3`}>
-        <div className="flex gap-2 text-base font-medium items-center">
-          <div className="rounded-full bg-primary-normal w-1.5 h-1.5" />
+        <div className="flex items-center gap-2 text-base font-medium">
+          <div className="bg-primary-normal h-1.5 w-1.5 rounded-full" />
           {title}
         </div>
         {description && (
-          <span className=" text-xs font-normal text-color-neutral-50">
+          <span className="text-color-neutral-50 text-xs font-normal">
             {description}
           </span>
         )}
@@ -81,7 +81,7 @@ export default function Page() {
           .replace("(We)", "(수)")
           .replace("(Th)", "(목)")
           .replace("(Fr)", "(금)")
-          .replace("(Sa)", "(토)"),
+          .replace("(Sa)", "(토)")
       );
       current = current.add(1, "day");
     }
@@ -94,14 +94,14 @@ export default function Page() {
     }
     const dates = getDateRange(store.startTime, store.endTime);
     return (
-      <div className="p-5 bg-white mt-[10px]">
+      <div className="mt-[10px] bg-white p-5">
         <Form title="날짜">
           <div className="grid grid-cols-2 gap-2">
-            {dates.map((date) => (
+            {dates.map(date => (
               <Button
                 key={date}
                 type="button"
-                className="px-4 py-2 rounded border border-color-neutral-40 bg-white text-color-neutral-80"
+                className="border-color-neutral-40 text-color-neutral-80 rounded border bg-white px-4 py-2"
               >
                 {date}
               </Button>
@@ -110,7 +110,7 @@ export default function Page() {
         </Form>
         <Form title="시간대">
           <DropdownMenu>
-            <DropdownMenuTrigger className="flex h-[52px] justify-between items-center pl-5 pr-[14px] border rounded-md border-color-neutral-99">
+            <DropdownMenuTrigger className="border-color-neutral-99 flex h-[52px] items-center justify-between rounded-md border pl-5 pr-[14px]">
               <span className="text-xl font-semibold">성균관대학교</span>
               <IoIosArrowDown className="h-4 w-4" />
             </DropdownMenuTrigger>
@@ -121,19 +121,19 @@ export default function Page() {
         </Form>
         <Form title="총 인원" isRow>
           <div className="flex items-center gap-5">
-            <Button variant="outline" className="p-[7px] w-[38px] h-[38px]">
+            <Button variant="outline" className="h-[38px] w-[38px] p-[7px]">
               <Image
                 src={plusIcon}
                 alt="Add"
-                onClick={() => setCount((prev) => prev + 1)}
+                onClick={() => setCount(prev => prev + 1)}
               />
             </Button>
             <span className="text-base font-medium">{count}</span>
-            <Button variant="outline" className="p-[7px] w-[38px] h-[38px]">
+            <Button variant="outline" className="h-[38px] w-[38px] p-[7px]">
               <Image
                 src={minusIcon}
                 alt="Remove"
-                onClick={() => setCount((prev) => Math.max(prev - 1, 0))}
+                onClick={() => setCount(prev => Math.max(prev - 1, 0))}
               />
             </Button>
           </div>
@@ -143,7 +143,7 @@ export default function Page() {
           description="메뉴는 당일 현장에서 주문도 가능합니다"
         >
           <DropdownMenu>
-            <DropdownMenuTrigger className="flex h-[52px] justify-between items-center pl-5 pr-[14px] border rounded-md border-color-neutral-99">
+            <DropdownMenuTrigger className="border-color-neutral-99 flex h-[52px] items-center justify-between rounded-md border pl-5 pr-[14px]">
               <span className="text-xl font-semibold">성균관대학교</span>
               <IoIosArrowDown className="h-4 w-4" />
             </DropdownMenuTrigger>
@@ -158,7 +158,7 @@ export default function Page() {
   return (
     <div>
       <div className="h-4 bg-white" />
-      {store && renderStoreSummary({ store })}
+      {store && <StoreInfo store={store} />}
       {renderReservationForm()}
     </div>
   );

@@ -23,7 +23,8 @@ export class UserController {
   @Get('owner-application')
   @UseGuards(AdminGuard)
   async getOwnerApplications(
-    @Query('isConfirmed', ParseBoolPipe) isConfirmed?: boolean,
+    @Query('isConfirmed', new ParseBoolPipe({ optional: true }))
+    isConfirmed?: boolean,
   ) {
     return this.userService.getOwnerApplications(isConfirmed)
   }

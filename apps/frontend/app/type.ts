@@ -3,13 +3,17 @@ export interface Store {
   name: string;
   phone: string;
   description: string;
+  college: string;
   organizer: string;
+  ownerId: number;
   instagramId: string;
   startTime: string; // ISO8601 string
   endTime: string; // ISO8601 string
   isAvailable: boolean;
   reservationFee: number;
-  college: string;
+  bankCode: string;
+  accountNumber: string;
+  accountHolder: string;
   location: string;
   latitude: number;
   longitude: number;
