@@ -1,6 +1,7 @@
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Geist, Geist_Mono } from "next/font/google";
+import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -24,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="ko">
       <head>
         <link rel="apple-touch-icon" href="/apple-icon.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -239,7 +240,11 @@ export default function RootLayout({
           href="splash_screens/4__iPhone_SE__iPod_touch_5th_generation_and_later_portrait.png"
         />
       </head>
-      <body>
+      <body
+        style={{
+          fontFamily: "Pretendard Variable, Pretendard",
+        }}
+      >
         <Analytics />
         <SpeedInsights />
         <main
