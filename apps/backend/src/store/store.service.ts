@@ -184,12 +184,14 @@ export class StoreService {
 
     const storeOperatingHours = timeSlots.reduce(
       (acc, slot) => {
-        const earliestStartTime = acc.startTime < slot.startTime ? acc.startTime : slot.startTime;
-        const latestEndTime = acc.endTime > slot.endTime ? acc.endTime : slot.endTime;
-        
+        const earliestStartTime =
+          acc.startTime < slot.startTime ? acc.startTime : slot.startTime
+        const latestEndTime =
+          acc.endTime > slot.endTime ? acc.endTime : slot.endTime
+
         return { startTime: earliestStartTime, endTime: latestEndTime }
       },
-      { startTime: timeSlots[0].startTime, endTime: timeSlots[0].endTime }
+      { startTime: timeSlots[0].startTime, endTime: timeSlots[0].endTime },
     )
 
     return await this.prisma.store.create({
@@ -239,11 +241,13 @@ export class StoreService {
     if (timeSlots && timeSlots.length > 0) {
       const storeOperatingHours = timeSlots.reduce(
         (acc, slot) => {
-          const earliestStartTime = acc.startTime < slot.startTime ? acc.startTime : slot.startTime
-          const latestEndTime = acc.endTime > slot.endTime ? acc.endTime : slot.endTime
+          const earliestStartTime =
+            acc.startTime < slot.startTime ? acc.startTime : slot.startTime
+          const latestEndTime =
+            acc.endTime > slot.endTime ? acc.endTime : slot.endTime
           return { startTime: earliestStartTime, endTime: latestEndTime }
         },
-        { startTime: timeSlots[0].startTime, endTime: timeSlots[0].endTime }
+        { startTime: timeSlots[0].startTime, endTime: timeSlots[0].endTime },
       )
       operatingHoursData = {
         startTime: storeOperatingHours.startTime,
@@ -256,14 +260,18 @@ export class StoreService {
       data: {
         ...storeData,
         ...operatingHoursData,
-        timeSlots: timeSlots ? {
-          deleteMany: {},
-          create: timeSlots.map((timeslot) => ({
-            ...timeslot,          
-            totalCapacity: storeData.totalCapacity ?? existingStore.totalCapacity,
-            availableSeats: storeData.totalCapacity ?? existingStore.totalCapacity,
-          })),
-        } : undefined,
+        timeSlots: timeSlots
+          ? {
+              deleteMany: {},
+              create: timeSlots.map((timeslot) => ({
+                ...timeslot,
+                totalCapacity:
+                  storeData.totalCapacity ?? existingStore.totalCapacity,
+                availableSeats:
+                  storeData.totalCapacity ?? existingStore.totalCapacity,
+              })),
+            }
+          : undefined,
       },
     })
   }

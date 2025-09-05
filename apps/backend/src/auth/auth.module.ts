@@ -10,6 +10,7 @@ import { JwtStrategy } from '@auth/jwt.strategy'
 import { JwtAuthGuard } from '@auth/jwt.guard'
 import { OptionalJwtAuthGuard } from '@auth/optional-jwt.guard'
 import { AdminGuard } from '@auth/admin.guard'
+import { OwnerGuard } from './owner.guard'
 
 @Module({
   imports: [
@@ -32,8 +33,9 @@ import { AdminGuard } from '@auth/admin.guard'
     JwtAuthGuard,
     OptionalJwtAuthGuard,
     AdminGuard,
+    OwnerGuard,
   ],
   controllers: [AuthController],
-  exports: [JwtAuthGuard, OptionalJwtAuthGuard, AdminGuard],
+  exports: [JwtAuthGuard, OptionalJwtAuthGuard, AdminGuard, OwnerGuard],
 })
 export class AuthModule {}
