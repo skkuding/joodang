@@ -10,37 +10,16 @@ patch {
   auth: inherit
 }
 
+params:path {
+  storeId: 1
+}
+
 headers {
   Cookie: {{user1}}
 }
 
-params:path {
-  storeId: 3
-}
-
 body:json {
   {
-    "timeSlots": [
-      {
-        "startTime": "2026-01-02T18:00:00.000Z",
-        "endTime": "2026-01-02T20:00:00.000Z",
-        "totalCapacity": 18
-      },
-      {
-        "startTime": "2026-01-02T20:00:00.000Z",
-        "endTime": "2026-01-02T22:00:00.000Z",
-        "totalCapacity": 30
-      },
-      {
-        "startTime": "2026-01-03T18:00:00.000Z",
-        "endTime": "2026-01-03T20:00:00.000Z",
-        "totalCapacity": 30
-      },
-      {
-        "startTime": "2026-01-03T20:00:00.000Z",
-        "endTime": "2026-01-03T22:00:00.000Z",
-        "totalCapacity": 30
-      }
-    ]
+     "description": "고맙고, 행복하길 빌고, 많이 좋아했다 스꾸딩... 가볍게 즐길 수 있는 칵테일부터 시원한 맥주, 맛있는 안주까지 준비했어요. 친구랑 와도 좋고, 혼자 와도 환영하는 편안한 분위기의 주점입니다. 축제의 밤, 기분 좋은 술 한 잔이 필요하다면 꼭 들러주세요!"
   }
 }

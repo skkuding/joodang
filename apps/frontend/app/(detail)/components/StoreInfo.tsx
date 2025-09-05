@@ -64,8 +64,13 @@ export function StoreInfo({ store }: senderStoreSummaryProps) {
             <div className="bg-primary-normal h-1.5 w-1.5 rounded-full" />
             <span>주점 연락처</span>
           </div>
-          <Button onClick={handleCopyPhone} variant="ghost" size="sm">
-            <span>{store.phone}</span>
+          <Button
+            onClick={handleCopyPhone}
+            variant="ghost"
+            size="sm"
+            className="p-0"
+          >
+            <span className="text-sm font-normal">{store.phone}</span>
           </Button>
         </div>
         <div className="flex w-full justify-between">
