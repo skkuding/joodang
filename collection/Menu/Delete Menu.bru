@@ -1,0 +1,19 @@
+meta {
+  name: Delete Menu
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{baseUrl}}/menu/:id
+  body: none
+  auth: inherit
+}
+
+headers {
+  Cookie: {{user1}}
+}
+
+params:path {
+  id: 1
+}

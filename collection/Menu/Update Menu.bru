@@ -1,0 +1,26 @@
+meta {
+  name: Update Menu
+  type: http
+  seq: 3
+}
+
+patch {
+  url: {{baseUrl}}/menu/:id
+  body: json
+  auth: inherit
+}
+
+headers {
+  Cookie: {{user1}}
+}
+
+params:path {
+  id: 1
+}
+
+body:json {
+  {
+    "name": "감자탕 (대)",
+    "price": 15000
+  }
+}

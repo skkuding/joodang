@@ -1,0 +1,23 @@
+meta {
+  name: Get Menu Image Presigned URL
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/menu/image/presign
+  body: json
+  auth: inherit
+}
+
+headers {
+  Cookie: {{user1}}
+}
+
+body:json {
+  {
+    "storeId": 1,
+    "fileIdx": "1",
+    "contentType": "image/jpeg"
+  }
+}
