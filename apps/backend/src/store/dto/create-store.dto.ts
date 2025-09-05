@@ -61,6 +61,23 @@ export class CreateStoreDto {
   @IsNotEmpty()
   college: string
 
+  @Type(() => Number)
+  @IsInt()
+  @IsPositive()
+  ownerId: number
+
+  @IsString()
+  @IsNotEmpty()
+  bankCode: string
+
+  @IsString()
+  @IsNotEmpty()
+  accountNumber: string
+
+  @IsString()
+  @IsNotEmpty()
+  accountHolder: string
+
   @IsString()
   location: string
 

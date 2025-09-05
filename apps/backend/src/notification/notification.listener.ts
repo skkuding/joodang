@@ -10,4 +10,24 @@ export class NotificationListener {
   async handleComeToStore(payload: { reservationId: number }) {
     this.notificationService.notifyComeToStore(payload.reservationId)
   }
+
+  @OnEvent('reservation.confirmed')
+  async handleReservationConfirmed(payload: { reservationId: number }) {
+    this.notificationService.notifyReservationConfirmed(payload.reservationId)
+  }
+
+  @OnEvent('reservation.declined')
+  async handleReservationDeclined(payload: { reservationId: number }) {
+    this.notificationService.notifyReservationDeclined(payload.reservationId)
+  }
+
+  @OnEvent('owner.applied')
+  async handleOwnerApplied() {
+    this.notificationService.notifyOwnerApplied()
+  }
+
+  @OnEvent('owner.confirmed')
+  async handleOwnerConfirmed(payload: { userId: number }) {
+    this.notificationService.notifyOwnerConfirmed(payload.userId)
+  }
 }

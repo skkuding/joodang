@@ -1,0 +1,19 @@
+meta {
+  name: Confirm Owner Application
+  type: http
+  seq: 3
+}
+
+patch {
+  url: {{baseUrl}}/user/owner-application/:id/confirm
+  body: none
+  auth: inherit
+}
+
+headers {
+  Cookie: {{user1}}
+}
+
+params:path {
+  id: 1
+}

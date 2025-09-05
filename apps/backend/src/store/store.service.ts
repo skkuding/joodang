@@ -5,7 +5,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid'
 import { CreateStoreDto } from './dto/create-store.dto'
 import { UpdateStoreDto } from './dto/update-store.dto'
 import { PrismaService } from '@prisma/prisma.service'
@@ -323,12 +323,13 @@ export class StoreService {
         expiresAt: expiresAt,
       },
     })
-    
-    const frontendBase = this.config.get<string>('FRONTEND_BASE_URL') || 'http://localhost:3000'
+
+    const frontendBase =
+      this.config.get<string>('FRONTEND_BASE_URL') || 'http://localhost:3000'
     const url = new URL('/staff/invitation', frontendBase)
     url.searchParams.set('code', inviteCode)
     const invitationLink = url.toString()
-    
+
     return {
       message: '초대 링크가 생성되었습니다. 24시간 안에 수락해야 합니다.',
       invitationLink,
@@ -344,7 +345,7 @@ export class StoreService {
     if (!invitation) {
       throw new NotFoundException('유효하지 않은 초대 코드입니다.')
     }
-    
+
     if (new Date() > invitation.expiresAt) {
       await this.prisma.staffInvitation.delete({ where: { id: invitation.id } })
       throw new GoneException('초대 코드가 만료되었습니다.')
@@ -366,6 +367,31 @@ export class StoreService {
         storeId: storeId,
         role: Role.STAFF,
       },
+    })
+  }
+
+  async removeStaff(ownerId: number, storeId: number, userId: number) {
+    const ownerInfo = await this.prisma.storeStaff.findUnique({
+      where: { userId_storeId: { userId: ownerId, storeId } },
+    })
+    if (!ownerInfo || ownerInfo.role !== Role.OWNER) {
+      throw new ForbiddenException('스태프를 삭제할 권한이 없습니다.')
+    }
+    if (ownerId === userId) {
+      throw new ForbiddenException(
+        '본인을 스스로를 스태프에서 삭제할 수 없습니다. 주점 삭제 기능을 이용해주세요.',
+      )
+    }
+
+    const storeStaffToRemove = await this.prisma.storeStaff.findUnique({
+      where: { userId_storeId: { userId, storeId } },
+    })
+    if (!storeStaffToRemove) {
+      throw new NotFoundException('주점에서 해당 스태프를 찾을 수 없습니다.')
+    }
+
+    return this.prisma.storeStaff.delete({
+      where: { userId_storeId: { userId, storeId } },
     })
   }
 
