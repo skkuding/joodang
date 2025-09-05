@@ -44,3 +44,10 @@ export interface Menu {
 export interface MenuData {
   Bap: Menu[];
 }
+
+export interface filterVariables {
+  days: string[];
+  maxFee: number;
+  startTime: string;
+  endTime: string;
+}
