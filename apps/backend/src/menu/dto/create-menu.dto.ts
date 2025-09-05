@@ -10,7 +10,7 @@ export class CreateMenuDto {
 
   @IsOptional()
   @IsString()
-  photoUrl?: string
+  imageUrl?: string
 
   @IsInt()
   @Min(0)

@@ -13,6 +13,7 @@ model Store {
   description    String?
   college        String   @default("성균관대학교") // 추후 대학교 입력 필드 생길 예정
   organizer      String?
+  imageUrl       String   @default("https://joodang.com/store_image.png") @map("image_url")
   owner          User     @relation(fields: [ownerId], references: [id])
   ownerId        Int      @map("owner_id")
   icon           Int      @default(1)
@@ -55,7 +56,7 @@ enum MenuCategory {
 model Menu {
   id       Int          @id @default(autoincrement())
   name     String
-  photoUrl String?      @map("photo_url")
+  imageUrl String?      @map("image_url")
   price    Int
   category MenuCategory
 
