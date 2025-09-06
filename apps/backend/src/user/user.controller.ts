@@ -13,8 +13,8 @@ import {
 } from '@nestjs/common'
 import { UserService } from './user.service'
 import { ApplyOwnerDto } from './dto/apply-owner.dto'
-import { AdminGuard } from '@app/auth/admin.guard'
-import { JwtAuthGuard } from '@app/auth/jwt.guard'
+import { AdminGuard } from '@app/auth/guards/admin.guard'
+import { JwtAuthGuard } from '@app/auth/guards/jwt.guard'
 
 @Controller('user')
 export class UserController {

@@ -7,11 +7,12 @@ import { AuthController } from '@auth/auth.controller'
 import { PrismaModule } from '@prisma/prisma.module'
 import { AuthService } from '@auth/auth.service'
 import { JwtStrategy } from '@auth/jwt.strategy'
-import { JwtAuthGuard } from '@auth/jwt.guard'
-import { OptionalJwtAuthGuard } from '@auth/optional-jwt.guard'
-import { AdminGuard } from '@auth/admin.guard'
-import { OwnerGuard } from './owner.guard'
-import { StaffGuard } from './staff.guard'
+import { JwtAuthGuard } from '@app/auth/guards/jwt.guard'
+import { OptionalJwtAuthGuard } from '@app/auth/guards/optional-jwt.guard'
+import { AdminGuard } from '@app/auth/guards/admin.guard'
+import { OwnerGuard } from './guards/owner.guard'
+import { StaffGuard } from './guards/staff.guard'
+import { KakaoAuthGuard } from './guards/kakao.guard'
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { StaffGuard } from './staff.guard'
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         secret: config.get<string>('JWT_SECRET') || 'dev-secret',
-        signOptions: { expiresIn: '7d' },
+        signOptions: { expiresIn: '14d' },
       }),
     }),
     PrismaModule,
@@ -36,6 +37,7 @@ import { StaffGuard } from './staff.guard'
     AdminGuard,
     OwnerGuard,
     StaffGuard,
+    KakaoAuthGuard,
   ],
   controllers: [AuthController],
   exports: [

@@ -18,8 +18,8 @@ import {
   CreateWalkInReservationDto,
 } from './dto/create-reservation.dto'
 import type { Request } from 'express'
-import { JwtAuthGuard } from '@app/auth/jwt.guard'
-import { OptionalJwtAuthGuard } from '@app/auth/optional-jwt.guard'
+import { JwtAuthGuard } from '@app/auth/guards/jwt.guard'
+import { OptionalJwtAuthGuard } from '@app/auth/guards/optional-jwt.guard'
 
 @UseGuards(JwtAuthGuard)
 @Controller('reservation')
