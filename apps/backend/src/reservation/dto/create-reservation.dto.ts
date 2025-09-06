@@ -9,6 +9,9 @@ export class CreateReservationDto {
   @Min(1)
   storeId: number
 
+  @IsString()
+  phone: string
+
   @IsInt()
   @Min(1)
   timeSlotId: number
