@@ -18,7 +18,6 @@ export function AuthSheet() {
     const checkAuth = async () => {
       try {
         await safeFetcher.get("user/me/role").json();
-        console.log("Authenticated");
       } catch {
         setIsSheetOpen(true);
       }

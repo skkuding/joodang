@@ -87,3 +87,15 @@ export function formatToHHMM(isoString: string): string {
   const minutes = String(date.getMinutes()).padStart(2, "0");
   return `${hours}:${minutes}`;
 }
+
+// UTC 시간을 한국 시간 HH:MM 형태로 변환하는 함수
+export const formatTimeToKST = (utcTimeString: string) => {
+  const utcDate = new Date(utcTimeString);
+  // 한국 시간으로 변환 (UTC+9)
+  const kstDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000);
+  return kstDate.toLocaleTimeString("ko-KR", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+};
