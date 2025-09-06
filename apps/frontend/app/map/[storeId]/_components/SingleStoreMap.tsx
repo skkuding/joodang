@@ -3,6 +3,8 @@ import type { StoreDetail } from "@/app/type";
 import Image from "next/image";
 import Script from "next/script";
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { IoIosArrowBack } from "react-icons/io";
 
 declare global {
   interface Window {
@@ -16,6 +18,7 @@ interface SingleStoreMapProps {
 export default function SingleStoreMap({ store }: SingleStoreMapProps) {
   const mapRef = useRef<naver.maps.Map | null>(null);
   const [myMarker, setMyMarker] = useState<naver.maps.Marker | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (!window.naver) return;
@@ -30,7 +33,7 @@ export default function SingleStoreMap({ store }: SingleStoreMapProps) {
     mapRef.current = map;
 
     // 가게 위치 마커
-    new window.naver.maps.Marker({
+    const storeMarker = new window.naver.maps.Marker({
       position: new window.naver.maps.LatLng(store.latitude, store.longitude),
       map,
       icon: {
@@ -46,6 +49,12 @@ export default function SingleStoreMap({ store }: SingleStoreMapProps) {
                     />
                   </div>`,
       },
+    });
+    window.naver.maps.Event.addListener(storeMarker, "click", () => {
+      map.setZoom(17);
+      map.setCenter(
+        new window.naver.maps.LatLng(store.latitude, store.longitude)
+      );
     });
     const storeLatLng = new window.naver.maps.LatLng(
       store.latitude,
@@ -140,6 +149,12 @@ export default function SingleStoreMap({ store }: SingleStoreMapProps) {
       <div className="relative mt-[-48px] h-screen w-screen">
         {/* 지도 */}
         <div className="h-full w-full" id="map" />
+        <IoIosArrowBack
+          className="absolute left-5 top-11 h-6 w-6 text-white"
+          onClick={() => {
+            router.back();
+          }}
+        />
 
         {/* 내 위치 버튼 */}
         <button
