@@ -403,14 +403,6 @@ export class StoreService {
       throw new ConflictException('이미 해당 가게의 스태프입니다.')
     }
 
-    return this.prisma.storeStaff.create({
-      data: {
-        userId: userId,
-        storeId: storeId,
-        role: Role.STAFF,
-      },
-    })
-
     return await this.prisma.$transaction(async (tx) => {
       const newStoreStaff = await tx.storeStaff.create({
         data: {
@@ -454,11 +446,13 @@ export class StoreService {
       throw new NotFoundException('주점에서 해당 스태프를 찾을 수 없습니다.')
     }
 
-    await this.updateUserRoleAfterRemove(userId)
-
-    return this.prisma.storeStaff.delete({
+    const deletedStaff = await this.prisma.storeStaff.delete({
       where: { userId_storeId: { userId, storeId } },
     })
+
+    await this.updateUserRoleAfterRemove(userId)
+
+    return deletedStaff
   }
 
   /**
@@ -481,7 +475,7 @@ export class StoreService {
     })
 
     let newRole: Role = Role.USER
-
+    console.log(remainingStaffRoles + "+++" + remainingStaffRoles.length)
     if (remainingStaffRoles.length > 0) {
       if (remainingStaffRoles.some((r) => r.role === Role.OWNER)) {
         newRole = Role.OWNER
