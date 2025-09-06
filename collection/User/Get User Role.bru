@@ -1,0 +1,19 @@
+meta {
+  name: Get User Role
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/user/me/role
+  body: none
+  auth: inherit
+}
+
+params:query {
+  ~isConfirmed: true
+}
+
+headers {
+  Cookie: {{user1}}
+}

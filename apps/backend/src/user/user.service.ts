@@ -15,6 +15,13 @@ export class UserService {
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
+  async getUserRole(userId: number) {
+    return await this.prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: { role: true },
+    })
+  }
+
   async applyForOwner(userId: number, applyOwnerDto: ApplyOwnerDto) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },

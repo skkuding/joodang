@@ -20,6 +20,12 @@ import { JwtAuthGuard } from '@app/auth/jwt.guard'
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Get('me/role')
+  @UseGuards(JwtAuthGuard)
+  async getUserRole(@Req() req) {
+    return this.userService.getUserRole(req.user.id)
+  }
+
   @Get('owner-application')
   @UseGuards(AdminGuard)
   async getOwnerApplications(
