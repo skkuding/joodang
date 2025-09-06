@@ -61,7 +61,7 @@ export function StoreDrawer({ store }: StoreDrawerProps) {
 
             <div className="flex items-center gap-2">
               <Image
-                src="/icons/icon_time.svg"
+                src="/icons/icon_orange_clock.svg"
                 alt="Operating Hours"
                 width={16}
                 height={16}
@@ -74,7 +74,7 @@ export function StoreDrawer({ store }: StoreDrawerProps) {
 
             <div className="flex items-center gap-2">
               <Image
-                src="/icons/icon_ticket.svg"
+                src="/icons/orangemoney.svg"
                 alt="Entrance Fee"
                 width={16}
                 height={16}
