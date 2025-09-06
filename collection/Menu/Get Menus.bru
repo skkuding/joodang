@@ -1,7 +1,7 @@
 meta {
   name: Get Menus
   type: http
-  seq: 1
+  seq: 2
 }
 
 get {
@@ -14,10 +14,10 @@ params:query {
   storeId: 1
 }
 
-settings {
-  encodeUrl: true
-}
-
 headers {
   Cookie: {{user1}}
+}
+
+settings {
+  encodeUrl: true
 }

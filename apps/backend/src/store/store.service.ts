@@ -18,6 +18,7 @@ import {
   DeleteObjectsCommand,
 } from '@aws-sdk/client-s3'
 import { createPresignedPost } from '@aws-sdk/s3-presigned-post'
+import { UploadStoreImageDto } from './dto/upload-store-image.dto'
 
 export type StoreSortFilter = 'popular' | 'fee' | 'seats'
 
@@ -427,8 +428,7 @@ export class StoreService {
   async createStoreImagePresign(
     userId: number,
     storeId: number,
-    fileIdx: string,
-    contentType: string,
+    uploadStoreImageDto: UploadStoreImageDto,
   ) {
     const staffInfo = await this.prisma.storeStaff.findUnique({
       where: { userId_storeId: { userId, storeId } },
@@ -438,6 +438,8 @@ export class StoreService {
     if (!staffInfo) {
       throw new ForbiddenException('가게에 대한 업로드 권한이 없습니다.')
     }
+
+    const { fileIdx, contentType } = uploadStoreImageDto
 
     const extensionMap: Record<string, string> = {
       'image/png': 'png',

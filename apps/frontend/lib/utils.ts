@@ -33,11 +33,16 @@ export const dateFormatter = (date: string | Date, format: string) => {
   ).format(format);
 };
 
-export function formatWithComma(num: number): string {
+/**
+ *
+ * @param num
+ * @returns 세 자리마다 ,를 찍어서 반환합니다. ex) 15000 -> 15,000
+ */
+export const formatWithComma = (num: number): string => {
   return num.toLocaleString();
-}
+};
 
-export function formatDateWithDay(date: string | Date): string {
+export const formatDateWithDay = (date: string | Date): string => {
   const dayNames = ["일", "월", "화", "수", "목", "금", "토"];
   const dateObj = new Date(date);
   const year = dateObj.getFullYear();
@@ -46,4 +51,38 @@ export function formatDateWithDay(date: string | Date): string {
   const dayOfWeek = dayNames[dateObj.getDay()];
 
   return `${year}. ${month}. ${day} (${dayOfWeek})`;
+};
+
+export const getDateRange = (start: string, end: string) => {
+  const startDate = dayjs(start);
+  const endDate = dayjs(end);
+  const dates: string[] = [];
+  let current = startDate;
+  while (current.isBefore(endDate) || current.isSame(endDate, "day")) {
+    dates.push(
+      current
+        .format("YYYY년 MM월 DD일 (dd)")
+        .replace("(Su)", "(일)")
+        .replace("(Mo)", "(월)")
+        .replace("(Tu)", "(화)")
+        .replace("(We)", "(수)")
+        .replace("(Th)", "(목)")
+        .replace("(Fr)", "(금)")
+        .replace("(Sa)", "(토)")
+    );
+    current = current.add(1, "day");
+  }
+  return dates;
+};
+
+/**
+ *
+ * @param isoString
+ * @returns isoString에서 HH:MM을 추출합니다.
+ */
+export function formatToHHMM(isoString: string): string {
+  const date = new Date(isoString);
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  return `${hours}:${minutes}`;
 }

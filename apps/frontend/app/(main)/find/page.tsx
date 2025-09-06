@@ -1,23 +1,47 @@
 "use client";
 
+import { filterVariables, Store } from "@/app/type";
+import { formatWithComma, safeFetcher } from "@/lib/utils";
 import locationIcon from "@/public/icons/icon_location.svg";
 import OrangeDot from "@/public/icons/orange_dot.svg";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BarCard from "./components/BarCard";
-import FilterSetting from "./components/FilterSetting";
+import FilterSheet from "./components/FilterSetting";
+
+// alert! 시간 값을 보내줄 때는 UTC로 보내줘야합니다.
 
 export default function BarPage() {
-  const arr = [1, 2, 3];
-  const [isFilterSet, SetIsFilterSet] = useState(false);
-  const [selOrder, SetSelOrder] = useState("popular");
+  const [isFilterSet, setIsFilterSet] = useState<boolean>(false);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [filterValue, setFilterValue] = useState<filterVariables>({
+    days: [""],
+    maxFee: 15000,
+    startTime: "00:00",
+    endTime: "00:00",
+  });
 
-  const [open, setOpen] = useState(false);
+  const [selOrder, SetSelOrder] = useState("popular");
+  const [stores, setStores] = useState<Store[]>([]);
+
+  useEffect(() => {
+    async function fetchStores() {
+      const stores: Store[] = await safeFetcher("store").json();
+      setStores(stores);
+    }
+    fetchStores();
+  }, []);
 
   return (
     <div>
       <div className="mt-[48px] p-5">
-        <FilterSetting open={open} onClose={() => setOpen(false)} />
+        <FilterSheet
+          open={filterOpen}
+          onClose={() => setFilterOpen(false)}
+          filterValue={filterValue}
+          setFilterValue={setFilterValue}
+          setIsFilterSet={setIsFilterSet}
+        />
         <div>
           <Image src={locationIcon} alt="주황위치" width={24} height={24} />
           <div className="flex flex-row justify-between">
@@ -54,12 +78,12 @@ export default function BarPage() {
                 최대 입장료
               </p>
               {!isFilterSet ? (
-                <p className="text-color-neutral-70 ml-auto font-sans text-base font-medium not-italic leading-[140%] tracking-[-0.48px]">
-                  10 원
+                <p className="text-color-neutral-70 ml-auto font-sans text-base font-normal not-italic leading-[140%] tracking-[-0.48px]">
+                  0 원
                 </p>
               ) : (
-                <p className="text-color-common-0 ml-auto font-sans text-base font-medium not-italic leading-[140%] tracking-[-0.48px]">
-                  10 원
+                <p className="text-color-common-0 ml-auto font-['Pretendard'] text-base font-normal leading-normal">
+                  {formatWithComma(filterValue.maxFee)} 원
                 </p>
               )}
             </div>
@@ -75,12 +99,12 @@ export default function BarPage() {
                 시간대
               </p>
               {!isFilterSet ? (
-                <p className="text-color-neutral-70 ml-auto font-sans text-base font-medium not-italic leading-[140%] tracking-[-0.48px]">
+                <p className="text-color-neutral-70 ml-auto font-sans text-base font-normal not-italic leading-[140%] tracking-[-0.48px]">
                   00:00 ~ 00:00
                 </p>
               ) : (
-                <p className="text-color-common-0 ml-auto font-sans text-base font-medium not-italic leading-[140%] tracking-[-0.48px]">
-                  00:00 ~ 00:00
+                <p className="text-color-common-0 ml-auto font-['Pretendard'] text-base font-normal leading-normal">
+                  {filterValue.startTime} ~ {filterValue.endTime}
                 </p>
               )}
             </div>
@@ -89,7 +113,7 @@ export default function BarPage() {
             <p
               className="font-sans text-[14px] font-medium leading-[140%] tracking-[-0.42px]"
               onClick={() => {
-                setOpen(true);
+                setFilterOpen(true);
                 return;
               }}
             >
@@ -166,11 +190,20 @@ export default function BarPage() {
             )}
           </div>
           <div className="flex flex-col items-center gap-2">
-            {arr.map((item, idx) => (
-              <div key={idx}>
-                <BarCard />
-              </div>
-            ))}
+            {stores.map((item, idx) => {
+              return (
+                <BarCard
+                  key={idx}
+                  id={item.id}
+                  organizer={item.organizer}
+                  name={item.name}
+                  location={item.location}
+                  startTime={item.startTime}
+                  endTime={item.endTime}
+                  reservationFee={item.reservationFee}
+                />
+              );
+            })}
           </div>
         </div>
       </div>

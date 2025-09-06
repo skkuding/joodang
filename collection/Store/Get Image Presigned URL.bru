@@ -5,22 +5,24 @@ meta {
 }
 
 post {
-  url: {{baseUrl}}/store/:id/image/presign?fileIdx=1&contentType=image/jpeg
-  body: none
+  url: {{baseUrl}}/store/:id/image/presign
+  body: json
   auth: none
+}
+
+params:path {
+  id: 1
 }
 
 headers {
   Cookie: {{user1}}
 }
 
-params:query {
-  fileIdx: 1
-  contentType: image/jpeg
-}
-
-params:path {
-  id: 1
+body:json {
+  {
+    "contentType":"image/jpeg",
+    "fileIdx":"1"
+  }
 }
 
 settings {

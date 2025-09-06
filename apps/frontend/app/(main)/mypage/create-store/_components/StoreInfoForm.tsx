@@ -1,120 +1,357 @@
-"use client"
+"use client";
 
-import { useCreateStoreStore } from "@/app/stores/createStore"
-import { useCallback } from "react"
+import { useCreateStoreStore } from "@/app/stores/createStore";
+import { useForm } from "react-hook-form";
+import { valibotResolver } from "@hookform/resolvers/valibot";
+import * as v from "valibot";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import {
+  PawIcon,
+  HeartIcon,
+  NoodleIcon,
+  LeafIcon,
+  DumbbellIcon,
+  BagIcon,
+  MonitorIcon,
+  HospitalIcon,
+  HouseIcon,
+  KeyIcon,
+} from "./StoreIcons";
+import PlusIcon from "@/public/icons/icon_plus.svg";
+import MinusIcon from "@/public/icons/icon_minus.svg";
+import { cn } from "@/lib/utils";
+import Image from "next/image";
+import { BankCodes } from "@/constant";
+import { Check } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { useState } from "react";
+import Arrow from "@/public/icons/icon_arrow.svg";
+
+const Icons = [
+  PawIcon,
+  HeartIcon,
+  NoodleIcon,
+  LeafIcon,
+  DumbbellIcon,
+  BagIcon,
+  MonitorIcon,
+  HospitalIcon,
+  HouseIcon,
+  KeyIcon,
+];
+
+const storeFormSchema = v.object({
+  name: v.pipe(v.string(), v.minLength(1, "주점명을 입력해주세요")),
+  description: v.pipe(v.string(), v.minLength(1, "상세 설명을 입력해주세요")),
+  icon: v.pipe(v.number(), v.minValue(0, "아이콘을 선택해주세요")),
+  totalCapacity: v.pipe(
+    v.number(),
+    v.minValue(1, "총 좌석은 1개 이상이어야 합니다")
+  ),
+  bankCode: v.pipe(v.string(), v.minLength(1, "은행을 선택해주세요")),
+  accountNumber: v.pipe(
+    v.string(),
+    v.minLength(1, "계좌번호를 입력해주세요"),
+    v.regex(/^\d+$/, "숫자만 입력 가능합니다")
+  ),
+  accountHolder: v.pipe(v.string(), v.minLength(1, "예금주명을 입력해주세요")),
+  contactInfo: v.pipe(v.string(), v.minLength(1, "연락 수단을 입력해주세요")),
+});
+
+type StoreFormData = {
+  name: string;
+  description: string;
+  icon: number;
+  totalCapacity: number;
+  bankCode: string;
+  accountNumber: string;
+  accountHolder: string;
+  contactInfo: string;
+};
 
 export default function StoreInfoForm() {
-  const { formData, setFormData, nextModal } = useCreateStoreStore((state) => state)
+  const { formData, setFormData, nextModal } = useCreateStoreStore(
+    state => state
+  );
+  const [open, setOpen] = useState(false);
 
-  const handleChange = useCallback(
-    (field: keyof typeof formData, value: string) => {
-      setFormData({
-        ...formData,
-        [field]: value,
-      })
+  const form = useForm<StoreFormData>({
+    resolver: valibotResolver(storeFormSchema),
+    defaultValues: {
+      name: formData.name,
+      description: formData.description,
+      icon: formData.icon,
+      totalCapacity: formData.totalCapacity,
+      bankCode: formData.bankCode,
+      accountNumber: formData.accountNumber,
+      accountHolder: formData.accountHolder,
+      contactInfo: formData.contactInfo,
     },
-    [formData, setFormData]
-  )
+  });
 
-  const canProceed =
-    formData.name.trim().length > 0 &&
-    formData.description.trim().length > 0 &&
-    formData.phone.trim().length > 0 &&
-    formData.accountNumber.trim().length > 0 &&
-    formData.accountHolder.trim().length > 0
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors, isValid },
+  } = form;
+
+  const onSubmit = (data: StoreFormData) => {
+    setFormData({ ...formData, ...data });
+    nextModal();
+  };
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-2">
-        <div>1단계</div>
-        <div>주점 정보를 입력해주세요</div>
-      </div>
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <div className="rounded-full bg-primary-normal w-1.5 h-1.5" />
-          <label className="block text-sm font-medium">주점명</label>
-        </div>
-        <input
-          type="text"
-          className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
-          placeholder="주점명을 입력하세요"
-          value={formData.name}
-          onChange={(e) => handleChange("name", e.target.value)}
-        />
-      </div>
-
-      <div className="space-y-2">
-        <label className="block text-sm font-medium">상세 설명</label>
-        <textarea
-          rows={4}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
-          placeholder="주점 소개, 운영 안내 등을 적어주세요."
-          value={formData.description}
-          onChange={(e) => handleChange("description", e.target.value)}
-        />
-      </div>
-
-      <div className="space-y-2">
-        <label className="block text-sm font-medium">전화번호</label>
-        <input
-          type="tel"
-          inputMode="tel"
-          className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
-          placeholder="예) 010-1234-5678"
-          value={formData.phone}
-          onChange={(e) => handleChange("phone", e.target.value)}
-        />
-      </div>
-
-      <div className="space-y-3">
-        <div className="text-sm font-medium">입금받을 계좌</div>
-        <div className="grid grid-cols-1 gap-3">
-          <div className="space-y-2">
-            <label className="block text-xs text-gray-600">은행</label>
-            <input
-              type="text"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
-              placeholder="예) 국민, 신한 등"
-              value={formData.bankCode}
-              onChange={(e) => handleChange("bankCode", e.target.value)}
-            />
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <div className="text-primary-normal mb-[2px] text-xs">1단계</div>
+      <div className="mb-10 text-xl font-medium">주점 정보를 입력해주세요</div>
+      <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <div className="bg-primary-normal h-1.5 w-1.5 rounded-full" />
+            <label className="font-medium">주점명</label>
           </div>
-          <div className="space-y-2">
-            <label className="block text-xs text-gray-600">계좌번호</label>
+          <div>
             <input
               type="text"
-              inputMode="numeric"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
-              placeholder="숫자만 입력"
-              value={formData.accountNumber}
-              onChange={(e) => handleChange("accountNumber", e.target.value)}
+              className="placeholder-color-neutral-90 w-full rounded-md border px-4 py-[14px] text-sm"
+              placeholder="주점명을 입력하세요"
+              {...register("name")}
+              maxLength={20}
             />
-          </div>
-          <div className="space-y-2">
-            <label className="block text-xs text-gray-600">예금주</label>
-            <input
-              type="text"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
-              placeholder="예금주명을 입력"
-              value={formData.accountHolder}
-              onChange={(e) => handleChange("accountHolder", e.target.value)}
-            />
+            {errors.name && (
+              <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>
+            )}
           </div>
         </div>
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <div className="bg-primary-normal h-1.5 w-1.5 rounded-full" />
+            <label className="font-medium">상세 설명</label>
+          </div>
+          <div className="relative">
+            <textarea
+              className="placeholder-color-neutral-90 h-[118px] w-full resize-none rounded-md border px-4 py-[14px] text-sm"
+              placeholder="상세 설명을 입력하세요"
+              {...register("description")}
+              maxLength={200}
+            />
+            <div className="text-color-neutral-60 absolute bottom-[14px] right-4 text-xs">
+              {watch("description")?.length || 0}/200
+            </div>
+            {errors.description && (
+              <p className="mt-1 text-xs text-red-500">
+                {errors.description.message}
+              </p>
+            )}
+          </div>
+        </div>
+        <div className="flex flex-col gap-2">
+          <div>
+            <div className="flex items-center gap-2">
+              <div className="bg-primary-normal h-1.5 w-1.5 rounded-full" />
+              <label className="font-medium">아이콘 선택</label>
+            </div>
+            <div className="text-color-neutral-50 text-xs">
+              주점을 대표하는 아이콘을 선택해주세요!
+            </div>
+          </div>
+          <ScrollArea>
+            <div className="flex gap-2">
+              {Icons.map((Icon, index) => (
+                <div
+                  key={index}
+                  className={cn(
+                    "flex h-[74px] w-[74px] items-center justify-center rounded-lg border transition-colors",
+                    watch("icon") === index
+                      ? "border-primary-normal bg-primary-normal"
+                      : "border-color-neutral-95 bg-white"
+                  )}
+                  onClick={() => setValue("icon", index)}
+                >
+                  <Icon
+                    strokeColor={watch("icon") === index ? "white" : "#FF5940"}
+                  />
+                </div>
+              ))}
+            </div>
+            <ScrollBar orientation="horizontal" className="hidden" />
+          </ScrollArea>
+        </div>
+        <div className="flex justify-between">
+          <div className="flex items-center gap-2">
+            <div className="bg-primary-normal h-1.5 w-1.5 rounded-full" />
+            <label className="font-medium">총 좌석</label>
+          </div>
+          <div className="flex items-center gap-[14px]">
+            <button
+              type="button"
+              className="rounded-xs border-color-neutral-95 flex h-[38px] w-[38px] items-center justify-center border"
+              onClick={() => {
+                const currentValue = watch("totalCapacity");
+                if (currentValue > 0) {
+                  setValue("totalCapacity", currentValue - 1);
+                }
+              }}
+            >
+              <Image src={MinusIcon} alt="minus" width={24} height={24} />
+            </button>
+            <span className="min-w-6 text-center font-medium">
+              {watch("totalCapacity")}
+            </span>
+            <button
+              type="button"
+              className="rounded-xs border-color-neutral-95 flex h-[38px] w-[38px] items-center justify-center border"
+              onClick={() => {
+                const currentValue = watch("totalCapacity");
+                setValue("totalCapacity", currentValue + 1);
+              }}
+            >
+              <Image src={PlusIcon} alt="plus" width={24} height={24} />
+            </button>
+          </div>
+        </div>
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <div className="bg-primary-normal h-1.5 w-1.5 rounded-full" />
+            <label className="font-medium">입금받을 계좌</label>
+          </div>
+          <div className="grid grid-cols-1 gap-2">
+            <div className="flex gap-2">
+              <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={open}
+                    className={cn(
+                      "border-color-neutral-95 flex-1 justify-between border text-sm font-normal",
+                      !watch("bankCode") && "text-color-neutral-90"
+                    )}
+                  >
+                    {watch("bankCode")
+                      ? BankCodes[watch("bankCode")]
+                      : "은행을 선택하세요"}
+                    <Image src={Arrow} alt="arrow" className="rotate-90" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="h-80 w-60">
+                  <Command>
+                    <CommandInput placeholder="은행을 검색하세요..." />
+                    <CommandEmpty>은행을 찾을 수 없습니다.</CommandEmpty>
+                    <ScrollArea className="h-64">
+                      <CommandGroup>
+                        {Object.entries(BankCodes).map(([code, name]) => (
+                          <CommandItem
+                            key={code}
+                            value={name}
+                            onSelect={() => {
+                              setValue("bankCode", code);
+                              setOpen(false);
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                watch("bankCode") === code
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                            {name}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </ScrollArea>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              <div>
+                <input
+                  type="text"
+                  className="placeholder-color-neutral-90 w-[140px] rounded-md border px-4 py-[14px] text-sm"
+                  placeholder="예금주명"
+                  {...register("accountHolder")}
+                  maxLength={4}
+                />
+                {errors.accountHolder && (
+                  <p className="mt-1 text-xs text-red-500">
+                    {errors.accountHolder.message}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div>
+              <input
+                type="text"
+                inputMode="numeric"
+                className="placeholder-color-neutral-90 w-full rounded-md border px-4 py-[14px] text-sm"
+                placeholder="계좌번호를 입력하세요"
+                {...register("accountNumber", {
+                  onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                    const numericValue = e.target.value.replace(/[^0-9]/g, "");
+                    setValue("accountNumber", numericValue);
+                  },
+                })}
+                maxLength={14}
+              />
+              {errors.accountNumber && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.accountNumber.message}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <div className="bg-primary-normal h-1.5 w-1.5 rounded-full" />
+            <label className="font-medium">연락 수단</label>
+          </div>
+          <div>
+            <input
+              type="text"
+              className="placeholder-color-neutral-90 w-full rounded-md border px-4 py-[14px] text-sm"
+              placeholder="전화번호 또는 SNS 주소를 입력하세요"
+              {...register("contactInfo")}
+              maxLength={20}
+            />
+            {errors.contactInfo && (
+              <p className="mt-1 text-xs text-red-500">
+                {errors.contactInfo.message}
+              </p>
+            )}
+          </div>
+        </div>
       </div>
 
-      <div className="pt-2">
+      <div className="fixed bottom-0 left-0 right-0 z-20 flex h-[84px] bg-white px-5 py-4">
         <button
-          type="button"
-          className="w-full rounded-md bg-black px-4 py-2 text-white disabled:opacity-40"
-          onClick={nextModal}
-          disabled={!canProceed}
+          type="submit"
+          className={cn(
+            "w-full rounded-md",
+            isValid
+              ? "bg-primary-normal text-white"
+              : "bg-color-neutral-95 text-color-neutral-70"
+          )}
+          disabled={!isValid}
         >
           다음
         </button>
       </div>
-    </div>
-  )
+    </form>
+  );
 }
-
-
