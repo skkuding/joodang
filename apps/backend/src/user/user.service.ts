@@ -40,6 +40,7 @@ export class UserService {
       data: {
         userId,
         phone: applyOwnerDto.phone,
+        organizer: applyOwnerDto.organizer,
       },
     })
 

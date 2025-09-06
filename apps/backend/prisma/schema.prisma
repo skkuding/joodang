@@ -103,6 +103,7 @@ model OwnerApplication {
   userId      Int      @map("user_id")
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   phone       String
+  organizer   String   
   isConfirmed Boolean  @default(false) @map("is_confirmed")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")

@@ -5,4 +5,8 @@ export class ApplyOwnerDto {
   @IsNotEmpty()
   @Length(8, 15)
   phone: string
+
+  @IsString()
+  @IsNotEmpty()
+  organizer: string
 }
