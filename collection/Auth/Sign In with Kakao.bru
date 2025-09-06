@@ -1,0 +1,15 @@
+meta {
+  name: Sign In with Kakao
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/auth/kakao/?returnTo=/find
+  body: none
+  auth: none
+}
+
+params:query {
+  returnTo: /find
+}
