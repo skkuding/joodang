@@ -16,7 +16,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/ui/dropdown-menu";
-import { Separator } from "@radix-ui/react-dropdown-menu";
+
+import { Separator } from "@/app/(main)/components/Separator";
 import Link from "next/dist/client/link";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -29,6 +30,7 @@ export default function Page() {
 
   const [count, setCount] = useState(0);
   const [store, setStore] = useState<StoreDetail | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   useEffect(() => {
     const fetchStore = async () => {
@@ -69,9 +71,10 @@ export default function Page() {
               .map(date => (
                 <Button
                   key={date.id}
-                  variant="outline"
+                  variant={selectedDate === date ? "selected" : "outline"}
                   className="h-[37px]"
                   disabled={date.availableSeats === 0}
+                  onClick={() => setSelectedDate(date)}
                 >
                   <span className="text-sm font-normal">
                     {formatDateWithDay(date.startTime)}
@@ -145,13 +148,13 @@ export default function Page() {
   }
 
   return (
-    <div className="w-full">
+    <form className="w-full">
       <AuthSheet />
       <div className="h-4" />
       <StoreInfo store={store} />
       <Separator />
       <ReservationForm />
       <SubmitButton />
-    </div>
+    </form>
   );
 }
