@@ -384,7 +384,6 @@ export class StoreService {
       where: { userId_storeId: { userId, storeId } },
     })
     if (existingStaff) {
-      await this.prisma.staffInvitation.delete({ where: { id: invitation.id } })
       throw new ConflictException('이미 해당 가게의 스태프입니다.')
     }
 
