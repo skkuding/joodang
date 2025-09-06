@@ -10,6 +10,7 @@ async function main() {
       college: '성균관대학교',
       major: '소프트웨어학과',
       name: '성민규',
+      role: Role.OWNER,
     },
   })
 
@@ -273,6 +274,7 @@ async function main() {
       data: {
         reservationNum: 1,
         headcount: 2,
+        phone: '12345678',
         userId: user2.id,
         storeId: store1.id,
         timeSlotId: store1Slots[0].id,
@@ -287,6 +289,7 @@ async function main() {
       data: {
         reservationNum: 2,
         headcount: 3,
+        phone: '12345678',
         userId: user3.id,
         storeId: store1.id,
         timeSlotId: store1Slots[0].id,
@@ -301,6 +304,7 @@ async function main() {
       data: {
         reservationNum: 3,
         headcount: 2,
+        phone: '12345678',
         userId: user4.id,
         storeId: store1.id,
         timeSlotId: store1Slots[0].id,
@@ -315,6 +319,7 @@ async function main() {
       data: {
         reservationNum: 4,
         headcount: 3,
+        phone: '12345678',
         userId: user5.id,
         storeId: store1.id,
         timeSlotId: store1Slots[0].id,
@@ -331,6 +336,7 @@ async function main() {
       data: {
         reservationNum: 1,
         headcount: 2,
+        phone: '12345678',
         userId: user2.id,
         storeId: store2.id,
         timeSlotId: store2Slots[0].id,
@@ -345,6 +351,7 @@ async function main() {
       data: {
         reservationNum: 2,
         headcount: 4,
+        phone: '12345678',
         userId: user3.id,
         storeId: store2.id,
         timeSlotId: store2Slots[0].id,
@@ -359,6 +366,7 @@ async function main() {
       data: {
         reservationNum: 3,
         headcount: 2,
+        phone: '12345678',
         userId: user4.id,
         storeId: store2.id,
         timeSlotId: store2Slots[0].id,
@@ -373,6 +381,7 @@ async function main() {
       data: {
         reservationNum: 4,
         headcount: 4,
+        phone: '12345678',
         userId: user5.id,
         storeId: store2.id,
         timeSlotId: store2Slots[0].id,

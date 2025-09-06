@@ -11,14 +11,15 @@ post {
 }
 
 headers {
-  Cookie: {{user1}}
+  Cookie: {{user2}}
 }
 
 body:json {
   {
     "headcount": 2,
     "storeId": 1,
-    "timeSlotId": 1,
+    "timeSlotId": 2,
+    "phone": "01099321234",
     "menuIds": [1, 2]
   }
 }
