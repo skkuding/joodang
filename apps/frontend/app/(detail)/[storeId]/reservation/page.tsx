@@ -1,12 +1,21 @@
 "use client";
-import { Separator } from "@/app/(main)/components/Separator";
 import { FormSection } from "@/app/components/FormSection";
 import { StoreDetail } from "@/app/type";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { formatDateWithDay, safeFetcher } from "@/lib/utils";
+import kakaoIcon from "@/public/icons/icon_kakao.svg";
 import minusIcon from "@/public/icons/icon_minus.svg";
 import plusIcon from "@/public/icons/icon_plus.svg";
+import logoSymbol from "@/public/logo_symbol.svg";
+import logoText from "@/public/logo_text.svg";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,7 +27,6 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
-import { StoreInfo } from "../../components/StoreInfo";
 
 export default function Page() {
   const { storeId } = useParams();
@@ -139,12 +147,39 @@ export default function Page() {
     return;
   }
   return (
-    <div>
-      <div className="h-4" />
+    <div className="w-full">
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button variant="outline">Open</Button>
+        </SheetTrigger>
+        <SheetContent side="bottom" className="h-5/6 rounded-t-2xl">
+          <SheetHeader>
+            <SheetTitle className="hidden" />
+          </SheetHeader>
+          <div className="flex h-full flex-col items-center justify-center px-5">
+            <div className="mb-4 flex gap-[5.54px]">
+              <Image src={logoSymbol} alt="Logo Symbol" />
+              <Image src={logoText} alt="Logo Text" />
+            </div>
+            <p className="mb-10 text-center">
+              간편하게 로그인하고 <br />
+              다양한 서비스를 이용해보세요
+            </p>
+            <Button
+              className="h-[55px] w-full rounded bg-[#fee500] text-black"
+              onClick={() => (window.location.href = "/api/auth/kakao")}
+            >
+              <Image src={kakaoIcon} alt="Kakao Icon" />
+              <span>카카오 로그인/회원가입</span>
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
+      {/* <div className="h-4" />
       <StoreInfo store={store} />
       <Separator />
       <ReservationForm />
-      <SubmitButton />
+      <SubmitButton /> */}
     </div>
   );
 }
