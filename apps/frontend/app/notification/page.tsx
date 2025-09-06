@@ -41,8 +41,14 @@ export default async function NotificationPage() {
                 </h2>
               </div>
               <Link href={item.url} passHref>
-                <button className="text-xs text-gray-500 hover:underline">
-                  <p>내 예약 보기</p>
+                <button className="flex text-xs text-gray-500 hover:underline">
+                  <p>내 예약 보기 </p>
+                  <Image
+                    src="/icons/icon_arrow.svg"
+                    alt=">"
+                    width={14}
+                    height={14}
+                  />
                 </button>
               </Link>
             </div>

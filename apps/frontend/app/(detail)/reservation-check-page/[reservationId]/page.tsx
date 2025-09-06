@@ -9,6 +9,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { DetailHeader } from "../../../components/DetailHeader";
+import Link from "next/link";
 
 export default function ReservationDetail() {
   const router = useRouter();
@@ -160,15 +161,22 @@ export default function ReservationDetail() {
             </div>
           </div>
         </div> */}
-        <div className="mb-[40px] mt-[60px]">
-          <button
-            className="h-11 w-full rounded-xl bg-[#FF5940] text-sm font-medium text-white"
-            onClick={() => {
-              router.back();
-            }}
-          >
-            예약 취소
-          </button>
+        <div className="flex flex-col">
+          <Link href={"/map/1"} className="mt-2">
+            <button className="h-11 w-full rounded-xl border border-[#FF5940] bg-white text-sm font-medium text-[#FF5940]">
+              위치 안내
+            </button>
+          </Link>
+          <div className="mb-[40px] mt-[60px]">
+            <button
+              className="h-11 w-full rounded-xl bg-[#FF5940] text-sm font-medium text-white"
+              onClick={() => {
+                router.back();
+              }}
+            >
+              예약 취소
+            </button>
+          </div>
         </div>
       </div>
     </div>
