@@ -195,26 +195,40 @@ export class StoreService {
       { startTime: timeSlots[0].startTime, endTime: timeSlots[0].endTime },
     )
 
-    return await this.prisma.store.create({
-      data: {
-        ...storeData,
-        ownerId: userId,
-        startTime: storeOperatingHours.startTime,
-        endTime: storeOperatingHours.endTime,
-        timeSlots: {
-          create: timeSlots.map((timeslot) => ({
-            ...timeslot,
-            totalCapacity: createStoreDto.totalCapacity,
-            availableSeats: createStoreDto.totalCapacity,
-          })),
-        },
-        staffs: {
-          create: {
-            userId: userId,
-            role: Role.OWNER,
+    return await this.prisma.$transaction(async (tx) => {
+      const newStore = await tx.store.create({
+        data: {
+          ...storeData,
+          ownerId: userId,
+          startTime: storeOperatingHours.startTime,
+          endTime: storeOperatingHours.endTime,
+          timeSlots: {
+            create: timeSlots.map((timeslot) => ({
+              ...timeslot,
+              totalCapacity: createStoreDto.totalCapacity,
+              availableSeats: createStoreDto.totalCapacity,
+            })),
+          },
+          staffs: {
+            create: {
+              userId: userId,
+              role: Role.OWNER,
+            },
           },
         },
-      },
+      })
+
+      await tx.user.update({
+        where: {
+          id: userId,
+          role: { not: Role.ADMIN },
+        },
+        data: {
+          role: Role.OWNER,
+        },
+      })
+
+      return newStore
     })
   }
 
@@ -291,6 +305,8 @@ export class StoreService {
     }
 
     const deletedStore = await this.prisma.store.delete({ where: { id } })
+
+    await this.updateUserRoleAfterRemove(userId)
 
     try {
       await this.deleteStoreAssetsPrefix(id)
@@ -394,6 +410,28 @@ export class StoreService {
         role: Role.STAFF,
       },
     })
+
+    return await this.prisma.$transaction(async (tx) => {
+      const newStoreStaff = await tx.storeStaff.create({
+        data: {
+          userId: userId,
+          storeId: storeId,
+          role: Role.STAFF,
+        },
+      })
+
+      await tx.user.update({
+        where: {
+          id: userId,
+          role: { not: Role.ADMIN },
+        },
+        data: {
+          role: Role.STAFF,
+        },
+      })
+
+      return newStoreStaff
+    })
   }
 
   async removeStaff(ownerId: number, storeId: number, userId: number) {
@@ -416,9 +454,48 @@ export class StoreService {
       throw new NotFoundException('주점에서 해당 스태프를 찾을 수 없습니다.')
     }
 
+    await this.updateUserRoleAfterRemove(userId)
+
     return this.prisma.storeStaff.delete({
       where: { userId_storeId: { userId, storeId } },
     })
+  }
+
+  /**
+   * User의 Store 관련 role(OWNER, STAFF)이 변경되었을 때, User 모델의 role을 재조정합니다.
+   * ADMIN 유저라면 role을 변경하지 않습니다.
+   * @param userId 역할을 재조정할 유저의 ID
+   */
+  private async updateUserRoleAfterRemove(userId: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { role: true },
+    })
+
+    if (!user || user.role === Role.ADMIN) {
+      return
+    }
+
+    const remainingStaffRoles = await this.prisma.storeStaff.findMany({
+      where: { userId },
+    })
+
+    let newRole: Role = Role.USER
+
+    if (remainingStaffRoles.length > 0) {
+      if (remainingStaffRoles.some((r) => r.role === Role.OWNER)) {
+        newRole = Role.OWNER
+      } else {
+        newRole = Role.STAFF
+      }
+    }
+
+    if (user.role !== newRole) {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { role: newRole },
+      })
+    }
   }
 
   /**
