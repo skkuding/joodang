@@ -5,6 +5,8 @@ import GrayReservation from "@/public/icons/icon_gray_reservation.svg";
 import OrangeBeer from "@/public/icons/icon_orange_beer.svg";
 import OrangeHouse from "@/public/icons/icon_orange_house.svg";
 import OrangeReservation from "@/public/icons/icon_orange_reservation.svg";
+import OrangeMypage from "@/public/icons/icon_orange_mypage.svg";
+import GrayMypage from "@/public/icons/icon_gray_mypage.svg";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -113,6 +115,35 @@ export function Footer() {
                   height={32}
                 />
                 <p className="text-xs text-[#9B9B9B]">예약 내역</p>
+              </>
+            )}
+          </div>
+          <div
+            onClick={() => {
+              router.push("/mypage");
+            }}
+            className="flex h-[54px] w-[60px] flex-col items-center justify-center"
+          >
+            {curPos === "/mypage" ? (
+              <>
+                <Image
+                  className="flex justify-center"
+                  src={OrangeMypage}
+                  alt="마이페이지"
+                  width={20}
+                  height={20}
+                />
+                <p className="mt-1 text-xs text-[#FF5940]">마이페이지</p>
+              </>
+            ) : (
+              <>
+                <Image
+                  src={GrayMypage}
+                  alt="마이페이지"
+                  width={20}
+                  height={20}
+                />
+                <p className="mt-1 text-xs text-[#9B9B9B]">마이페이지</p>
               </>
             )}
           </div>

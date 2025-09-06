@@ -45,6 +45,38 @@ export interface MenuData {
   Bap: Menu[];
 }
 
+// API 요청/응답 타입들
+export interface CreateStoreDto {
+  name: string;
+  description?: string;
+  organizer?: string;
+  college: string;
+  icon: number;
+  totalCapacity: number;
+  contactInfo?: string;
+  startTime: Date;
+  endTime: Date;
+  reservationFee: number;
+  bankCode: string;
+  accountNumber: string;
+  accountHolder: string;
+  location: string;
+  latitude: number;
+  longitude: number;
+  timeSlots: {
+    startTime: Date;
+    endTime: Date;
+  }[];
+}
+
+export interface CreateMenuDto {
+  name: string;
+  category: string;
+  price: number;
+  storeId: number;
+  imageUrl?: string;
+}
+
 export interface filterVariables {
   days: string[];
   maxFee: number;

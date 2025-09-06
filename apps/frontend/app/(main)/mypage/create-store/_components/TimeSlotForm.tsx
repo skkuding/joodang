@@ -54,14 +54,25 @@ export default function TimeSlotForm() {
   );
 
   // 각 요일별로 독립적인 시간대 관리
-  const [selectedDate, setSelectedDate] = useState<string>("");
   const [timeSlots, setTimeSlots] = useState<
     {
       id: string;
       startTime: Date;
       endTime: Date;
     }[]
-  >([]);
+  >(formData.timeSlots || []);
+
+  // 기존 데이터가 있으면 첫 번째 날짜를 자동 선택
+  const getInitialSelectedDate = () => {
+    if (formData.timeSlots && formData.timeSlots.length > 0) {
+      return formData.timeSlots[0].startTime.toISOString().split("T")[0];
+    }
+    return "";
+  };
+
+  const [selectedDate, setSelectedDate] = useState<string>(
+    getInitialSelectedDate()
+  );
 
   // 현재 선택된 날짜의 시간대들
   const currentDateTimeSlots = timeSlots.filter(slot => {
@@ -123,21 +134,30 @@ export default function TimeSlotForm() {
   const form = useForm<TimeSlotFormData>({
     resolver: valibotResolver(timeSlotFormSchema),
     defaultValues: {
-      timeSlots: timeSlots,
+      timeSlots: formData.timeSlots || [],
     },
   });
 
   const {
-    register,
     handleSubmit,
-    watch,
     setValue,
     formState: { errors, isValid },
   } = form;
 
-  // 각 날짜별 입력 방식 상태 관리
+  // 각 날짜별 입력 방식 상태 관리 - 기존 데이터가 있으면 "manual"로 초기화
+  const getInitialDateInputTypes = () => {
+    const types: Record<string, string> = {};
+    if (formData.timeSlots && formData.timeSlots.length > 0) {
+      formData.timeSlots.forEach(slot => {
+        const dateKey = slot.startTime.toISOString().split("T")[0];
+        types[dateKey] = "manual"; // 기존 데이터가 있으면 "manual"로 설정
+      });
+    }
+    return types;
+  };
+
   const [dateInputTypes, setDateInputTypes] = useState<Record<string, string>>(
-    {}
+    getInitialDateInputTypes()
   );
 
   // 자동 입력 모달 상태
@@ -192,7 +212,7 @@ export default function TimeSlotForm() {
     if (value === "manual") {
       // 직접 입력 선택 시 기본 시간대 생성
       const selectedDateObj = new Date(selectedDate);
-      const manualTimeSlots = defaultTimeSlots.map(slot => ({
+      const manualTimeSlots = defaultTimeSlots.map(() => ({
         id: generateUniqueId(),
         startTime: new Date(selectedDateObj),
         endTime: new Date(selectedDateObj),
