@@ -51,3 +51,14 @@ export interface filterVariables {
   startTime: string;
   endTime: string;
 }
+
+export interface Notification {
+  id: number;
+  notificationId: number;
+  title: string;
+  message: string;
+  url: string;
+  type: "Reservation" | "OwnerApplication" | "Other";
+  isRead: boolean;
+  createTime: string;
+}

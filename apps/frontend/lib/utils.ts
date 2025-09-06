@@ -16,6 +16,7 @@ export const fetcher = ky.create({
   timeout: 5000,
   throwHttpErrors: false,
   hooks: {},
+  credentials: "include",
 });
 
 // difference with fetcher: "throws" http error (must handle error when using)
