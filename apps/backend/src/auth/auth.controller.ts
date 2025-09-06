@@ -15,6 +15,7 @@ import { AuthService } from '@auth/auth.service'
 import { decryptState, safeReturnTo } from '@auth/oauth-state.util'
 import { KakaoAuthGuard } from '@app/auth/guards/kakao.guard'
 import type { KakaoUserPayload } from '@auth/auth.service'
+import { JwtAuthGuard } from './guards/jwt.guard'
 
 @Controller('auth')
 export class AuthController {
@@ -22,6 +23,26 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly config: ConfigService,
   ) {}
+
+  @Post('logout')
+  @UseGuards(JwtAuthGuard)
+  async logout(@Res({ passthrough: true }) res: Response) {
+    const cookieName = this.config.get<string>('JWT_COOKIE_NAME') || 'token'
+    const isProd =
+      (this.config.get<string>('NODE_ENV') || 'development') === 'production'
+    const cookieDomain = '.joodang.com'
+
+    res.cookie(cookieName, '', {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
+      domain: isProd ? cookieDomain : 'localhost',
+      path: '/',
+      maxAge: 0,
+    })
+
+    return { ok: true }
+  }
 
   @Get('kakao')
   @UseGuards(KakaoAuthGuard)
