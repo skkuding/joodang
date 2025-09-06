@@ -26,6 +26,36 @@ const withPWA = require("next-pwa")({
   dest: "public",
   register: true,
   skipWaiting: true,
+  runtimeCaching: [
+    {
+      urlPattern: ({ url }: { url: URL }) =>
+        url.origin === self.location.origin &&
+        url.pathname.startsWith("/_next/image"),
+      handler: "CacheFirst",
+      options: {
+        cacheName: "next-image",
+        expiration: {
+          maxEntries: 300,
+          maxAgeSeconds: 60 * 60 * 24 * 30, // 30일
+        },
+        cacheableResponse: { statuses: [0, 200] },
+      },
+    },
+    {
+      urlPattern: ({ url }: { url: URL }) =>
+        url.origin === self.location.origin &&
+        url.pathname.startsWith("/_next/static/media"),
+      handler: "CacheFirst",
+      options: {
+        cacheName: "next-static-media",
+        expiration: {
+          maxEntries: 200,
+          maxAgeSeconds: 60 * 60 * 24 * 365, // 1년
+        },
+        cacheableResponse: { statuses: [0, 200] },
+      },
+    },
+  ],
 });
 module.exports = withPWA({});
 
