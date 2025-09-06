@@ -198,10 +198,12 @@ export class NotificationService {
       message: record.notification.message,
       url: record.notification.url,
       type: record.notification.type,
+      storeId: record.notification.storeId,
       isRead: record.isRead,
       createTime: record.createTime,
     }))
   }
+
   async notifyReservationConfirmed(reservationId: number) {
     const reservation = await this.prisma.reservation.findUnique({
       where: { id: reservationId },
