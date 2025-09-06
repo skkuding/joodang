@@ -155,6 +155,7 @@ export class StoreService {
         menus: true,
         timeSlots: {
           select: {
+            id: true,
             startTime: true,
             endTime: true,
             availableSeats: true,
@@ -475,7 +476,7 @@ export class StoreService {
     })
 
     let newRole: Role = Role.USER
-    console.log(remainingStaffRoles + "+++" + remainingStaffRoles.length)
+    console.log(remainingStaffRoles + '+++' + remainingStaffRoles.length)
     if (remainingStaffRoles.length > 0) {
       if (remainingStaffRoles.some((r) => r.role === Role.OWNER)) {
         newRole = Role.OWNER
