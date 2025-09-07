@@ -1,12 +1,12 @@
 "use client";
 import GrayBeer from "@/public/icons/icon_gray_beer.svg";
 import GrayHouse from "@/public/icons/icon_gray_house.svg";
+import GrayMypage from "@/public/icons/icon_gray_mypage.svg";
 import GrayReservation from "@/public/icons/icon_gray_reservation.svg";
 import OrangeBeer from "@/public/icons/icon_orange_beer.svg";
 import OrangeHouse from "@/public/icons/icon_orange_house.svg";
-import OrangeReservation from "@/public/icons/icon_orange_reservation.svg";
 import OrangeMypage from "@/public/icons/icon_orange_mypage.svg";
-import GrayMypage from "@/public/icons/icon_gray_mypage.svg";
+import OrangeReservation from "@/public/icons/icon_orange_reservation.svg";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -42,7 +42,7 @@ export function Footer() {
         className="fixed bottom-0 left-0 right-0 z-10 flex h-20 w-full items-center justify-center bg-white"
         style={{ boxShadow: "0 -2px 8px rgba(0,0,0,0.1)" }}
       >
-        <div className="-mt-2 flex flex-row justify-center gap-[60px]">
+        <div className="-mt-2 flex w-full flex-row justify-between px-[40px]">
           <div
             onClick={() => {
               router.push("/");
