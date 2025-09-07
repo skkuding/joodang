@@ -6,12 +6,15 @@ export interface NaverMapInstance {
   setCenter(latlng: NaverLatLng): void;
   panTo?(latlng: NaverLatLng): void;
   setZoom(zoom: number): void;
-  getProjection():
-    | {
-        fromCoordToOffset(latlng: NaverLatLng): NaverPoint;
-        fromOffsetToCoord(pt: NaverPoint): NaverLatLng;
-      }
-    | null;
+  setOptions(options: {
+    customStyleId?: string;
+    center?: NaverLatLng;
+    zoom?: number;
+  }): void;
+  getProjection(): {
+    fromCoordToOffset(latlng: NaverLatLng): NaverPoint;
+    fromOffsetToCoord(pt: NaverPoint): NaverLatLng;
+  } | null;
   getSize(): { width: number; height: number };
 }
 
@@ -31,25 +34,25 @@ export interface NaverMapsNamespace {
       center: NaverLatLng;
       zoom: number;
       customStyleId?: string;
-    },
+    }
   ) => NaverMapInstance;
   LatLng: new (lat: number, lng: number) => NaverLatLng;
   Point: new (x: number, y: number) => NaverPoint;
   Marker: new (opts: {
     position: NaverLatLng;
     map: NaverMapInstance;
-  icon: { content: string; anchor?: NaverPoint };
+    icon: { content: string; anchor?: NaverPoint };
   }) => NaverMarkerInstance;
   Event: {
     addListener: (
       target: unknown,
       eventName: string,
-      handler: (...args: unknown[]) => void,
+      handler: (...args: unknown[]) => void
     ) => void;
     once: (
       target: unknown,
       eventName: string,
-      handler: (...args: unknown[]) => void,
+      handler: (...args: unknown[]) => void
     ) => void;
   };
 }
@@ -58,11 +61,11 @@ declare global {
   interface Window {
     naver: {
       maps?: {
-        Map: NaverMapsNamespace['Map'];
-        LatLng: NaverMapsNamespace['LatLng'];
-        Point: NaverMapsNamespace['Point'];
-  Marker: NaverMapsNamespace['Marker'];
-  Event: NaverMapsNamespace['Event'];
+        Map: NaverMapsNamespace["Map"];
+        LatLng: NaverMapsNamespace["LatLng"];
+        Point: NaverMapsNamespace["Point"];
+        Marker: NaverMapsNamespace["Marker"];
+        Event: NaverMapsNamespace["Event"];
       };
     };
   }
