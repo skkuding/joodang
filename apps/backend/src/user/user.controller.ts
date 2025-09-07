@@ -20,6 +20,12 @@ import { JwtAuthGuard } from '@app/auth/guards/jwt.guard'
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  async getUser(@Req() req) {
+    return this.userService.getUser(req.user.id)
+  }
+
   @Get('me/role')
   @UseGuards(JwtAuthGuard)
   async getUserRole(@Req() req) {
