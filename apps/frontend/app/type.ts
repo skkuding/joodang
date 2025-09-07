@@ -3,9 +3,11 @@ export interface Store {
   name: string;
   description: string;
   college: string;
-  imageUrl: string;
   organizer: string;
+  imageUrl: string;
   ownerId: number;
+  icon: number;
+  totalCapacity: number;
   contactInfo: string;
   startTime: string; // ISO8601 string
   endTime: string; // ISO8601 string
