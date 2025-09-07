@@ -1,14 +1,14 @@
 import { CreateStoreDto, CreateMenuDto } from "@/app/type";
 import { FormData } from "@/app/stores/createStore";
 
-// 메뉴 카테고리 enum
+// 메뉴 카테고리 enum (백엔드 Prisma enum과 일치)
 export enum MenuCategory {
-  Tang = "tang", // 탕/전골
-  Tuiguim = "tuiguim", // 튀김
-  Bap = "bap", // 밥/식사
-  Fruit = "fruit", // 과일
-  Maroon5 = "maroon5", // 마른 안주
-  Beverage = "beverage", // 음료
+  Tang = "Tang", // 탕/전골
+  Tuiguim = "Tuiguim", // 튀김
+  Bap = "Bap", // 밥/식사
+  Fruit = "Fruit", // 과일
+  Maroon5 = "Maroon5", // 마른 안주
+  Beverage = "Beverage", // 음료
 }
 
 // 카테고리 매핑

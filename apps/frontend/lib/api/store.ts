@@ -18,7 +18,7 @@ export const createStore = async (storeData: CreateStoreDto) => {
 // 스토어 이미지 presigned URL 요청
 export const getStoreImagePresignedUrl = async (
   storeId: number,
-  uploadData: { fileIdx: number; contentType: string }
+  uploadData: { fileIdx: string; contentType: string }
 ) => {
   const response = await safeFetcher.post(`store/${storeId}/image/presign`, {
     json: uploadData,
@@ -34,7 +34,7 @@ export const getStoreImagePresignedUrl = async (
 // 메뉴 이미지 presigned URL 요청
 export const getMenuImagePresignedUrl = async (uploadData: {
   storeId: number;
-  fileIdx: number;
+  fileIdx: string;
   contentType: string;
 }) => {
   const response = await safeFetcher.post("menu/image/presign", {
@@ -50,22 +50,27 @@ export const getMenuImagePresignedUrl = async (uploadData: {
 
 // S3에 직접 이미지 업로드
 export const uploadToS3 = async (
-  url: string,
   fields: Record<string, string>,
   file: File
 ) => {
+  console.log("sss");
+  console.log({ ...fields, file: file });
+
+  // FormData를 사용하여 파일과 필드들을 함께 전송
   const formData = new FormData();
 
-  // presigned POST의 fields 추가
+  // fields의 모든 키-값 쌍을 FormData에 추가
   Object.entries(fields).forEach(([key, value]) => {
     formData.append(key, value);
   });
 
-  // 파일 추가
+  // 파일을 FormData에 추가
   formData.append("file", file);
 
-  const response = await safeFetcher.post(url, {
-    json: JSON.stringify(formData),
+  // S3 storage URL로 직접 업로드
+  const response = await fetch("https://storage.joodang.com/joodang-assets", {
+    method: "POST",
+    body: formData,
   });
 
   if (!response.ok) {
@@ -81,7 +86,7 @@ export const updateStoreImageUrl = async (
   imageUrl: string
 ) => {
   const response = await safeFetcher.patch(`store/${storeId}`, {
-    json: JSON.stringify({ imageUrl }),
+    json: { imageUrl },
   });
 
   if (!response.ok) {

@@ -103,7 +103,7 @@ model OwnerApplication {
   userId      Int      @map("user_id")
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   phone       String
-  organizer   String   
+  organizer   String
   isConfirmed Boolean  @default(false) @map("is_confirmed")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
@@ -214,4 +214,26 @@ model PushSubscription {
 
   @@unique([userId, endpoint])
   @@map("push_subscription")
+}
+
+enum JobStatus {
+  scheduled
+  processing
+  done
+  failed
+}
+
+model NotificationJob {
+  id          Int       @id @default(autoincrement())
+  topic       String
+  key         String    @unique()
+  payload     Json
+  dueAt       DateTime  @map("due_at")
+  status      JobStatus @default(scheduled)
+  attempts    Int       @default(0)
+  maxAttempts Int       @default(5) @map("max_attempts")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @default(now()) @map("updated_at")
+
+  @@map("notification_job")
 }
