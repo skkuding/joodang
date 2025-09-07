@@ -1,16 +1,27 @@
 "use client";
+import CopyAccountModal from "@/app/components/CopyAccountModal";
+import { ReservationResponse } from "@/app/type";
 import { Button } from "@/components/ui/button";
 import arrowIcon from "@/public/icons/icon_arrow.svg";
 import kakaoPayIcon from "@/public/icons/icon_kakao_pay.svg";
 import tossIcon from "@/public/icons/icon_toss.svg";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { ReservationConfirmButton } from "../components/ReservationConfirmButton";
 import { ReservationInfo } from "../components/ReservationInfo";
 
 export default function Page() {
-  const searchParams = useSearchParams();
-  const reservationNum = searchParams.get("reservationNum");
+  const [reservationData, setReservationData] =
+    useState<ReservationResponse | null>(null);
+
+  useEffect(() => {
+    const storedData = sessionStorage.getItem("reservationData");
+    if (storedData) {
+      setReservationData(JSON.parse(storedData));
+      // 사용 후 제거 (선택사항)
+      sessionStorage.removeItem("reservationData");
+    }
+  }, []);
 
   function SendMoneyButton() {
     const handleTossPayment = () => {
@@ -59,7 +70,18 @@ export default function Page() {
     };
     return (
       <div className="mb-10 w-full px-5">
-        <div className="flex h-[108px] w-full flex-col rounded-md shadow-[0px_0px_20px_0px_rgba(0,0,0,0.08)]">
+        <div className="flex w-full flex-col rounded-md px-4 py-3 shadow-[0px_0px_20px_0px_rgba(0,0,0,0.08)]">
+          <div className="bg-color-neutral-99 rounded-md px-3 py-2 text-base font-normal">
+            <div className="flex w-full justify-between">
+              <div className="flex items-center gap-2">
+                <div className="bg-primary-normal h-1.5 w-1.5 rounded-full" />
+                <span>입금 계좌</span>
+              </div>
+              {reservationData && (
+                <CopyAccountModal store={reservationData?.store} />
+              )}
+            </div>
+          </div>
           <Button
             variant={"ghost"}
             className="flex justify-between"
@@ -90,7 +112,11 @@ export default function Page() {
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="h-[106px]" />
-      <ReservationInfo reservationNum={reservationNum} />
+      {reservationData && (
+        <ReservationInfo
+          reservationNum={reservationData?.reservationNum.toString()}
+        />
+      )}
       <div className="fixed bottom-0 w-full">
         <SendMoneyButton />
         <div className="pb-15 w-full p-5">

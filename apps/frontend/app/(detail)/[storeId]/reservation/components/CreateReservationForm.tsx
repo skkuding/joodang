@@ -51,8 +51,11 @@ export function CreateReservationForm({
       });
       const reservationResponse: ReservationResponse = await response.json();
 
-      const reservationNum = reservationResponse.reservationNum; // 예: 응답에서 예약 ID 추출
-      router.push(`./reservation/success?reservationNum=${reservationNum}`);
+      sessionStorage.setItem(
+        "reservationData",
+        JSON.stringify(reservationResponse)
+      );
+      router.push("./reservation/success");
     } catch (error) {
       console.error("Error creating reservation:", error);
       if (error instanceof HTTPError) {
