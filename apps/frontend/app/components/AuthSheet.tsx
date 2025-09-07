@@ -52,9 +52,13 @@ export function AuthSheet() {
           </p>
           <Button
             className="h-[55px] w-full rounded bg-[#fee500] text-black"
-            onClick={() =>
-              (window.location.href = "https://api.joodang.com/auth/kakao")
-            }
+            onClick={() => {
+              const { pathname, search, hash } = window.location;
+              const returnTo = encodeURIComponent(
+                `${pathname}${search || ""}${hash || ""}`
+              );
+              window.location.href = `https://api.joodang.com/auth/kakao?returnTo=${returnTo}`;
+            }}
           >
             <Image src={kakaoIcon} alt="Kakao Icon" />
             <span>카카오 로그인/회원가입</span>
