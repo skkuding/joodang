@@ -96,7 +96,7 @@ export function StoreDrawer({ store, mylocationfunc }: StoreDrawerProps) {
 
           <div className="flex items-center gap-2">
             <Image
-              src="/icons/orangemoney.svg"
+              src="/icons/orangeMoney.svg"
               alt="Entrance Fee"
               width={18}
               height={18}
