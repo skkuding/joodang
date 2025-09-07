@@ -32,6 +32,8 @@ export default function ReservationDetail() {
     location: "",
     latitude: 0,
     longitude: 0,
+    icon: 1,
+    totalCapacity: 0,
   });
 
   return (
