@@ -15,7 +15,7 @@ interface BarCardProps {
   startTime: string;
   endTime: string;
   reservationFee: number;
-  imageUrl?: string;
+  imageUrl: string;
 }
 
 export default function BarCard(information: BarCardProps) {
@@ -24,10 +24,13 @@ export default function BarCard(information: BarCardProps) {
       className="h-[284px] w-[335px] overflow-hidden rounded-[6px]"
       style={{ boxShadow: "0 0 20px 0 rgba(0, 0, 0, 0.12)" }}
     >
-      <div
-        className="h-[110px] w-full bg-cover bg-center"
-        style={{ backgroundImage: `url(${information.imageUrl})` }}
-      ></div>
+      <Image
+        src={information.imageUrl}
+        alt="Store Image"
+        className="h-[110px] object-cover object-center"
+        height={100}
+        width={335}
+      />
 
       <div className="px-5 pb-5 pt-[14px]">
         <div className="text-xs font-normal leading-[140%] tracking-[-0.36px] text-[#FF5940]">

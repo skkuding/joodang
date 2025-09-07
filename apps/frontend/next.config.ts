@@ -1,40 +1,8 @@
 // next.config.ts
 import type { NextConfig } from "next";
+import withPWAOrig from "next-pwa";
 
-const nextConfig: NextConfig = {
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "joodang.com",
-        pathname: "/**",
-      },
-      { protocol: "https", hostname: "storage.joodang.com", pathname: "/**" },
-      { protocol: "http", hostname: "localhost", pathname: "/**" },
-    ],
-    formats: ["image/avif", "image/webp"],
-  },
-  webpack(config) {
-    config.module.rules.push({
-      test: /\.svg$/i,
-      oneOf: [
-        // 1) ?component를 붙여 import하면 React 컴포넌트로
-        {
-          resourceQuery: /component/,
-          use: [{ loader: "@svgr/webpack", options: { icon: true } }],
-        },
-        // 2) ?url을 붙여 import하면 파일 URL(StaticImageData)로
-        {
-          resourceQuery: /url/,
-          type: "asset",
-        },
-      ],
-    });
-    return config;
-  },
-};
-
-const withPWA = require("next-pwa")({
+const withPWA = withPWAOrig({
   dest: "public",
   register: true,
   skipWaiting: true,
@@ -46,10 +14,7 @@ const withPWA = require("next-pwa")({
       handler: "CacheFirst",
       options: {
         cacheName: "next-image",
-        expiration: {
-          maxEntries: 300,
-          maxAgeSeconds: 60 * 60 * 24 * 30, // 30일
-        },
+        expiration: { maxEntries: 300, maxAgeSeconds: 60 * 60 * 24 * 30 },
         cacheableResponse: { statuses: [0, 200] },
       },
     },
@@ -60,15 +25,35 @@ const withPWA = require("next-pwa")({
       handler: "CacheFirst",
       options: {
         cacheName: "next-static-media",
-        expiration: {
-          maxEntries: 200,
-          maxAgeSeconds: 60 * 60 * 24 * 365, // 1년
-        },
+        expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 365 },
         cacheableResponse: { statuses: [0, 200] },
       },
     },
   ],
 });
-module.exports = withPWA({});
+
+const nextConfig: NextConfig = withPWA({
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "joodang.com", pathname: "/**" },
+      { protocol: "https", hostname: "storage.joodang.com", pathname: "/**" },
+      { protocol: "http", hostname: "localhost", pathname: "/**" }, // dev
+    ],
+    formats: ["image/avif", "image/webp"],
+  },
+  webpack(config) {
+    config.module.rules.push({
+      test: /\.svg$/i,
+      oneOf: [
+        {
+          resourceQuery: /component/,
+          use: [{ loader: "@svgr/webpack", options: { icon: true } }],
+        },
+        { resourceQuery: /url/, type: "asset" },
+      ],
+    });
+    return config;
+  },
+});
 
 export default nextConfig;
