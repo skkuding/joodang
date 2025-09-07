@@ -158,7 +158,10 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
         onLoad={() => setIsReady(true)}
         onReady={() => setIsReady(true)}
       />
-  <div ref={mapRef} className="relative isolate z-0 h-[215px] overflow-hidden rounded-md" />
+      <div
+        ref={mapRef}
+        className="relative isolate z-0 my-3 aspect-[67/43] overflow-hidden rounded-md"
+      />
     </>
   );
 }
