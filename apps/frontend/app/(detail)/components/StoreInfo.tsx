@@ -17,7 +17,7 @@ export function StoreInfo({ store }: senderStoreSummaryProps) {
   const handleCopyPhone = async () => {
     toast.dismiss();
     try {
-      await navigator.clipboard.writeText(store.phone);
+      await navigator.clipboard.writeText(store.contactInfo);
       toast.success("연락처가 복사되었습니다", {
         id: "copy-toast",
       });
@@ -70,7 +70,7 @@ export function StoreInfo({ store }: senderStoreSummaryProps) {
             size="sm"
             className="p-0"
           >
-            <span className="text-sm font-normal">{store.phone}</span>
+            <span className="text-sm font-normal">{store.contactInfo}</span>
           </Button>
         </div>
         <div className="flex w-full justify-between">

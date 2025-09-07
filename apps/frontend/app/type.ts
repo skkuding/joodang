@@ -1,12 +1,12 @@
 export interface Store {
   id: number;
   name: string;
-  phone: string;
   description: string;
   college: string;
+  imageUrl: string;
   organizer: string;
   ownerId: number;
-  instagramId: string;
+  contactInfo: string;
   startTime: string; // ISO8601 string
   endTime: string; // ISO8601 string
   isAvailable: boolean;
