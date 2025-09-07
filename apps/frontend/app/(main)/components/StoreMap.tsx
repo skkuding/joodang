@@ -3,46 +3,7 @@
 import { Store } from "@/app/type";
 import Script from "next/script";
 import { useEffect, useRef, useState } from "react";
-
-type NaverLatLng = unknown;
-type NaverPoint = unknown;
-
-interface NaverMapInstance {
-  setCenter(latlng: NaverLatLng): void;
-  panTo?(latlng: NaverLatLng): void;
-}
-
-interface NaverMarkerInstance {
-  setPosition(latlng: NaverLatLng): void;
-  setIcon(icon: { content: string; anchor: NaverPoint }): void;
-  getMap(): NaverMapInstance | null;
-  setMap(map: NaverMapInstance | null): void;
-}
-
-declare global {
-  interface Window {
-    naver: {
-      maps?: {
-        Map: new (
-          el: HTMLElement,
-          options: {
-            gl?: boolean;
-            center: NaverLatLng;
-            zoom: number;
-            customStyleId?: string;
-          }
-        ) => NaverMapInstance;
-        LatLng: new (lat: number, lng: number) => NaverLatLng;
-        Point: new (x: number, y: number) => NaverPoint;
-        Marker: new (opts: {
-          position: NaverLatLng;
-          map: NaverMapInstance;
-          icon: { content: string; anchor: NaverPoint };
-        }) => NaverMarkerInstance;
-      };
-    };
-  }
-}
+import type { NaverMapInstance, NaverMarkerInstance } from "@/types/naver";
 
 interface StoreMapProps {
   stores: Store[];

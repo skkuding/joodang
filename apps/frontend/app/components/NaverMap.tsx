@@ -3,12 +3,6 @@
 import Script from "next/script";
 import { useEffect, useRef } from "react";
 
-declare global {
-  interface Window {
-    naver: naver.maps.Map;
-  }
-}
-
 export default function NaverMap() {
   const mapRef = useRef<HTMLDivElement>(null);
 

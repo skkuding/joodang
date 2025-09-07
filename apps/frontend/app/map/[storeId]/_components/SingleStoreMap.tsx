@@ -1,31 +1,25 @@
 "use client";
 import type { StoreDetail } from "@/app/type";
-import Image from "next/image";
 import Script from "next/script";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { IoIosArrowBack } from "react-icons/io";
 import { StoreDrawer } from "./StoreDrawer";
-
-declare global {
-  interface Window {
-    naver: naver.maps.Map;
-  }
-}
+import type { NaverMapInstance, NaverMarkerInstance } from "@/types/naver";
 interface SingleStoreMapProps {
   store: StoreDetail;
 }
 
 export default function SingleStoreMap({ store }: SingleStoreMapProps) {
-  const mapRef = useRef<naver.maps.Map | null>(null);
-  const [myMarker, setMyMarker] = useState<naver.maps.Marker | null>(null);
+  const mapRef = useRef<NaverMapInstance | null>(null);
+  const myMarkerRef = useRef<NaverMarkerInstance | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     if (!window.naver) return;
 
     // 지도 생성
-    const map = new window.naver.maps.Map("map", {
+  const map = new window.naver.maps.Map("map", {
       gl: true,
       center: new window.naver.maps.LatLng(store.latitude, store.longitude),
       zoom: 16,
@@ -34,7 +28,7 @@ export default function SingleStoreMap({ store }: SingleStoreMapProps) {
     mapRef.current = map;
 
     // 가게 위치 마커
-    const storeMarker = new window.naver.maps.Marker({
+  const storeMarker = new window.naver.maps.Marker({
       position: new window.naver.maps.LatLng(store.latitude, store.longitude),
       map,
       icon: {
@@ -49,10 +43,11 @@ export default function SingleStoreMap({ store }: SingleStoreMapProps) {
                       height="35"
                     />
                   </div>`,
+    anchor: new window.naver.maps.Point(100, 50),
       },
     });
     window.naver.maps.Event.addListener(storeMarker, "click", () => {
-      map.setZoom(20);
+      map.setZoom(16);
       map.setCenter(
         new window.naver.maps.LatLng(store.latitude, store.longitude)
       );
@@ -85,7 +80,8 @@ export default function SingleStoreMap({ store }: SingleStoreMapProps) {
           const { latitude, longitude } = position.coords;
           const myLatLng = new window.naver.maps.LatLng(latitude, longitude);
 
-          if (!myMarker) {
+          const currentMarker = myMarkerRef.current;
+          if (!currentMarker) {
             // 처음에는 새 마커 생성
             const newMarker = new window.naver.maps.Marker({
               position: myLatLng,
@@ -95,10 +91,10 @@ export default function SingleStoreMap({ store }: SingleStoreMapProps) {
                   '<div style="width:20px;height:20px;background:red;border-radius:50%;border:2px solid white;"></div>',
               },
             });
-            setMyMarker(newMarker);
+            myMarkerRef.current = newMarker;
           } else {
             // 이후에는 위치만 갱신
-            myMarker.setPosition(myLatLng);
+            currentMarker.setPosition(myLatLng);
           }
         },
         error => {
@@ -112,14 +108,14 @@ export default function SingleStoreMap({ store }: SingleStoreMapProps) {
       );
 
       // cleanup (컴포넌트 언마운트 시 위치 추적 중단)
-      return () => navigator.geolocation.clearWatch(watchId);
+    return () => navigator.geolocation.clearWatch(watchId);
     }
-  }, [store.latitude, store.longitude]);
+  }, [store.latitude, store.longitude, store.name]);
 
   // 버튼 클릭 시 내 위치로 이동
   const moveToMyLocation = () => {
-    if (mapRef.current && myMarker) {
-      mapRef.current.setCenter(myMarker.getPosition() as naver.maps.LatLng);
+    if (mapRef.current && myMarkerRef.current) {
+      mapRef.current.setCenter(myMarkerRef.current.getPosition());
     }
   };
 
