@@ -29,7 +29,7 @@ export default function SingleStoreMap({ store }: SingleStoreMapProps) {
       gl: true,
       center: new window.naver.maps.LatLng(store.latitude, store.longitude),
       zoom: 16,
-      customStyleId: "5ebaa70e-0bc8-4f24-b7a3-6247c307974c",
+      customStyleId: "56e070b5-b8ce-4f3f-90a7-fc9e602ba64c",
     });
     mapRef.current = map;
 

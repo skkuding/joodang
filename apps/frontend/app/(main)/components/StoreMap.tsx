@@ -2,7 +2,7 @@
 
 import { Store } from "@/app/type";
 import Script from "next/script";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 declare global {
   interface Window {
@@ -17,30 +17,51 @@ interface StoreMapProps {
 
 export default function StoreMap({ stores, current }: StoreMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<any>(null);
+  const markerRef = useRef<any>(null);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     if (!mapRef.current) return;
+    if (!isReady) return;
 
-    const { naver } = window;
+    const { naver } = window as any;
     if (!naver?.maps) return;
 
-    const selectedStore = stores[current];
+    const selectedIndex = stores.length
+      ? Math.max(
+          0,
+          Math.min(stores.length - 1, current > 0 ? current - 1 : current)
+        )
+      : 0;
+    const selectedStore = stores[selectedIndex];
 
     const centerLat = selectedStore?.latitude ?? 37.2931959;
     const centerLng = selectedStore?.longitude ?? 126.9745929;
 
-    const map = new naver.maps.Map(mapRef.current, {
-      gl: true,
-      center: new naver.maps.LatLng(centerLat, centerLng),
-      zoom: 16,
-      customStyleId: "5ebaa70e-0bc8-4f24-b7a3-6247c307974c",
-    });
+    if (!mapInstanceRef.current) {
+      mapInstanceRef.current = new naver.maps.Map(mapRef.current, {
+        gl: true,
+        center: new naver.maps.LatLng(centerLat, centerLng),
+        zoom: 16,
+        customStyleId: "56e070b5-b8ce-4f3f-90a7-fc9e602ba64c",
+      });
+    } else {
+      mapInstanceRef.current.setCenter(
+        new naver.maps.LatLng(centerLat, centerLng)
+      );
+    }
 
-    stores.forEach((store, index) => {
-      if (index !== current - 1) return;
-      const markerContent = `<div id="marker-${store.id}" style="display: flex; width: fit-content; flex-direction: column; align-items: center; gap: 4px; padding: 0px; border-radius: 8px; color: white;">
+    // Update marker for the selected store
+    if (markerRef.current) {
+      markerRef.current.setMap(null);
+      markerRef.current = null;
+    }
+
+    if (selectedStore) {
+      const markerContent = `<div id="marker-${selectedStore.id}" style="display: flex; width: fit-content; flex-direction: column; align-items: center; gap: 4px; padding: 0px; border-radius: 8px; color: white;">
                         <span style="background-color: rgba(255,255,255,0.1); padding: 4px 12px; font-size: 14px; font-weight: 600;">
-                          ${store.name}
+                          ${selectedStore.name}
                         </span>
                         <img
                           src="/icons/icon_location.svg"
@@ -59,28 +80,35 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
 
       const markerElement = tempDiv.firstElementChild as HTMLElement;
       const rect = markerElement.getBoundingClientRect();
-
       const anchorX = rect.width / 2;
       const anchorY = 55;
-
       document.body.removeChild(tempDiv);
 
-      new naver.maps.Marker({
-        position: new naver.maps.LatLng(store.latitude, store.longitude),
-        map,
+      markerRef.current = new naver.maps.Marker({
+        position: new naver.maps.LatLng(
+          selectedStore.latitude,
+          selectedStore.longitude
+        ),
+        map: mapInstanceRef.current,
         icon: {
           content: markerContent,
           anchor: new naver.maps.Point(anchorX, anchorY),
         },
       });
-    });
-  });
+    }
+
+    // optional cleanup on unmount
+    return () => {
+      // leave map instance to persist across renders; cleanup happens on component unmount
+    };
+  }, [isReady, stores, current]);
 
   return (
     <>
       <Script
         type="text/javascript"
         src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${process.env.NEXT_PUBLIC_NAVER_ID}&submodules=gl`}
+        onLoad={() => setIsReady(true)}
       />
       <div ref={mapRef} className="h-[215px] rounded-md" />
     </>
