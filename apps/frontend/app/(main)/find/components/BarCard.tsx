@@ -15,7 +15,7 @@ interface BarCardProps {
   startTime: string;
   endTime: string;
   reservationFee: number;
-  imageUrl: string;
+  imageUrl?: string;
 }
 
 export default function BarCard(information: BarCardProps) {
