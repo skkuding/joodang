@@ -74,11 +74,11 @@ export default function BarPage() {
                 height={6}
                 className="mr-2"
               />
-              <p className="text-color-neutral-30 font-sans text-base font-normal leading-[150%] tracking-[-0.48px]">
+              <p className="text-color-neutral-30 font-sans text-sm font-normal leading-[150%] tracking-[-0.48px]">
                 최대 입장료
               </p>
               {!isFilterSet ? (
-                <p className="text-color-neutral-70 ml-auto font-sans text-base font-normal not-italic leading-[140%] tracking-[-0.48px]">
+                <p className="text-color-neutral-70 ml-auto font-sans text-sm font-normal not-italic leading-[140%] tracking-[-0.48px]">
                   0 원
                 </p>
               ) : (
@@ -95,11 +95,32 @@ export default function BarPage() {
                 height={6}
                 className="mr-2"
               />
-              <p className="text-color-neutral-30 font-sans text-base font-normal leading-[150%] tracking-[-0.48px]">
+              <p className="text-color-neutral-30 font-sans text-sm font-normal leading-[150%] tracking-[-0.48px]">
+                날짜
+              </p>
+              {!isFilterSet ? (
+                <p className="text-color-neutral-70 ml-auto font-sans text-sm font-normal not-italic leading-[140%] tracking-[-0.48px]">
+                  0000. 00. 00
+                </p>
+              ) : (
+                <p className="text-color-common-0 ml-auto font-['Pretendard'] text-base font-normal leading-normal">
+                  {filterValue.days[0]}
+                </p>
+              )}
+            </div>
+            <div className="flex flex-row">
+              <Image
+                src={OrangeDot}
+                alt="주황닷"
+                width={6}
+                height={6}
+                className="mr-2"
+              />
+              <p className="text-color-neutral-30 font-sans text-sm font-normal leading-[150%] tracking-[-0.48px]">
                 시간대
               </p>
               {!isFilterSet ? (
-                <p className="text-color-neutral-70 ml-auto font-sans text-base font-normal not-italic leading-[140%] tracking-[-0.48px]">
+                <p className="text-color-neutral-70 ml-auto font-sans text-sm font-normal not-italic leading-[140%] tracking-[-0.48px]">
                   00:00 ~ 00:00
                 </p>
               ) : (
