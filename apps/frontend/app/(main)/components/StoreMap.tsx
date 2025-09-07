@@ -17,6 +17,12 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
+    if (typeof window !== "undefined" && (window as any).naver?.maps) {
+      setIsReady(true);
+    }
+  }, []);
+
+  useEffect(() => {
     if (!mapRef.current) return;
     if (!isReady) return;
 
@@ -103,10 +109,7 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
       }
     }
 
-    // optional cleanup on unmount
-    return () => {
-      // leave map instance to persist across renders; cleanup happens on component unmount
-    };
+    return () => {};
   }, [isReady, stores, current]);
 
   return (
@@ -114,7 +117,9 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
       <Script
         type="text/javascript"
         src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${process.env.NEXT_PUBLIC_NAVER_ID}&submodules=gl`}
+        strategy="afterInteractive"
         onLoad={() => setIsReady(true)}
+        onReady={() => setIsReady(true)}
       />
       <div ref={mapRef} className="h-[215px] rounded-md" />
     </>
