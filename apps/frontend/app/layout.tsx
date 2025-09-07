@@ -17,6 +17,12 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: "주당 Joodang",
   description: "대학 축제 주점 예약 플랫폼",
+  viewport: {
+    width: "device-width",
+    initialScale: 1.0,
+    maximumScale: 1.0,
+    userScalable: "no",
+  },
 };
 
 export default function RootLayout({
@@ -29,10 +35,6 @@ export default function RootLayout({
       <head>
         <link rel="apple-touch-icon" href="/apple-icon.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-        />
         <link
           rel="apple-touch-startup-image"
           media="screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)"
