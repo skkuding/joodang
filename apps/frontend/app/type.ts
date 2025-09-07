@@ -78,7 +78,7 @@ export interface CreateMenuDto {
 }
 
 export interface filterVariables {
-  days: string[];
+  days: string | null;
   maxFee: number;
   startTime: string;
   endTime: string;
