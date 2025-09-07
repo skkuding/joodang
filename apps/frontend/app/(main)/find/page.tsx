@@ -86,15 +86,15 @@ export default function BarPage() {
                 height={6}
                 className="mr-2"
               />
-              <p className="text-color-neutral-30 font-sans text-sm font-normal leading-[150%] tracking-[-0.48px]">
+              <p className="text-color-neutral-30 text-sm font-normal leading-[150%] tracking-[-0.48px]">
                 최대 입장료
               </p>
               {!isFilterSet ? (
-                <p className="text-color-neutral-70 ml-auto font-sans text-sm font-normal not-italic leading-[140%] tracking-[-0.48px]">
+                <p className="text-color-neutral-70 ml-auto text-sm font-normal not-italic leading-[140%] tracking-[-0.48px]">
                   0 원
                 </p>
               ) : (
-                <p className="text-color-common-0 ml-auto font-['Pretendard'] text-sm font-normal leading-normal">
+                <p className="text-color-common-0 ml-auto text-sm font-normal leading-normal">
                   {formatWithComma(filterValue.maxFee)} 원
                 </p>
               )}
@@ -107,15 +107,15 @@ export default function BarPage() {
                 height={6}
                 className="mr-2"
               />
-              <p className="text-color-neutral-30 font-sans text-sm font-normal leading-[150%] tracking-[-0.48px]">
+              <p className="text-color-neutral-30 text-sm font-normal leading-[150%] tracking-[-0.48px]">
                 날짜
               </p>
               {!isFilterSet ? (
-                <p className="text-color-neutral-70 ml-auto font-sans text-sm font-normal not-italic leading-[140%] tracking-[-0.48px]">
+                <p className="text-color-neutral-70 ml-auto text-sm font-normal not-italic leading-[140%] tracking-[-0.48px]">
                   0000. 00. 00
                 </p>
               ) : (
-                <p className="text-color-common-0 ml-auto font-['Pretendard'] text-sm font-normal leading-normal">
+                <p className="text-color-common-0 ml-auto text-sm font-normal leading-normal">
                   {formatDateDash2Point(filterValue.days)}
                 </p>
               )}
@@ -128,7 +128,7 @@ export default function BarPage() {
                 height={6}
                 className="mr-2"
               />
-              <p className="text-color-neutral-30 font-sans text-sm font-normal leading-[150%] tracking-[-0.48px]">
+              <p className="text-color-neutral-30 text-sm font-normal leading-[150%] tracking-[-0.48px]">
                 시간대
               </p>
               {!isFilterSet ? (
@@ -144,7 +144,7 @@ export default function BarPage() {
           </div>
           <button className="text-color-common-100 flex h-10 w-full items-center justify-center rounded-md bg-[#FF5940]">
             <p
-              className="font-sans text-[14px] font-medium leading-[140%] tracking-[-0.42px]"
+              className="text-[14px] font-medium leading-[140%] tracking-[-0.42px]"
               onClick={() => {
                 setFilterOpen(true);
                 return;

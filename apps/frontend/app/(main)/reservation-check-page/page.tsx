@@ -1,3 +1,5 @@
+import { AuthSheet } from "@/app/components/AuthSheet";
+// import { safeFetcher } from "@/lib/utils";
 import Checkbox from "@/public/icons/orangeCheckbox.svg";
 import Image from "next/image";
 import ReservationCard from "./components/ReservationCard";
@@ -12,6 +14,7 @@ export default function ReservationCheckPage() {
   // console.log("페이로드: ", payload);
   return (
     <div className="mt-[60px] px-5">
+      <AuthSheet />
       <div className="mb-[30px]">
         <Image
           src={Checkbox}
