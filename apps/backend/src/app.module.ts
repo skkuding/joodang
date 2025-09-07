@@ -10,6 +10,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter'
 import { ConfigModule } from '@nestjs/config'
 import { AuthModule } from '@auth/auth.module'
 import { UserModule } from './user/user.module'
+import { JobModule } from './job/job.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { UserModule } from './user/user.module'
     PrismaModule,
     AuthModule,
     UserModule,
+    JobModule,
   ],
   controllers: [AppController],
   providers: [AppService],
