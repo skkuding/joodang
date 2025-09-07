@@ -67,12 +67,8 @@ function StandByButtonForm({
       const reservationResponse: ReservationResponse = await response.json();
       onSuccess?.(reservationResponse.reservationNum.toString());
     } catch (error) {
-      console.error("Caught error:", error);
-
-      // ky의 HTTPError 처리
       if (error instanceof HTTPError) {
         try {
-          // HTTPError의 response에서 JSON 데이터 추출
           const errorData = await error.response.json();
           console.log("Error data:", errorData);
 

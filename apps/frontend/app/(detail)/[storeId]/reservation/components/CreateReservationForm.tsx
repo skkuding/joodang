@@ -3,6 +3,7 @@ import { safeFetcher } from "@/lib/utils";
 import { valibotResolver } from "@hookform/resolvers/valibot";
 
 import { ReservationResponse } from "@/app/type";
+import { HTTPError } from "ky";
 import { useRouter } from "next/navigation";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -54,7 +55,26 @@ export function CreateReservationForm({
       router.push(`./reservation/success?reservationNum=${reservationNum}`);
     } catch (error) {
       console.error("Error creating reservation:", error);
-      toast.error("예약 생성에 실패했습니다. 다시 시도해주세요.");
+      if (error instanceof HTTPError) {
+        try {
+          const errorData = await error.response.json();
+          console.log("Error data:", errorData);
+
+          if (error.response.status === 409) {
+            toast.error("해당 시간대에 예약이 존재합니다.");
+          } else if (errorData.message) {
+            toast.error(errorData.message);
+          } else {
+            toast.error("예약 생성에 실패했습니다. 다시 시도해주세요1.");
+          }
+        } catch (parseError) {
+          console.error("Error parsing response:", parseError);
+          toast.error("예약 생성에 실패했습니다. 다시 시도해주세요2.");
+        }
+      } else {
+        console.error("Non-HTTP error:", error);
+        toast.error("예약 생성에 실패했습니다. 다시 시도해주세요.3");
+      }
     }
   };
   return (
