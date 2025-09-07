@@ -34,7 +34,7 @@ export default function BarPage() {
 
   return (
     <div>
-      <div className="mt-[48px] p-5">
+      <div className="mt-[36px] p-5">
         <FilterSheet
           open={filterOpen}
           onClose={() => setFilterOpen(false)}

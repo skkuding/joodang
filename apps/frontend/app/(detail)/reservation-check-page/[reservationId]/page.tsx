@@ -6,10 +6,10 @@ import Clock from "@/public/icons/orangeClock.svg";
 import Money from "@/public/icons/orangeMoney.svg";
 import OrangeDot from "@/public/icons/orange_dot.svg";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { DetailHeader } from "../../../components/DetailHeader";
-import Link from "next/link";
 
 export default function ReservationDetail() {
   const router = useRouter();
@@ -132,35 +132,6 @@ export default function ReservationDetail() {
             <p className="text-color-common-0">5명</p>
           </div>
         </div>
-        {/* <div>
-          <div className="mb-2 flex">
-            <Image src={OrangeDot} alt="주황닷" width={6} height={6} />
-            <div className="ml-3 flex w-full justify-between">
-              <p>메뉴 선예약</p>
-            </div>
-          </div>
-          <div className="bg-color-neutral-99 w-full rounded-[6px] px-5 py-4">
-            <div className="flex flex-col space-y-2 border-b pb-2">
-              <div className="flex">
-                <Image src={OrangeDot} alt="주황닷" width={6} height={6} />
-                <div className="ml-2 flex w-full justify-between">
-                  <p>김치찌개</p>
-                  <p>24,800원</p>
-                </div>
-              </div>
-              <div className="flex">
-                <Image src={OrangeDot} alt="주황닷" width={6} height={6} />
-                <div className="ml-2 flex w-full justify-between">
-                  <p>먹태</p>
-                  <p>16,000원</p>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-row-reverse">
-              <p>총 40,800원</p>
-            </div>
-          </div>
-        </div> */}
         <div className="flex flex-col">
           <Link href={"/map/1"} className="mt-2">
             <button className="h-11 w-full rounded-xl border border-[#FF5940] bg-white text-sm font-medium text-[#FF5940]">
