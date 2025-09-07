@@ -42,6 +42,7 @@ export function StoreLocation() {
         <div className="mx-5">
           <StoreMap stores={stores} current={current} />
         </div>
+
         <Carousel
           setApi={setApi}
           opts={{
@@ -50,7 +51,7 @@ export function StoreLocation() {
             containScroll: "trimSnaps",
           }}
         >
-          <CarouselContent className="my-[14px] -ml-2 sm:-ml-4">
+          <CarouselContent className="my-[14px] ml-1">
             {stores.map(store => (
               <CarouselItem className="basis-auto" key={store.id}>
                 <StoreCard

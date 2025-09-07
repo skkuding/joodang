@@ -24,7 +24,7 @@ export function StoreList() {
           <IoIosRefresh className="h-3.5 w-3.5" onClick={fetchStores} />
         </div>
         <Carousel opts={{ align: "start" }}>
-          <CarouselContent className="my-[14px] -ml-2 sm:-ml-4">
+          <CarouselContent className="my-[14px] ml-1">
             {stores.map(store => (
               <CarouselItem className="basis-auto" key={store.id}>
                 <StoreCard
