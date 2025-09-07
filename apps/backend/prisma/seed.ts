@@ -3,6 +3,30 @@ import { PrismaClient, MenuCategory, Role } from '@prisma/client'
 const prisma = new PrismaClient()
 
 async function main() {
+  // Ensure a single Festival exists with id=1 so Store.festivalId default(1) is valid
+  // Use raw SQL upsert to avoid depending on generated client types
+  await prisma.$executeRaw`
+    INSERT INTO "festival" ("id", "name", "description", "start_time", "end_time", "location", "latitude", "longitude")
+    VALUES (
+      1,
+      '성균관대학교 대동제',
+      NULL,
+      TIMESTAMPTZ '2025-09-11 00:00:00+09',
+      TIMESTAMPTZ '2025-09-12 23:59:59+09',
+      '대운동장',
+      37.295226,
+      126.970964
+    )
+    ON CONFLICT ("id") DO UPDATE SET
+      "name" = EXCLUDED."name",
+      "description" = EXCLUDED."description",
+      "start_time" = EXCLUDED."start_time",
+      "end_time" = EXCLUDED."end_time",
+      "location" = EXCLUDED."location",
+      "latitude" = EXCLUDED."latitude",
+      "longitude" = EXCLUDED."longitude";
+  `
+
   const user1 = await prisma.user.create({
     data: {
       kakaoId: 'kakao_2020123456',
@@ -87,6 +111,8 @@ async function main() {
       accountNumber: '1101234567891',
       accountHolder: user1.name,
       ownerId: user1.id,
+      latitude: 37.2930059,
+      longitude: 126.9748929,
       icon: 2,
       contactInfo: '@skku_software',
       startTime: new Date('2026-01-02T18:00:00.000Z'),
@@ -111,6 +137,8 @@ async function main() {
       accountNumber: '1101234567892',
       accountHolder: user1.name,
       ownerId: user1.id,
+      latitude: 37.2928959,
+      longitude: 126.9745929,
       icon: 3,
       contactInfo: '@skku_amse',
       startTime: new Date('2026-01-03T17:00:00.000Z'),
@@ -135,6 +163,8 @@ async function main() {
       accountNumber: '1101234567893',
       accountHolder: user1.name,
       ownerId: user1.id,
+      latitude: 37.295226,
+      longitude: 126.970964,
       icon: 4,
       contactInfo: '@skku_electrical',
       startTime: new Date('2026-01-04T18:00:00.000Z'),

@@ -1,0 +1,29 @@
+meta {
+  name: Get Festivals
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/festival
+  body: none
+  auth: inherit
+}
+
+headers {
+  Cookie: {{user1}}
+}
+
+params:query {
+  ~cursor: 0
+  ~take: 8
+}
+
+docs {
+  ## Get Festivals
+  
+  페스티벌 목록을 페이지네이션하여 가져옵니다.
+  
+  - cursor: 다음 페이지 커서 (선택)
+  - take: 가져올 개수 (기본 8)
+}
