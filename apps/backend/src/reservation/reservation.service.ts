@@ -27,9 +27,10 @@ export class ReservationService {
 
     const alreadyBooked = await this.prisma.reservation.findUnique({
       where: { userId_timeSlotId: { userId, timeSlotId } },
+      select: { isConfirmed: true },
     })
 
-    if (alreadyBooked) {
+    if (alreadyBooked && alreadyBooked.isConfirmed !== false) {
       throw new ConflictException('You have already booked this time slot')
     }
 
@@ -123,13 +124,13 @@ export class ReservationService {
           timeSlot: {
             totalCapacity: -1,
             availableSeats: 0,
-            startTime: dayStart,
           },
           userId,
         },
+        select: { isConfirmed: true },
       })
 
-      if (alreadyBooked) {
+      if (alreadyBooked && alreadyBooked.isConfirmed !== false) {
         throw new ConflictException(
           'You have already made a walk-in reservation for this store',
         )
