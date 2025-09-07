@@ -38,6 +38,7 @@ import {
 } from "@/components/ui/popover";
 import { useState } from "react";
 import Arrow from "@/public/icons/icon_arrow.svg";
+import ImageUploadForm from "./ImageUploadForm";
 
 const Icons = [
   PawIcon,
@@ -54,6 +55,7 @@ const Icons = [
 
 const storeFormSchema = v.object({
   name: v.pipe(v.string(), v.minLength(1, "주점명을 입력해주세요")),
+  organizer: v.pipe(v.string(), v.minLength(1, "단체명을 입력해주세요")),
   description: v.pipe(v.string(), v.minLength(1, "상세 설명을 입력해주세요")),
   icon: v.pipe(v.number(), v.minValue(0, "아이콘을 선택해주세요")),
   totalCapacity: v.pipe(
@@ -68,10 +70,17 @@ const storeFormSchema = v.object({
   ),
   accountHolder: v.pipe(v.string(), v.minLength(1, "예금주명을 입력해주세요")),
   contactInfo: v.pipe(v.string(), v.minLength(1, "연락 수단을 입력해주세요")),
+  reservationFee: v.pipe(
+    v.number(),
+    v.minValue(0, "예약비는 0원 이상이어야 합니다")
+  ),
+  startTime: v.pipe(v.string(), v.minLength(1, "시작 시간을 입력해주세요")),
+  endTime: v.pipe(v.string(), v.minLength(1, "종료 시간을 입력해주세요")),
 });
 
 type StoreFormData = {
   name: string;
+  organizer: string;
   description: string;
   icon: number;
   totalCapacity: number;
@@ -79,6 +88,9 @@ type StoreFormData = {
   accountNumber: string;
   accountHolder: string;
   contactInfo: string;
+  reservationFee: number;
+  startTime: string;
+  endTime: string;
 };
 
 export default function StoreInfoForm() {
@@ -91,6 +103,7 @@ export default function StoreInfoForm() {
     resolver: valibotResolver(storeFormSchema),
     defaultValues: {
       name: formData.name,
+      organizer: formData.organizer,
       description: formData.description,
       icon: formData.icon,
       totalCapacity: formData.totalCapacity,
@@ -98,6 +111,9 @@ export default function StoreInfoForm() {
       accountNumber: formData.accountNumber,
       accountHolder: formData.accountHolder,
       contactInfo: formData.contactInfo,
+      reservationFee: formData.reservationFee,
+      startTime: formData.startTime || "",
+      endTime: formData.endTime || "",
     },
   });
 
@@ -106,6 +122,7 @@ export default function StoreInfoForm() {
     handleSubmit,
     watch,
     setValue,
+    trigger,
     formState: { errors, isValid },
   } = form;
 
@@ -134,6 +151,26 @@ export default function StoreInfoForm() {
             />
             {errors.name && (
               <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>
+            )}
+          </div>
+        </div>
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <div className="bg-primary-normal h-1.5 w-1.5 rounded-full" />
+            <label className="font-medium">운영 단체</label>
+          </div>
+          <div>
+            <input
+              type="text"
+              className="placeholder-color-neutral-90 w-full rounded-md border px-4 py-[14px] text-sm"
+              placeholder="동아리 등 단체명을 입력하세요"
+              {...register("organizer")}
+              maxLength={20}
+            />
+            {errors.organizer && (
+              <p className="mt-1 text-xs text-red-500">
+                {errors.organizer.message}
+              </p>
             )}
           </div>
         </div>
@@ -204,6 +241,7 @@ export default function StoreInfoForm() {
                 const currentValue = watch("totalCapacity");
                 if (currentValue > 0) {
                   setValue("totalCapacity", currentValue - 1);
+                  trigger("totalCapacity");
                 }
               }}
             >
@@ -218,6 +256,7 @@ export default function StoreInfoForm() {
               onClick={() => {
                 const currentValue = watch("totalCapacity");
                 setValue("totalCapacity", currentValue + 1);
+                trigger("totalCapacity");
               }}
             >
               <Image src={PlusIcon} alt="plus" width={24} height={24} />
@@ -260,6 +299,7 @@ export default function StoreInfoForm() {
                             value={name}
                             onSelect={() => {
                               setValue("bankCode", code);
+                              trigger("bankCode");
                               setOpen(false);
                             }}
                           >
@@ -319,6 +359,28 @@ export default function StoreInfoForm() {
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
             <div className="bg-primary-normal h-1.5 w-1.5 rounded-full" />
+            <label className="font-medium">예약비(원)</label>
+          </div>
+          <div className="grid grid-cols-1 gap-2">
+            <div>
+              <input
+                type="number"
+                className="placeholder-color-neutral-90 w-full rounded-md border px-4 py-[14px] text-sm"
+                placeholder="0"
+                min="0"
+                {...register("reservationFee", { valueAsNumber: true })}
+              />
+              {errors.reservationFee && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.reservationFee.message}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <div className="bg-primary-normal h-1.5 w-1.5 rounded-full" />
             <label className="font-medium">연락 수단</label>
           </div>
           <div>
@@ -335,6 +397,48 @@ export default function StoreInfoForm() {
               </p>
             )}
           </div>
+        </div>
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <div className="bg-primary-normal h-1.5 w-1.5 rounded-full" />
+            <label className="font-medium">운영 시간</label>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <input
+                type="datetime-local"
+                className="placeholder-color-neutral-90 w-full rounded-md border px-4 py-[14px] text-sm"
+                {...register("startTime")}
+              />
+              {errors.startTime && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.startTime.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <input
+                type="datetime-local"
+                className="placeholder-color-neutral-90 w-full rounded-md border px-4 py-[14px] text-sm"
+                {...register("endTime")}
+              />
+              {errors.endTime && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.endTime.message}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+        <div>
+          <div className="flex items-center gap-2">
+            <div className="bg-primary-normal h-1.5 w-1.5 rounded-full" />
+            <label className="font-medium">대표 이미지 등록</label>
+          </div>
+          <div className="text-color-neutral-50 mb-2 text-xs">
+            대표 이미지는 최대 1장 선택 가능합니다
+          </div>
+          <ImageUploadForm />
         </div>
       </div>
 

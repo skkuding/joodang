@@ -4,7 +4,7 @@ import ReservationCard from "./components/ReservationCard";
 
 export default function ReservationCheckPage() {
   return (
-    <div className="mt-[48px] px-5">
+    <div className="mt-[60px] px-5">
       <div className="mb-[30px]">
         <Image
           src={Checkbox}

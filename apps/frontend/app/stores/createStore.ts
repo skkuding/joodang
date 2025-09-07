@@ -1,12 +1,11 @@
 import { create } from "zustand";
-import { Menu, TimeSlot } from "../type";
 
-interface FormData {
+export interface FormData {
   name: string;
   description: string;
   organizer: string;
-  startTime: string;
-  endTime: string;
+  startTime?: string;
+  endTime?: string;
   reservationFee: number;
   college: string;
   icon: number;
@@ -18,11 +17,20 @@ interface FormData {
   location: string;
   latitude: number;
   longitude: number;
-  menus: Menu[];
   timeSlots: {
     id: string;
     startTime: Date;
     endTime: Date;
+  }[];
+  representativeImage: File | null;
+  representativeImagePreview: string | null;
+  menuItems: {
+    id: string;
+    name: string;
+    price: number;
+    category: string;
+    image: File | null;
+    imagePreview: string | null;
   }[];
 }
 
@@ -56,6 +64,9 @@ export const useCreateStoreStore = create<CreateStoreStore>(set => ({
     longitude: 0,
     menus: [],
     timeSlots: [],
+    representativeImage: null,
+    representativeImagePreview: null,
+    menuItems: [],
   },
   setModalPage: (page: number) => set({ modalPage: page }),
   setFormData: (data: FormData) => set({ formData: data }),

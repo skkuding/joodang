@@ -1,9 +1,11 @@
 "use client";
 import GrayBeer from "@/public/icons/icon_gray_beer.svg";
 import GrayHouse from "@/public/icons/icon_gray_house.svg";
+import GrayMypage from "@/public/icons/icon_gray_mypage.svg";
 import GrayReservation from "@/public/icons/icon_gray_reservation.svg";
 import OrangeBeer from "@/public/icons/icon_orange_beer.svg";
 import OrangeHouse from "@/public/icons/icon_orange_house.svg";
+import OrangeMypage from "@/public/icons/icon_orange_mypage.svg";
 import OrangeReservation from "@/public/icons/icon_orange_reservation.svg";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -40,7 +42,7 @@ export function Footer() {
         className="fixed bottom-0 left-0 right-0 z-10 flex h-20 w-full items-center justify-center bg-white"
         style={{ boxShadow: "0 -2px 8px rgba(0,0,0,0.1)" }}
       >
-        <div className="-mt-2 flex flex-row justify-center gap-[60px]">
+        <div className="-mt-2 flex w-full flex-row justify-between px-[40px]">
           <div
             onClick={() => {
               router.push("/");
@@ -113,6 +115,35 @@ export function Footer() {
                   height={32}
                 />
                 <p className="text-xs text-[#9B9B9B]">예약 내역</p>
+              </>
+            )}
+          </div>
+          <div
+            onClick={() => {
+              router.push("/mypage");
+            }}
+            className="flex h-[54px] w-[60px] flex-col items-center justify-center"
+          >
+            {curPos === "/mypage" ? (
+              <>
+                <Image
+                  className="flex justify-center"
+                  src={OrangeMypage}
+                  alt="마이페이지"
+                  width={20}
+                  height={20}
+                />
+                <p className="mt-1 text-xs text-[#FF5940]">마이페이지</p>
+              </>
+            ) : (
+              <>
+                <Image
+                  src={GrayMypage}
+                  alt="마이페이지"
+                  width={20}
+                  height={20}
+                />
+                <p className="mt-1 text-xs text-[#9B9B9B]">마이페이지</p>
               </>
             )}
           </div>
