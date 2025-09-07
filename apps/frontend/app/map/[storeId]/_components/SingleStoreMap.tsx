@@ -19,7 +19,7 @@ export default function SingleStoreMap({ store }: SingleStoreMapProps) {
     if (!window.naver) return;
 
     // 지도 생성
-  const map = new window.naver.maps.Map("map", {
+    const map = new window.naver.maps.Map("map", {
       gl: true,
       center: new window.naver.maps.LatLng(store.latitude, store.longitude),
       zoom: 16,
@@ -28,22 +28,48 @@ export default function SingleStoreMap({ store }: SingleStoreMapProps) {
     mapRef.current = map;
 
     // 가게 위치 마커
-  const storeMarker = new window.naver.maps.Marker({
+    function buildIconHTML(name: string) {
+      return `
+        <div class="store-marker" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:8px;color:white;pointer-events:none;">
+          <span style="background-color:rgba(255,255,255,0.1);padding:4px 12px;font-size:14px;font-weight:600;white-space:nowrap;">
+            ${name}
+          </span>
+          <img src="/icons/icon_location.svg" alt="pin" width="35" height="35" style="display:block;" />
+        </div>`;
+    }
+
+    function measureHTML(html: string) {
+      const wrapper = document.createElement("div");
+      wrapper.style.position = "absolute";
+      wrapper.style.left = "-9999px";
+      wrapper.style.top = "0";
+      wrapper.innerHTML = html;
+      document.body.appendChild(wrapper);
+
+      const el = wrapper.firstElementChild as HTMLElement;
+      const rect = el.getBoundingClientRect();
+      const width = Math.round(rect.width);
+      const height = Math.round(rect.height);
+
+      document.body.removeChild(wrapper);
+
+      return { html, width, height };
+    }
+
+    // storeMarker 생성 부분 대체
+    const iconHtml = buildIconHTML(store.name);
+    const measured = measureHTML(iconHtml);
+
+    const storeMarker = new window.naver.maps.Marker({
       position: new window.naver.maps.LatLng(store.latitude, store.longitude),
       map,
       icon: {
-        content: `<div style="display: flex; width: fit-content; flex-direction: column; align-items: center; gap: 4px;  padding: 8px; border-radius: 8px; color: white;">
-                    <span style="background-color: rgba(255,255,255,0.1); padding: 4px 12px; font-size: 14px; font-weight: 600;">
-                      ${store.name}
-                    </span>
-                    <img
-                      src="/icons/icon_location.svg"
-                      alt="pin"
-                      width="35"
-                      height="35"
-                    />
-                  </div>`,
-    anchor: new window.naver.maps.Point(100, 50),
+        content: measured.html,
+        // 하단 중앙이 좌표에 오도록 설정
+        anchor: new window.naver.maps.Point(
+          Math.round(measured.width / 2),
+          measured.height
+        ),
       },
     });
     window.naver.maps.Event.addListener(storeMarker, "click", () => {
@@ -108,7 +134,7 @@ export default function SingleStoreMap({ store }: SingleStoreMapProps) {
       );
 
       // cleanup (컴포넌트 언마운트 시 위치 추적 중단)
-    return () => navigator.geolocation.clearWatch(watchId);
+      return () => navigator.geolocation.clearWatch(watchId);
     }
   }, [store.latitude, store.longitude, store.name]);
 
