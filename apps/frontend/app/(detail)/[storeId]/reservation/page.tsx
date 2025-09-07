@@ -191,7 +191,7 @@ export default function Page() {
 
           <FormSection title="총 인원" isRow>
             <div className="flex items-center gap-5">
-              <Button variant="outline" className="h-[38px] w-[38px] p-[7px]">
+              <Button variant="counter" className="h-[38px] w-[38px] p-[7px]">
                 <Image
                   src={minusIcon}
                   alt="Remove"
@@ -202,7 +202,7 @@ export default function Page() {
                 />
               </Button>
               <span className="text-base font-medium">{count}</span>
-              <Button variant="outline" className="h-[38px] w-[38px] p-[7px]">
+              <Button variant="counter" className="h-[38px] w-[38px] p-[7px]">
                 <Image
                   src={plusIcon}
                   alt="Add"

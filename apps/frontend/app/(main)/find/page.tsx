@@ -1,10 +1,15 @@
 "use client";
 
 import { filterVariables, Store } from "@/app/type";
-import { formatWithComma, safeFetcher } from "@/lib/utils";
+import {
+  formatDateDash2Point,
+  formatWithComma,
+  safeFetcher,
+} from "@/lib/utils";
 import locationIcon from "@/public/icons/icon_location.svg";
 import OrangeDot from "@/public/icons/orange_dot.svg";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import BarCard from "./components/BarCard";
 import FilterSheet from "./components/FilterSetting";
@@ -15,7 +20,7 @@ export default function BarPage() {
   const [isFilterSet, setIsFilterSet] = useState<boolean>(false);
   const [filterOpen, setFilterOpen] = useState(false);
   const [filterValue, setFilterValue] = useState<filterVariables>({
-    days: [""],
+    days: "0000-00-00",
     maxFee: 15000,
     startTime: "00:00",
     endTime: "00:00",
@@ -48,12 +53,19 @@ export default function BarPage() {
             <div className="text-color-common-0 mt-1 font-sans text-xl font-medium leading-[140%] tracking-[-0.6px]">
               주점을 찾아볼까요?
             </div>
-            <button className="justify-item item-center rounded-1 flex h-[25px] w-[95px] flex-row bg-[#FF594014] px-2 py-1">
-              <Image src={locationIcon} alt="지도버튼" width={12} height={12} />
-              <p className="font-sans text-xs font-normal leading-[140%] tracking-[-0.36px] text-[#FF5940]">
-                지도에서 찾기
-              </p>
-            </button>
+            <Link href={`/map/1`}>
+              <button className="justify-item item-center rounded-1 flex h-[25px] w-[95px] flex-row bg-[#FF594014] px-2 py-1">
+                <Image
+                  src={locationIcon}
+                  alt="지도버튼"
+                  width={12}
+                  height={12}
+                />
+                <p className="font-sans text-xs font-normal leading-[140%] tracking-[-0.36px] text-[#FF5940]">
+                  지도에서 찾기
+                </p>
+              </button>
+            </Link>
           </div>
 
           <div className="text-color-neutral-40 mb-5 mt-3 font-sans text-[14px] font-normal leading-[150%] tracking-[-0.42px]">
@@ -82,7 +94,7 @@ export default function BarPage() {
                   0 원
                 </p>
               ) : (
-                <p className="text-color-common-0 ml-auto font-['Pretendard'] text-base font-normal leading-normal">
+                <p className="text-color-common-0 ml-auto font-['Pretendard'] text-sm font-normal leading-normal">
                   {formatWithComma(filterValue.maxFee)} 원
                 </p>
               )}
@@ -103,8 +115,8 @@ export default function BarPage() {
                   0000. 00. 00
                 </p>
               ) : (
-                <p className="text-color-common-0 ml-auto font-['Pretendard'] text-base font-normal leading-normal">
-                  {filterValue.days[0]}
+                <p className="text-color-common-0 ml-auto font-['Pretendard'] text-sm font-normal leading-normal">
+                  {formatDateDash2Point(filterValue.days)}
                 </p>
               )}
             </div>
@@ -120,11 +132,11 @@ export default function BarPage() {
                 시간대
               </p>
               {!isFilterSet ? (
-                <p className="text-color-neutral-70 ml-auto font-sans text-sm font-normal not-italic leading-[140%] tracking-[-0.48px]">
+                <p className="text-color-neutral-70 ml-auto text-sm font-normal not-italic leading-[140%] tracking-[-0.48px]">
                   00:00 ~ 00:00
                 </p>
               ) : (
-                <p className="text-color-common-0 ml-auto font-['Pretendard'] text-base font-normal leading-normal">
+                <p className="text-color-common-0 ml-auto text-sm font-normal leading-normal">
                   {filterValue.startTime} ~ {filterValue.endTime}
                 </p>
               )}
@@ -213,17 +225,17 @@ export default function BarPage() {
           <div className="flex flex-col items-center gap-2">
             {stores.map((item, idx) => {
               return (
-                <BarCard
-                  key={idx}
-                  id={item.id}
-                  organizer={item.organizer}
-                  name={item.name}
-                  location={item.location}
-                  startTime={item.startTime}
-                  endTime={item.endTime}
-                  reservationFee={item.reservationFee}
-                  imageUrl={item.imageUrl}
-                />
+                <Link href={`/${String(item.id)}`} key={idx}>
+                  <BarCard
+                    id={item.id}
+                    organizer={item.organizer}
+                    name={item.name}
+                    location={item.location}
+                    startTime={item.startTime}
+                    endTime={item.endTime}
+                    reservationFee={item.reservationFee}
+                  />
+                </Link>
               );
             })}
           </div>

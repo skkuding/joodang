@@ -22,6 +22,7 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         selected:
           "bg-primary-normal/10 text-primary-normal border border-primary-normal",
+        counter: "bg-white border border-color-neutral-95 rounded-none",
       },
       size: {
         default: "h-[50px] px-4 py-2 has-[>svg]:px-3",

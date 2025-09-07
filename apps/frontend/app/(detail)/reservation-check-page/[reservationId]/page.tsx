@@ -9,7 +9,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { DetailHeader } from "../../../components/DetailHeader";
 
 export default function ReservationDetail() {
   const router = useRouter();
@@ -38,8 +37,7 @@ export default function ReservationDetail() {
 
   return (
     <div className="bg-color-neutral-99 flex min-h-screen flex-col">
-      <DetailHeader />
-      <div className="mb-4" />
+      <div className="h-[28px]" />
 
       {/* 윗 부분 */}
       <div className="bg-color-common-100 mb-[10px] p-5">
