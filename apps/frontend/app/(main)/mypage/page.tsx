@@ -142,17 +142,16 @@ export default function Page() {
         </div>
       )}
 
-      {userRole === "OWNER" ||
-        (userRole === "ADMIN" && (
-          <div className="text-center">
-            <Button
-              onClick={() => (window.location.href = "/mypage/create-store")}
-              className="w-full max-w-md"
-            >
-              주점 등록하기
-            </Button>
-          </div>
-        ))}
+      {(userRole === "OWNER" || userRole === "ADMIN") && (
+        <div className="text-center">
+          <Button
+            onClick={() => (window.location.href = "/mypage/create-store")}
+            className="w-full max-w-md"
+          >
+            주점 등록하기
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
