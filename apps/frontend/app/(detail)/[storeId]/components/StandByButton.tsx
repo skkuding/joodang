@@ -24,9 +24,17 @@ import {
   useFormContext,
 } from "react-hook-form";
 import { toast } from "sonner";
+import { ReservationConfirmButton } from "../reservation/components/ReservationConfirmButton";
+import { ReservationInfo } from "../reservation/components/ReservationInfo";
 import { createSchema } from "./_libs/schema";
 
-function StandByButtonForm({ children }: { children: React.ReactNode }) {
+function StandByButtonForm({
+  children,
+  onSuccess,
+}: {
+  children: React.ReactNode;
+  onSuccess?: (reservationNum: string) => void;
+}) {
   interface CreateStandByInput {
     headcount: number;
     storeId: number;
@@ -57,7 +65,7 @@ function StandByButtonForm({ children }: { children: React.ReactNode }) {
         body: JSON.stringify(standByData),
       });
       const reservationResponse: ReservationResponse = await response.json();
-      toast.success("현장 대기 생성에 성공했습니다.");
+      onSuccess?.(reservationResponse.reservationNum.toString());
     } catch (error) {
       console.error("Caught error:", error);
 
@@ -69,7 +77,7 @@ function StandByButtonForm({ children }: { children: React.ReactNode }) {
           console.log("Error data:", errorData);
 
           if (error.response.status === 409) {
-            toast.error("이미 해당 매장에 현장 대기 예약이 있습니다.");
+            toast.error("해당 매장에 현장 대기 예약이 존재합니다.");
           } else if (errorData.message) {
             toast.error(errorData.message);
           } else {
@@ -96,6 +104,7 @@ function StandByButtonForm({ children }: { children: React.ReactNode }) {
 export function StandByButton() {
   const storeId = useParams().storeId;
   const [count, setCount] = useState(0);
+  const [reservationNum, setReservationNum] = useState<string | null>(null);
 
   function StandByInput() {
     const { register, setValue } = useFormContext();
@@ -158,14 +167,28 @@ export function StandByButton() {
         </Button>
       </DialogTrigger>
       <DialogContent className="py-6">
-        <DialogTitle>현장 대기 신청</DialogTitle>
-
-        <StandByButtonForm>
-          <div className="flex h-full flex-col gap-4">
-            <StandByInput />
-            <SubmitButton />
-          </div>
-        </StandByButtonForm>
+        {!reservationNum ? (
+          // 예약 전 - 폼 표시
+          <>
+            <DialogTitle>현장 대기 신청</DialogTitle>
+            <StandByButtonForm onSuccess={setReservationNum}>
+              <div className="flex flex-col gap-4">
+                <StandByInput />
+                <SubmitButton />
+              </div>
+            </StandByButtonForm>
+          </>
+        ) : (
+          // 예약 완료 후 - 확인 버튼 표시
+          <>
+            <DialogTitle className="hidden" />
+            <div className="flex flex-col items-center justify-center">
+              <ReservationInfo reservationNum={reservationNum} isStandBy />
+              <div className="h-10" />
+              <ReservationConfirmButton />
+            </div>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );

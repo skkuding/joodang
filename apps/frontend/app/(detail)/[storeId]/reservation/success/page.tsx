@@ -3,32 +3,15 @@ import { Button } from "@/components/ui/button";
 import arrowIcon from "@/public/icons/icon_arrow.svg";
 import kakaoPayIcon from "@/public/icons/icon_kakao_pay.svg";
 import tossIcon from "@/public/icons/icon_toss.svg";
-import Link from "next/dist/client/link";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
+import { ReservationConfirmButton } from "../components/ReservationConfirmButton";
+import { ReservationInfo } from "../components/ReservationInfo";
 
 export default function Page() {
   const searchParams = useSearchParams();
   const reservationNum = searchParams.get("reservationNum");
 
-  function ReservationInfo() {
-    return (
-      <>
-        <span className="bg-primary-normal/10 text-primary-normal mb-4 px-[21px] py-1 font-normal">
-          예약 번호
-        </span>
-        <span className="text-primary-normal mb-3 text-[80px] font-medium">
-          {reservationNum}
-        </span>
-        <span className="mb-[6px] text-2xl font-medium">
-          예약이 신청되었어요
-        </span>
-        <span className="text-sm font-normal">
-          예약이 확정되면 알림을 보내드릴게요
-        </span>
-      </>
-    );
-  }
   function SendMoneyButton() {
     const handleTossPayment = () => {
       // 토스페이 앱 스킴 URL
@@ -104,23 +87,15 @@ export default function Page() {
     );
   }
 
-  function ConfirmButton() {
-    return (
-      <div className="pb-15 w-full p-5">
-        <Link href={"/reservation-check-page"}>
-          <Button className="w-full">확인했어요</Button>
-        </Link>
-      </div>
-    );
-  }
-
   return (
     <div className="flex flex-col items-center justify-center pt-10">
       <div className="h-[106px]" />
-      <ReservationInfo />
+      <ReservationInfo reservationNum={reservationNum} />
       <div className="fixed bottom-0 w-full">
         <SendMoneyButton />
-        <ConfirmButton />
+        <div className="pb-15 w-full p-5">
+          <ReservationConfirmButton />
+        </div>
       </div>
     </div>
   );
