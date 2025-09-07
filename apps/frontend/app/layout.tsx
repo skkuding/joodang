@@ -3,6 +3,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "./globals.css";
+import { Viewport } from "next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,12 +18,13 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: "주당 Joodang",
   description: "대학 축제 주점 예약 플랫폼",
-  viewport: {
-    width: "device-width",
-    initialScale: 1.0,
-    maximumScale: 1.0,
-    userScalable: "no",
-  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({

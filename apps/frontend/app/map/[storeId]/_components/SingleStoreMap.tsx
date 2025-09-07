@@ -27,7 +27,7 @@ export default function SingleStoreMap({ store }: SingleStoreMapProps) {
     const map = new window.naver.maps.Map("map", {
       gl: true,
       center: new window.naver.maps.LatLng(store.latitude, store.longitude),
-      zoom: 15,
+      zoom: 16,
       customStyleId: "5ebaa70e-0bc8-4f24-b7a3-6247c307974c",
     });
     mapRef.current = map;
@@ -51,7 +51,7 @@ export default function SingleStoreMap({ store }: SingleStoreMapProps) {
       },
     });
     window.naver.maps.Event.addListener(storeMarker, "click", () => {
-      map.setZoom(17);
+      map.setZoom(20);
       map.setCenter(
         new window.naver.maps.LatLng(store.latitude, store.longitude)
       );

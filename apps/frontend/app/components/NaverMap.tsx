@@ -21,7 +21,7 @@ export default function NaverMap() {
     const map = new naver.maps.Map(mapRef.current, {
       gl: true,
       center: new naver.maps.LatLng(37.2931959, 126.9745929),
-      zoom: 14,
+      zoom: 16,
       customStyleId: "5ebaa70e-0bc8-4f24-b7a3-6247c307974c",
     });
 
