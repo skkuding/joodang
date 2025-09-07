@@ -7,6 +7,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Festival {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  startTime   DateTime @map("start_time")
+  endTime     DateTime @map("end_time")
+  location    String   @default("디도 앞 잔디밭")
+  latitude    Float    @default(37.2931959)
+  longitude   Float    @default(126.9745929)
+
+  Store Store[]
+
+  @@map("festival")
+}
+
 model Store {
   id             Int      @id @default(autoincrement())
   name           String
@@ -14,8 +29,6 @@ model Store {
   college        String   @default("성균관대학교") // 추후 대학교 입력 필드 생길 예정
   organizer      String?
   imageUrl       String   @default("https://joodang.com/store_image.png") @map("image_url")
-  owner          User     @relation(fields: [ownerId], references: [id])
-  ownerId        Int      @map("owner_id")
   icon           Int      @default(1)
   totalCapacity  Int      @default(50) @map("total_capacity")
   contactInfo    String?  @map("contact_info")
@@ -31,6 +44,11 @@ model Store {
   location  String @default("디도 앞 잔디밭")
   latitude  Float  @default(37.2931959)
   longitude Float  @default(126.9745929)
+
+  owner      User     @relation(fields: [ownerId], references: [id])
+  ownerId    Int      @map("owner_id")
+  festival   Festival @relation(fields: [festivalId], references: [id], onDelete: Cascade)
+  festivalId Int      @default(1) @map("festival_id")
 
   menus           Menu[]
   timeSlots       TimeSlot[]
