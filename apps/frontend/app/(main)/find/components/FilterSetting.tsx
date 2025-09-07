@@ -1,10 +1,11 @@
 "use client";
 import { filterVariables } from "@/app/type";
+import { Button } from "@/components/ui/button";
+import { formatDateWithDay, formatWithComma } from "@/lib/utils";
 import OrangeDot from "@/public/icons/orange_dot.svg";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useId, useState } from "react";
-import { cn, formatWithComma } from "../../../../lib/utils";
 import {
   Select,
   SelectContent,
@@ -44,10 +45,16 @@ export default function FilterSheet({
   const titleId = useId();
 
   const [dayCandidates, setDayCandidates] = useState<string[]>([
-    "2025년 09월 11일 (목)",
-    "2025년 09월 12일 (금)",
+    "2025-09-11",
+    "2025-09-12",
   ]);
-  const [selDayIdx, setSelDayIdx] = useState<number>(-1);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+
+  function handleDayChange(selDate: string) {
+    setNewFilterValue(prev => {
+      return { ...prev, days: selDate };
+    });
+  }
 
   function handleSliderValueChange(next: number[]) {
     setNewFilterValue(prev => {
@@ -131,19 +138,24 @@ export default function FilterSheet({
                     날짜
                   </span>
                 </div>
-                <div className="grid grid-cols-2 place-items-center gap-[7px] rounded-lg">
-                  {dayCandidates.map((item, idx) => {
+                <div className="grid grid-cols-2 gap-2">
+                  {dayCandidates.map(dateKey => {
                     return (
-                      <div
-                        key={idx}
-                        className={cn(
-                          "border-color-neutral-90 item-center text-color-neutral-30 flex h-[37px] w-[168px] justify-center rounded border px-4 py-2 font-normal"
-                        )}
+                      <Button
+                        key={dateKey}
+                        variant={
+                          selectedDate === dateKey ? "selected" : "outline"
+                        }
+                        className="h-[37px]"
+                        onClick={() => {
+                          setSelectedDate(dateKey);
+                          handleDayChange(dateKey);
+                        }}
                       >
-                        <p className="w-[150px] text-sm leading-tight">
-                          {item}
-                        </p>
-                      </div>
+                        <span className="text-sm font-normal">
+                          {formatDateWithDay(dateKey)}
+                        </span>
+                      </Button>
                     );
                   })}
                 </div>

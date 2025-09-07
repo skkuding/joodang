@@ -99,3 +99,12 @@ export const formatTimeToKST = (utcTimeString: string) => {
     hour12: false,
   });
 };
+
+// 0000-00-00 -> 0000.00.00 하는 함수
+export function formatDateDash2Point(dateStr: string | null) {
+  if (!dateStr) {
+    return "";
+  }
+  const [year, month, day] = dateStr.split("-");
+  return `${year}.${month}.${day}`;
+}
