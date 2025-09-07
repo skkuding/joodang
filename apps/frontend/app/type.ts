@@ -71,7 +71,7 @@ export interface CreateStoreDto {
 
 export interface CreateMenuDto {
   name: string;
-  category: string;
+  category: "Tang" | "Tuiguim" | "Bap" | "Fruit" | "Maroon5" | "Beverage";
   price: number;
   storeId: number;
   imageUrl?: string;

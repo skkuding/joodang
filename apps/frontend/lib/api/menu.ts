@@ -1,13 +1,10 @@
 import { CreateMenuDto } from "@/app/type";
+import { safeFetcher } from "../utils";
 
 // 메뉴 생성
 export const createMenu = async (menuData: CreateMenuDto) => {
-  const response = await fetch("/api/menu", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(menuData),
+  const response = await safeFetcher.post("menu", {
+    json: menuData,
   });
 
   if (!response.ok) {

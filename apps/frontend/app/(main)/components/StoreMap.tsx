@@ -53,6 +53,7 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
                         height="35"
                       />
                     </div>`,
+          anchor: new naver.maps.Point(36.5, 53),
         },
       });
     });
