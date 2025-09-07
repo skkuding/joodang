@@ -4,9 +4,43 @@ import { Store } from "@/app/type";
 import Script from "next/script";
 import { useEffect, useRef, useState } from "react";
 
+type NaverLatLng = unknown;
+type NaverPoint = unknown;
+
+interface NaverMapInstance {
+  setCenter(latlng: NaverLatLng): void;
+  panTo?(latlng: NaverLatLng): void;
+}
+
+interface NaverMarkerInstance {
+  setPosition(latlng: NaverLatLng): void;
+  setIcon(icon: { content: string; anchor: NaverPoint }): void;
+  getMap(): NaverMapInstance | null;
+  setMap(map: NaverMapInstance | null): void;
+}
+
 declare global {
   interface Window {
-    naver: naver.maps.Map;
+    naver: {
+      maps?: {
+        Map: new (
+          el: HTMLElement,
+          options: {
+            gl?: boolean;
+            center: NaverLatLng;
+            zoom: number;
+            customStyleId?: string;
+          }
+        ) => NaverMapInstance;
+        LatLng: new (lat: number, lng: number) => NaverLatLng;
+        Point: new (x: number, y: number) => NaverPoint;
+        Marker: new (opts: {
+          position: NaverLatLng;
+          map: NaverMapInstance;
+          icon: { content: string; anchor: NaverPoint };
+        }) => NaverMarkerInstance;
+      };
+    };
   }
 }
 
@@ -17,15 +51,15 @@ interface StoreMapProps {
 
 export default function StoreMap({ stores, current }: StoreMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
-  const markerRef = useRef<any>(null);
+  const mapInstanceRef = useRef<NaverMapInstance | null>(null);
+  const markerRef = useRef<NaverMarkerInstance | null>(null);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     if (!mapRef.current) return;
     if (!isReady) return;
 
-    const { naver } = window as any;
+    const { naver } = window;
     if (!naver?.maps) return;
 
     const selectedIndex = stores.length
@@ -47,17 +81,15 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
         customStyleId: "56e070b5-b8ce-4f3f-90a7-fc9e602ba64c",
       });
     } else {
-      mapInstanceRef.current.setCenter(
-        new naver.maps.LatLng(centerLat, centerLng)
-      );
+      const nextCenter = new naver.maps.LatLng(centerLat, centerLng);
+      if (typeof mapInstanceRef.current.panTo === "function") {
+        mapInstanceRef.current.panTo(nextCenter);
+      } else {
+        mapInstanceRef.current.setCenter(nextCenter);
+      }
     }
 
     // Update marker for the selected store
-    if (markerRef.current) {
-      markerRef.current.setMap(null);
-      markerRef.current = null;
-    }
-
     if (selectedStore) {
       const markerContent = `<div id="marker-${selectedStore.id}" style="display: flex; width: fit-content; flex-direction: column; align-items: center; gap: 4px; padding: 0px; border-radius: 8px; color: white;">
                         <span style="background-color: rgba(255,255,255,0.1); padding: 4px 12px; font-size: 14px; font-weight: 600;">
@@ -84,17 +116,30 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
       const anchorY = 55;
       document.body.removeChild(tempDiv);
 
-      markerRef.current = new naver.maps.Marker({
-        position: new naver.maps.LatLng(
-          selectedStore.latitude,
-          selectedStore.longitude
-        ),
-        map: mapInstanceRef.current,
-        icon: {
+      const position = new naver.maps.LatLng(
+        selectedStore.latitude,
+        selectedStore.longitude
+      );
+
+      if (markerRef.current) {
+        markerRef.current.setPosition(position);
+        markerRef.current.setIcon({
           content: markerContent,
           anchor: new naver.maps.Point(anchorX, anchorY),
-        },
-      });
+        });
+        if (!markerRef.current.getMap()) {
+          markerRef.current.setMap(mapInstanceRef.current);
+        }
+      } else {
+        markerRef.current = new naver.maps.Marker({
+          position,
+          map: mapInstanceRef.current,
+          icon: {
+            content: markerContent,
+            anchor: new naver.maps.Point(anchorX, anchorY),
+          },
+        });
+      }
     }
 
     // optional cleanup on unmount
