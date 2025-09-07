@@ -234,6 +234,7 @@ export default function BarPage() {
                     startTime={item.startTime}
                     endTime={item.endTime}
                     reservationFee={item.reservationFee}
+                    imageUrl={item.imageUrl}
                   />
                 </Link>
               );
