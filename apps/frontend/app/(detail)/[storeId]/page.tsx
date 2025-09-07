@@ -25,10 +25,13 @@ export default async function Page({
 
   function ReservationButton() {
     return (
-      <div className="pb-15 fixed bottom-0 left-0 right-0 bg-white p-5">
+      <div className="pb-15 fixed bottom-0 left-0 right-0 flex flex-col gap-[6px] p-5">
         <Link href={`/${storeId}/reservation`}>
           <Button className="w-full">예약하기</Button>
         </Link>
+        <Button className="w-full" variant={"outline"}>
+          현장 대기
+        </Button>
       </div>
     );
   }
