@@ -47,6 +47,23 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
         zoom: 16,
         customStyleId: "56e070b5-b8ce-4f3f-90a7-fc9e602ba64c",
       });
+      mapInstanceRef.current.setOptions({
+        customStyleId: "56e070b5-b8ce-4f3f-90a7-fc9e602ba64c",
+      });
+      window.naver.maps.Event?.once(
+        mapInstanceRef.current as unknown as any,
+        "idle",
+        () => {
+          mapInstanceRef.current?.setOptions({
+            customStyleId: "56e070b5-b8ce-4f3f-90a7-fc9e602ba64c",
+          });
+        }
+      );
+      setTimeout(() => {
+        mapInstanceRef.current?.setOptions({
+          customStyleId: "56e070b5-b8ce-4f3f-90a7-fc9e602ba64c",
+        });
+      }, 50);
     } else {
       const nextCenter = new naver.maps.LatLng(centerLat, centerLng);
       if (typeof mapInstanceRef.current.panTo === "function") {
