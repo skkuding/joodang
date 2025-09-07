@@ -248,7 +248,7 @@ export default function Page() {
   }
 
   return (
-    <div className="w-full">
+    <div>
       <AuthSheet />
       <div className="h-4" />
       <CreateReservationForm>

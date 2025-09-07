@@ -5,6 +5,7 @@ import Script from "next/script";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { IoIosArrowBack } from "react-icons/io";
+import { StoreDrawer } from "./StoreDrawer";
 
 declare global {
   interface Window {
@@ -77,23 +78,6 @@ export default function SingleStoreMap({ store }: SingleStoreMapProps) {
       }
     });
 
-    // 내 위치 가져오기
-    // if (navigator.geolocation) {
-    //   navigator.geolocation.getCurrentPosition(position => {
-    //     const { latitude, longitude } = position.coords;
-    //     const myLatLng = new window.naver.maps.LatLng(latitude, longitude);
-
-    //     const marker = new window.naver.maps.Marker({
-    //       position: myLatLng,
-    //       map,
-    //       icon: {
-    //         content:
-    //           '<div style="width:20px;height:20px;background:red;border-radius:50%;border:2px solid white;"></div>',
-    //       },
-    //     });
-    //     setMyMarker(marker);
-    //   });
-    // }
     if (navigator.geolocation) {
       // 위치 변화 감지
       const watchId = navigator.geolocation.watchPosition(
@@ -146,7 +130,7 @@ export default function SingleStoreMap({ store }: SingleStoreMapProps) {
         src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${process.env.NEXT_PUBLIC_NAVER_ID}&submodules=gl`}
         strategy="beforeInteractive"
       />
-      <div className="relative mt-[-48px] h-screen w-screen">
+      <div className="relative mb-[-100px] mt-[-48px] h-screen w-screen">
         {/* 지도 */}
         <div className="h-full w-full" id="map" />
         <IoIosArrowBack
@@ -156,18 +140,7 @@ export default function SingleStoreMap({ store }: SingleStoreMapProps) {
           }}
         />
 
-        {/* 내 위치 버튼 */}
-        <button
-          onClick={moveToMyLocation}
-          className="absolute bottom-2 right-2 rounded-full bg-[#4A4A4A] shadow-md hover:cursor-pointer"
-        >
-          <Image
-            src="/icons/icon_my_location.svg"
-            alt="My Location"
-            width={40}
-            height={40}
-          />
-        </button>
+        <StoreDrawer store={store} mylocationfunc={moveToMyLocation} />
       </div>
     </>
   );

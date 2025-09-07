@@ -3,9 +3,11 @@ export interface Store {
   name: string;
   description: string;
   college: string;
-  imageUrl: string;
   organizer: string;
+  imageUrl: string;
   ownerId: number;
+  icon: number;
+  totalCapacity: number;
   contactInfo: string;
   startTime: string; // ISO8601 string
   endTime: string; // ISO8601 string
@@ -25,6 +27,18 @@ export interface StoreDetail extends Store {
   currentAvailableSeats: number | null;
 }
 
+export interface User {
+  id: number;
+  kakaoId: string;
+  name: string;
+  phone: string | null;
+  studentId: string;
+  college: string;
+  major: string;
+  profileImageUrl: string | null;
+  role: "ADMIN" | "OWNER" | "STAFF" | "USER";
+}
+
 export interface TimeSlot {
   id: number;
   startTime: string; // ISO8601 string
@@ -32,10 +46,15 @@ export interface TimeSlot {
   availableSeats: number;
 }
 
+export interface ReservationTimeSlot extends TimeSlot {
+  totalCapacity: number;
+  storeId: number;
+}
+
 export interface Menu {
   id: number;
   name: string;
-  photoUrl: string | null;
+  imageUrl: string | null;
   price: number;
   category: string;
   storeId: number;
