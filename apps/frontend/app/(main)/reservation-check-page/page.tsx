@@ -1,8 +1,16 @@
+import { safeFetcher } from "@/lib/utils";
 import Checkbox from "@/public/icons/orangeCheckbox.svg";
 import Image from "next/image";
 import ReservationCard from "./components/ReservationCard";
 
-export default function ReservationCheckPage() {
+export default async function ReservationCheckPage() {
+  const reservations = await safeFetcher("reservation").json();
+  console.log("reservations:", reservations);
+
+  // const token =
+  //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIyLCJrYWthb0lkIjoiNDQyMzQxOTQxMyIsImlhdCI6MTc1NzI0NTgzNiwiZXhwIjoxNzU4NDU1NDM2fQ.1UijpIjs9Bo_zmfKd6oPJuMP9QLmpKnCKfx-XWpbLy4";
+  // const payload = JSON.parse(atob(token.split(".")[1]));
+  // console.log("페이로드: ", payload);
   return (
     <div className="mt-[60px] px-5">
       <div className="mb-[30px]">
