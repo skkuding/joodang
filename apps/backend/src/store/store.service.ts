@@ -219,7 +219,7 @@ export class StoreService {
         },
       })
 
-      await tx.user.update({
+      await tx.user.updateMany({
         where: {
           id: userId,
           role: { not: Role.ADMIN },
