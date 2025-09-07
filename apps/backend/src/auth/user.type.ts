@@ -1,4 +1,4 @@
 export type JwtUser = {
-  id: number;
-  kakaoId?: string;
-};
+  id: number
+  kakaoId?: string
+}

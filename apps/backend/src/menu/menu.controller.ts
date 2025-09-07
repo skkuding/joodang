@@ -14,7 +14,7 @@ import {
 import { MenuService } from './menu.service'
 import { CreateMenuDto } from './dto/create-menu.dto'
 import { UpdateMenuDto } from './dto/update-menu.dto'
-import { StaffGuard } from '@app/auth/staff.guard'
+import { StaffGuard } from '@app/auth/guards/staff.guard'
 import { Public } from '@app/auth/public.decorator'
 import { UploadMenuImageDto } from './dto/upload-menu-image.dto'
 import type { Request } from 'express'

@@ -1,12 +1,12 @@
 export interface Store {
   id: number;
   name: string;
-  phone: string;
   description: string;
   college: string;
+  imageUrl: string;
   organizer: string;
   ownerId: number;
-  instagramId: string;
+  contactInfo: string;
   startTime: string; // ISO8601 string
   endTime: string; // ISO8601 string
   isAvailable: boolean;
@@ -60,6 +60,38 @@ export interface Menu {
 
 export interface MenuData {
   Bap: Menu[];
+}
+
+// API 요청/응답 타입들
+export interface CreateStoreDto {
+  name: string;
+  description?: string;
+  organizer?: string;
+  college: string;
+  icon: number;
+  totalCapacity: number;
+  contactInfo?: string;
+  startTime: Date;
+  endTime: Date;
+  reservationFee: number;
+  bankCode: string;
+  accountNumber: string;
+  accountHolder: string;
+  location: string;
+  latitude: number;
+  longitude: number;
+  timeSlots: {
+    startTime: Date;
+    endTime: Date;
+  }[];
+}
+
+export interface CreateMenuDto {
+  name: string;
+  category: "Tang" | "Tuiguim" | "Bap" | "Fruit" | "Maroon5" | "Beverage";
+  price: number;
+  storeId: number;
+  imageUrl?: string;
 }
 
 export interface filterVariables {

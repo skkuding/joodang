@@ -8,12 +8,14 @@ import * as webpush from 'web-push'
 import { PrismaService } from '../../prisma/prisma.service'
 import { CreatePushSubscriptionDto } from './dto/create-push-subscription.dto'
 import { Role } from '@prisma/client'
+import { JobService } from '@app/job/job.service'
 
 @Injectable()
 export class NotificationService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly config: ConfigService,
+    private readonly jobService: JobService,
   ) {
     const vapidKeys = {
       publicKey: this.config.get('VAPID_PUBLIC_KEY'),
@@ -202,6 +204,147 @@ export class NotificationService {
       isRead: record.isRead,
       createTime: record.createTime,
     }))
+  }
+
+  async notifyReservationReminder(reservationId: number, key: string) {
+    const reservation = await this.prisma.reservation.findUnique({
+      where: { id: reservationId },
+      select: {
+        userId: true,
+        store: { select: { id: true, name: true } },
+        timeSlot: { select: { startTime: true } },
+      },
+    })
+
+    try {
+      if (!reservation) {
+        throw new NotFoundException('Reservation Not Found')
+      }
+      if (!reservation.userId) {
+        throw new UnprocessableEntityException('User Id set to null')
+      }
+
+      const title = reservation.store.name ?? '곧 예약 시간이에요'
+      let message
+      const timeLeft =
+        reservation.timeSlot.startTime.getTime() - new Date().getTime()
+      if (timeLeft <= 0) {
+        message = '예약한 시간이 되었어요!'
+      } else if (timeLeft <= 5 * 60 * 1000) {
+        message = '예약한 시간 5분 전이에요!'
+      } else {
+        message = '예약한 시간 10분 전이에요!'
+      }
+
+      await this.saveNotification({
+        userIds: [reservation.userId],
+        title,
+        message,
+        storeId: reservation.store.id,
+        type: 'Reservation',
+        url: `/reservation-check-page/${reservationId}`,
+      })
+
+      await this.sendPushNotification(
+        [reservation.userId],
+        title,
+        message,
+        `/reservation-check-page/${reservationId}`,
+      )
+    } catch {
+      await this.jobService.markAsFailed(key)
+    }
+    await this.jobService.markAsDone(key)
+  }
+
+  async notifyOwnerReservationCreated(reservationId: number) {
+    const reservation = await this.prisma.reservation.findUnique({
+      where: { id: reservationId },
+      select: {
+        store: {
+          select: {
+            id: true,
+            name: true,
+            staffs: {
+              select: {
+                userId: true,
+              },
+            },
+          },
+        },
+        timeSlot: {
+          select: {
+            totalCapacity: true,
+          },
+        },
+      },
+    })
+
+    if (!reservation) return
+
+    const receivers = reservation.store.staffs.map((staff) => staff.userId)
+    const title = reservation.store.name ?? '새로운 예약'
+    const message =
+      reservation.timeSlot.totalCapacity === -1
+        ? '새로운 대기 인원이 있어요. 확인해주세요🎉'
+        : '새로운 예약 신청이 들어왔어요. 확인해주세요🎉'
+
+    await this.saveNotification({
+      userIds: receivers,
+      title,
+      message,
+      storeId: reservation.store.id,
+      type: 'Reservation',
+      url: `/reservation-check-page/${reservationId}`,
+    })
+
+    await this.sendPushNotification(
+      receivers,
+      title,
+      message,
+      `/reservation-check-page/${reservationId}`,
+    )
+  }
+
+  async notifyOwnerReservationCanceled(reservationId: number) {
+    const reservation = await this.prisma.reservation.findUnique({
+      where: { id: reservationId },
+      select: {
+        store: {
+          select: {
+            id: true,
+            name: true,
+            staffs: {
+              select: {
+                userId: true,
+              },
+            },
+          },
+        },
+      },
+    })
+
+    if (!reservation) return
+
+    const receivers = reservation.store.staffs.map((staff) => staff.userId)
+    const title = reservation.store.name ?? '예약 취소'
+    const message = '예약이 취소됐어요. 확인해주세요.'
+
+    await this.saveNotification({
+      userIds: receivers,
+      title,
+      message,
+      storeId: reservation.store.id,
+      type: 'Reservation',
+      url: `/reservation-check-page/${reservationId}`,
+    })
+
+    await this.sendPushNotification(
+      receivers,
+      title,
+      message,
+      `/reservation-check-page/${reservationId}`,
+    )
   }
 
   async notifyReservationConfirmed(reservationId: number) {

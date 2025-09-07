@@ -5,7 +5,6 @@ import Arrow from "@/public/icons/icon_arrow.svg";
 import Location from "@/public/icons/icon_location.svg";
 import Clock from "@/public/icons/orangeClock.svg";
 import Money from "@/public/icons/orangeMoney.svg";
-import Macju from "@/public/pictures/drinkMacju.png";
 import Image from "next/image";
 
 interface BarCardProps {
@@ -16,6 +15,7 @@ interface BarCardProps {
   startTime: string;
   endTime: string;
   reservationFee: number;
+  imageUrl: string;
 }
 
 export default function BarCard(information: BarCardProps) {
@@ -26,7 +26,7 @@ export default function BarCard(information: BarCardProps) {
     >
       <div
         className="h-[110px] w-full bg-cover bg-center"
-        style={{ backgroundImage: `url(${Macju.src})` }}
+        style={{ backgroundImage: `url(${information.imageUrl})` }}
       ></div>
 
       <div className="px-5 pb-5 pt-[14px]">

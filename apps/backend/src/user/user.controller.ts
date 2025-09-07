@@ -13,12 +13,18 @@ import {
 } from '@nestjs/common'
 import { UserService } from './user.service'
 import { ApplyOwnerDto } from './dto/apply-owner.dto'
-import { AdminGuard } from '@app/auth/admin.guard'
-import { JwtAuthGuard } from '@app/auth/jwt.guard'
+import { AdminGuard } from '@app/auth/guards/admin.guard'
+import { JwtAuthGuard } from '@app/auth/guards/jwt.guard'
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  async getUser(@Req() req) {
+    return this.userService.getUser(req.user.id)
+  }
 
   @Get('me/role')
   @UseGuards(JwtAuthGuard)

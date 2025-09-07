@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common'
 import { CreatePushSubscriptionDto } from './dto/create-push-subscription.dto'
 import { UseGuards } from '@nestjs/common'
-import { JwtAuthGuard } from '@auth/jwt.guard'
+import { JwtAuthGuard } from '@app/auth/guards/jwt.guard'
 import { Public } from '@auth/public.decorator'
 import { NotificationService } from './notification.service'
 import type { Request } from 'express'
@@ -34,7 +34,7 @@ export class NotificationController {
     @Query('isRead', new ParseBoolPipe({ optional: true }))
     isRead: boolean | null,
   ) {
-    return await this.notificationService.getNotifications(
+    return this.notificationService.getNotifications(
       req.user.id,
       cursor,
       take,
@@ -47,7 +47,7 @@ export class NotificationController {
    */
   @Patch('read-all')
   async markAllAsRead(@Req() req: Request) {
-    return await this.notificationService.markAllAsRead(req.user.id)
+    return this.notificationService.markAllAsRead(req.user.id)
   }
 
   /**

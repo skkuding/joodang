@@ -116,7 +116,10 @@ export class StoreService {
           where,
           include: {
             timeSlots: {
-              where: { startTime: { gte: new Date() } },
+              where: {
+                startTime: { gte: new Date() },
+                totalCapacity: { not: -1 },
+              },
               select: { availableSeats: true },
             },
           },
@@ -154,6 +157,11 @@ export class StoreService {
       include: {
         menus: true,
         timeSlots: {
+          where: {
+            totalCapacity: {
+              not: -1,
+            },
+          },
           select: {
             id: true,
             startTime: true,
@@ -219,7 +227,7 @@ export class StoreService {
         },
       })
 
-      await tx.user.update({
+      await tx.user.updateMany({
         where: {
           id: userId,
           role: { not: Role.ADMIN },

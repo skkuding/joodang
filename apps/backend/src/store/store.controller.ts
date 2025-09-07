@@ -18,10 +18,10 @@ import { GetStoresDto } from './dto/get-stores.dto'
 import { CreateStoreDto } from './dto/create-store.dto'
 import { UpdateStoreDto } from './dto/update-store.dto'
 import { AcceptInvitationDto } from './dto/accept-invitation.dto'
-import { JwtAuthGuard } from '@app/auth/jwt.guard'
+import { JwtAuthGuard } from '@app/auth/guards/jwt.guard'
 import type { Request } from 'express'
-import { OwnerGuard } from '@app/auth/owner.guard'
-import { StaffGuard } from '@app/auth/staff.guard'
+import { OwnerGuard } from '@app/auth/guards/owner.guard'
+import { StaffGuard } from '@app/auth/guards/staff.guard'
 import { UploadStoreImageDto } from './dto/upload-store-image.dto'
 
 @Controller('store')
