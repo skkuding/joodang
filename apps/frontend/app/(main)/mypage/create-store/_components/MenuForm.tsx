@@ -124,20 +124,14 @@ export default function MenuForm() {
       if (formData.representativeImage) {
         const storeImagePromise = (async () => {
           const presignedData = (await getStoreImagePresignedUrl(storeId, {
-            fileIdx: 0,
+            fileIdx: "main_image",
             contentType: formData.representativeImage!.type,
           })) as {
-            url: string;
             fields: Record<string, string>;
-            imageUrl: string;
+            publicUrl: string;
           };
-
-          await uploadToS3(
-            presignedData.url,
-            presignedData.fields,
-            formData.representativeImage!
-          );
-          await updateStoreImageUrl(storeId, presignedData.imageUrl);
+          await uploadToS3(presignedData.fields, formData.representativeImage!);
+          await updateStoreImageUrl(storeId, presignedData.publicUrl);
         })();
         imageUploadPromises.push(storeImagePromise);
       }
@@ -148,20 +142,15 @@ export default function MenuForm() {
           const menuImagePromise = (async () => {
             const presignedData = (await getMenuImagePresignedUrl({
               storeId,
-              fileIdx: index,
+              fileIdx: index.toString(),
               contentType: menuItem.image!.type,
             })) as {
-              url: string;
               fields: Record<string, string>;
-              imageUrl: string;
+              publicUrl: string;
             };
 
-            await uploadToS3(
-              presignedData.url,
-              presignedData.fields,
-              menuItem.image!
-            );
-            imageUrls[menuItem.id] = presignedData.imageUrl;
+            await uploadToS3(presignedData.fields, menuItem.image!);
+            imageUrls[menuItem.id] = presignedData.publicUrl;
           })();
           imageUploadPromises.push(menuImagePromise);
         }
@@ -186,7 +175,7 @@ export default function MenuForm() {
 
       // 5. 성공 처리
       alert("주점이 성공적으로 등록되었습니다!");
-      router.push(`/store/${storeId}`);
+      router.push("/mypage");
     } catch (error) {
       console.error("주점 등록 실패:", error);
       alert("주점 등록에 실패했습니다. 다시 시도해주세요.");

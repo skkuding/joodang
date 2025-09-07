@@ -6,6 +6,7 @@ import Link from "next/link";
 import { safeFetcher } from "../../../lib/utils";
 import { StoreDetail } from "../../type";
 import { StoreInfo } from "../components/StoreInfo";
+import { StandByButton } from "./components/StandByButton";
 
 export default async function Page({
   params,
@@ -25,10 +26,11 @@ export default async function Page({
 
   function ReservationButton() {
     return (
-      <div className="pb-15 fixed bottom-0 left-0 right-0 bg-white p-5">
+      <div className="pb-15 fixed bottom-0 left-0 right-0 flex flex-col gap-[6px] p-5">
         <Link href={`/${storeId}/reservation`}>
           <Button className="w-full">예약하기</Button>
         </Link>
+        <StandByButton />
       </div>
     );
   }

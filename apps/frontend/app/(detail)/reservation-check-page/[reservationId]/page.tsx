@@ -15,12 +15,12 @@ export default function ReservationDetail() {
   const [store, setStore] = useState<Store>({
     id: 1,
     name: "",
-    phone: "010-9971-6958",
+    contactInfo: "010-9971-6958",
     description: "",
     college: "",
     organizer: "",
     ownerId: 0,
-    instagramId: "",
+    imageUrl: "https://joodang.com/store_image.png",
     startTime: new Date().toISOString(),
     endTime: new Date().toISOString(),
     isAvailable: true,
@@ -31,6 +31,8 @@ export default function ReservationDetail() {
     location: "",
     latitude: 0,
     longitude: 0,
+    icon: 1,
+    totalCapacity: 0,
   });
 
   return (

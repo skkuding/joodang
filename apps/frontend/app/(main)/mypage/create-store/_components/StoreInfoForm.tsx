@@ -57,7 +57,7 @@ const storeFormSchema = v.object({
   name: v.pipe(v.string(), v.minLength(1, "주점명을 입력해주세요")),
   organizer: v.pipe(v.string(), v.minLength(1, "단체명을 입력해주세요")),
   description: v.pipe(v.string(), v.minLength(1, "상세 설명을 입력해주세요")),
-  icon: v.pipe(v.number(), v.minValue(0, "아이콘을 선택해주세요")),
+  icon: v.pipe(v.number(), v.minValue(1, "아이콘을 선택해주세요")),
   totalCapacity: v.pipe(
     v.number(),
     v.minValue(1, "총 좌석은 1개 이상이어야 합니다")
@@ -210,17 +210,19 @@ export default function StoreInfoForm() {
             <div className="flex gap-2">
               {Icons.map((Icon, index) => (
                 <div
-                  key={index}
+                  key={index + 1}
                   className={cn(
                     "flex h-[74px] w-[74px] items-center justify-center rounded-lg border transition-colors",
-                    watch("icon") === index
+                    watch("icon") === index + 1
                       ? "border-primary-normal bg-primary-normal"
                       : "border-color-neutral-95 bg-white"
                   )}
-                  onClick={() => setValue("icon", index)}
+                  onClick={() => setValue("icon", index + 1)}
                 >
                   <Icon
-                    strokeColor={watch("icon") === index ? "white" : "#FF5940"}
+                    strokeColor={
+                      watch("icon") === index + 1 ? "white" : "#FF5940"
+                    }
                   />
                 </div>
               ))}
@@ -396,38 +398,6 @@ export default function StoreInfoForm() {
                 {errors.contactInfo.message}
               </p>
             )}
-          </div>
-        </div>
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <div className="bg-primary-normal h-1.5 w-1.5 rounded-full" />
-            <label className="font-medium">운영 시간</label>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <input
-                type="datetime-local"
-                className="placeholder-color-neutral-90 w-full rounded-md border px-4 py-[14px] text-sm"
-                {...register("startTime")}
-              />
-              {errors.startTime && (
-                <p className="mt-1 text-xs text-red-500">
-                  {errors.startTime.message}
-                </p>
-              )}
-            </div>
-            <div>
-              <input
-                type="datetime-local"
-                className="placeholder-color-neutral-90 w-full rounded-md border px-4 py-[14px] text-sm"
-                {...register("endTime")}
-              />
-              {errors.endTime && (
-                <p className="mt-1 text-xs text-red-500">
-                  {errors.endTime.message}
-                </p>
-              )}
-            </div>
           </div>
         </div>
         <div>

@@ -1,7 +1,6 @@
 import SingleStoreMap from "@/app/map/[storeId]/_components/SingleStoreMap";
 import { safeFetcher } from "@/lib/utils";
 import type { StoreDetail } from "@/app/type";
-import { StoreDrawer } from "./_components/StoreDrawer";
 
 export default async function MapPageforSingleStore() {
   const storeId = 1; // Example storeId, replace with actual value as needed
@@ -11,7 +10,6 @@ export default async function MapPageforSingleStore() {
   return (
     <div>
       <SingleStoreMap store={store} />
-      <StoreDrawer store={store} />
     </div>
   );
 }

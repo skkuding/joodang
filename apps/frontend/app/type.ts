@@ -1,12 +1,14 @@
 export interface Store {
   id: number;
   name: string;
-  phone: string;
   description: string;
   college: string;
   organizer: string;
+  imageUrl: string;
   ownerId: number;
-  instagramId: string;
+  icon: number;
+  totalCapacity: number;
+  contactInfo: string;
   startTime: string; // ISO8601 string
   endTime: string; // ISO8601 string
   isAvailable: boolean;
@@ -25,6 +27,18 @@ export interface StoreDetail extends Store {
   currentAvailableSeats: number | null;
 }
 
+export interface User {
+  id: number;
+  kakaoId: string;
+  name: string;
+  phone: string | null;
+  studentId: string;
+  college: string;
+  major: string;
+  profileImageUrl: string | null;
+  role: "ADMIN" | "OWNER" | "STAFF" | "USER";
+}
+
 export interface TimeSlot {
   id: number;
   startTime: string; // ISO8601 string
@@ -32,10 +46,15 @@ export interface TimeSlot {
   availableSeats: number;
 }
 
+export interface ReservationTimeSlot extends TimeSlot {
+  totalCapacity: number;
+  storeId: number;
+}
+
 export interface Menu {
   id: number;
   name: string;
-  photoUrl: string | null;
+  imageUrl: string | null;
   price: number;
   category: string;
   storeId: number;
@@ -43,6 +62,22 @@ export interface Menu {
 
 export interface MenuData {
   Bap: Menu[];
+}
+
+export interface ReservationResponse {
+  id: number;
+  headcount: number;
+  reservationNum: number;
+  userId: number;
+  phone: string;
+  storeId: number;
+  timeSlotId: number;
+  isconfirmed: boolean | null;
+  isDone: boolean;
+  menus: Menu[];
+  user: User;
+  store: Store;
+  timeSlot: ReservationTimeSlot;
 }
 
 // API 요청/응답 타입들
@@ -71,7 +106,7 @@ export interface CreateStoreDto {
 
 export interface CreateMenuDto {
   name: string;
-  category: string;
+  category: "Tang" | "Tuiguim" | "Bap" | "Fruit" | "Maroon5" | "Beverage";
   price: number;
   storeId: number;
   imageUrl?: string;

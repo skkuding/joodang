@@ -27,13 +27,14 @@ export class ReservationService {
 
     const alreadyBooked = await this.prisma.reservation.findUnique({
       where: { userId_timeSlotId: { userId, timeSlotId } },
+      select: { isConfirmed: true },
     })
 
-    if (alreadyBooked) {
+    if (alreadyBooked && alreadyBooked.isConfirmed !== false) {
       throw new ConflictException('You have already booked this time slot')
     }
 
-    return await this.prisma.$transaction(
+    const reservationCreated = await this.prisma.$transaction(
       async (tx) => {
         const timeSlot = await tx.timeSlot.findUnique({
           where: { id: timeSlotId },
@@ -98,6 +99,13 @@ export class ReservationService {
       },
       { isolationLevel: 'Serializable' },
     )
+
+    this.eventEmitter.emit('reservation.created', {
+      reservationId: reservationCreated.id,
+      startTime: reservationCreated.timeSlot.startTime,
+    })
+
+    return reservationCreated
   }
 
   async createWalkInReservation(
@@ -116,20 +124,20 @@ export class ReservationService {
           timeSlot: {
             totalCapacity: -1,
             availableSeats: 0,
-            startTime: dayStart,
           },
           userId,
         },
+        select: { isConfirmed: true },
       })
 
-      if (alreadyBooked) {
+      if (alreadyBooked && alreadyBooked.isConfirmed !== false) {
         throw new ConflictException(
           'You have already made a walk-in reservation for this store',
         )
       }
     }
 
-    return await this.prisma.$transaction(async (tx) => {
+    const createdReservation = await this.prisma.$transaction(async (tx) => {
       // 해당 타임슬롯 날짜(당일) 기준으로 매장 내 예약 번호 산정
       const todayCount = await tx.reservation.count({
         where: {
@@ -191,6 +199,13 @@ export class ReservationService {
 
       return reservation
     })
+
+    this.eventEmitter.emit('reservation.created', {
+      reservationId: createdReservation.id,
+      startTime: null,
+    })
+
+    return createdReservation
   }
 
   async getReservations(userId: number) {
@@ -301,6 +316,10 @@ export class ReservationService {
       data: {
         availableSeats: { increment: deletedReservation.headcount },
       },
+    })
+
+    this.eventEmitter.emit('reservation.canceled', {
+      reservationId: deletedReservation.id,
     })
 
     return deletedReservation

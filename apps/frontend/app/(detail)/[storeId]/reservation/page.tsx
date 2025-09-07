@@ -193,22 +193,22 @@ export default function Page() {
             <div className="flex items-center gap-5">
               <Button variant="outline" className="h-[38px] w-[38px] p-[7px]">
                 <Image
-                  src={plusIcon}
-                  alt="Add"
+                  src={minusIcon}
+                  alt="Remove"
                   onClick={() => {
-                    setCount(prev => prev + 1);
-                    setValue("headcount", count + 1, { shouldValidate: true });
+                    setCount(prev => Math.max(prev - 1, 0));
+                    setValue("headcount", count - 1, { shouldValidate: true });
                   }}
                 />
               </Button>
               <span className="text-base font-medium">{count}</span>
               <Button variant="outline" className="h-[38px] w-[38px] p-[7px]">
                 <Image
-                  src={minusIcon}
-                  alt="Remove"
+                  src={plusIcon}
+                  alt="Add"
                   onClick={() => {
-                    setCount(prev => Math.max(prev - 1, 0));
-                    setValue("headcount", count - 1, { shouldValidate: true });
+                    setCount(prev => prev + 1);
+                    setValue("headcount", count + 1, { shouldValidate: true });
                   }}
                 />
               </Button>
@@ -248,7 +248,7 @@ export default function Page() {
   }
 
   return (
-    <div className="w-full">
+    <div>
       <AuthSheet />
       <div className="h-4" />
       <CreateReservationForm>

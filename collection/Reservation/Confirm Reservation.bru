@@ -5,17 +5,17 @@ meta {
 }
 
 patch {
-  url: {{baseUrl}}/reservation/:reservationId/confirm?isConfirmed=true
+  url: {{baseUrl}}/reservation/:reservationId/confirm?isConfirm=false
   body: none
   auth: none
 }
 
 params:query {
-  isConfirmed: true
+  isConfirm: false
 }
 
 params:path {
-  reservationId: 1
+  reservationId: 11
 }
 
 headers {
