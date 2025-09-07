@@ -96,12 +96,13 @@ export default function ImageUploadForm() {
         // 이미지가 선택된 경우
         <div className="space-y-3">
           <div className="relative">
-            <div className="relative h-[200px] w-full overflow-hidden rounded-md border">
+            <div className="relative h-[240px] w-full overflow-hidden rounded-md border">
               <Image
                 src={formData.representativeImagePreview}
                 alt="대표 이미지 미리보기"
-                fill
-                className="object-cover"
+                height={240}
+                width={800}
+                className="h-[240px] w-full object-cover object-center"
               />
               {/* 삭제 버튼 */}
               <button

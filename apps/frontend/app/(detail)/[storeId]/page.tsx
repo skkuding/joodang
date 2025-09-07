@@ -42,7 +42,7 @@ export default async function Page({
         alt="Description"
         width={800}
         height={240}
-        className="h-[240px] w-full object-cover"
+        className="h-[240px] w-full object-cover object-center"
       />
     );
   }
