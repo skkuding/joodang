@@ -38,22 +38,39 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
 
     stores.forEach((store, index) => {
       if (index !== current - 1) return;
+      const markerContent = `<div id="marker-${store.id}" style="display: flex; width: fit-content; flex-direction: column; align-items: center; gap: 4px; padding: 0px; border-radius: 8px; color: white;">
+                        <span style="background-color: rgba(255,255,255,0.1); padding: 4px 12px; font-size: 14px; font-weight: 600;">
+                          ${store.name}
+                        </span>
+                        <img
+                          src="/icons/icon_location.svg"
+                          alt="pin"
+                          width="22"
+                          height="35"
+                        />
+                      </div>`;
+
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = markerContent;
+      tempDiv.style.position = "absolute";
+      tempDiv.style.visibility = "hidden";
+      tempDiv.style.top = "-9999px";
+      document.body.appendChild(tempDiv);
+
+      const markerElement = tempDiv.firstElementChild as HTMLElement;
+      const rect = markerElement.getBoundingClientRect();
+
+      const anchorX = rect.width / 2;
+      const anchorY = 55;
+
+      document.body.removeChild(tempDiv);
+
       new naver.maps.Marker({
         position: new naver.maps.LatLng(store.latitude, store.longitude),
         map,
         icon: {
-          content: `<div style="display: flex; width: fit-content; flex-direction: column; align-items: center; gap: 4px;  padding: 8px; border-radius: 8px; color: white;">
-                      <span style="background-color: rgba(255,255,255,0.1); padding: 4px 12px; font-size: 14px; font-weight: 600;">
-                        ${store.name}
-                      </span>
-                      <img
-                        src="/icons/icon_location.svg"
-                        alt="pin"
-                        width="22"
-                        height="35"
-                      />
-                    </div>`,
-          anchor: new naver.maps.Point(36.5, 53),
+          content: markerContent,
+          anchor: new naver.maps.Point(anchorX, anchorY),
         },
       });
     });
