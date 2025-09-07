@@ -10,9 +10,10 @@ import { motion } from "framer-motion";
 
 interface StoreDrawerProps {
   store: StoreDetail;
+  mylocationfunc: () => void;
 }
 
-export function StoreDrawer({ store }: StoreDrawerProps) {
+export function StoreDrawer({ store, mylocationfunc }: StoreDrawerProps) {
   const router = useRouter();
   const [height, setHeight] = useState(0.9);
   const formattedStartTime = formatTimeToKST(store.startTime);
@@ -47,6 +48,17 @@ export function StoreDrawer({ store }: StoreDrawerProps) {
       animate={{ height: `${height * 100}vh` }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
     >
+      <button
+        onClick={mylocationfunc}
+        className="absolute right-5 top-[-60px] flex h-[42px] w-[42px] justify-center rounded-full bg-[#4A4A4A] shadow-md"
+      >
+        <Image
+          src="/icons/icon_my_location.svg"
+          alt="My Location"
+          width={26}
+          height={26}
+        />
+      </button>
       {/* 핸들 */}
       <div className="mx-auto mb-[30px] mt-4 h-1 w-[100px] cursor-pointer rounded-full bg-gray-300" />
 
