@@ -21,28 +21,83 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
   const markerRef = useRef<NaverMarkerInstance | null>(null);
   const [isReady, setIsReady] = useState(false);
   const STYLE_ID = "56e070b5-b8ce-4f3f-90a7-fc9e602ba64c";
-  const didReloadRef = useRef(false);
+  // Allow up to two soft reloads to maximize style application reliability
+  const reloadCountRef = useRef(0);
   const [reloadToken, setReloadToken] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
+  const timeoutsRef = useRef<number[]>([]);
+  const intervalsRef = useRef<number[]>([]);
 
-  const applyCustomStyle = (map: NaverMapInstance | null) => {
+  const scheduleTimeout = (fn: () => void, delay: number) => {
+    const id = window.setTimeout(fn, delay);
+    timeoutsRef.current.push(id);
+    return id;
+  };
+
+  const scheduleInterval = (fn: () => void, every: number, stopAfterMs: number) => {
+    const started = Date.now();
+    const id = window.setInterval(() => {
+      fn();
+      if (Date.now() - started > stopAfterMs) {
+        window.clearInterval(id);
+      }
+    }, every);
+    intervalsRef.current.push(id as unknown as number);
+    return id;
+  };
+
+  // Apply style with aggressive retries to guarantee application
+  const applyCustomStyle = (
+    map: NaverMapInstance | null,
+    mode: "robust" | "light" = "robust"
+  ) => {
     if (!map) return;
-    try {
-      map.setOptions({ customStyleId: STYLE_ID });
-    } catch {}
-    try {
-      window.naver?.maps?.Event?.once(map, "idle", () => {
-        try {
-          map.setOptions({ customStyleId: STYLE_ID });
-        } catch {}
-      });
-    } catch {}
-    // Single fallback after a short delay
-    window.setTimeout(() => {
+    const attempt = () => {
       try {
         map.setOptions({ customStyleId: STYLE_ID });
       } catch {}
-    }, 150);
+    };
+
+    // Always try immediately
+    attempt();
+
+    const delays = mode === "robust" ? [16, 33, 66, 120, 200, 350, 600, 1200, 2000] : [60, 180];
+    for (const d of delays) {
+      scheduleTimeout(attempt, d);
+    }
+
+    // Also on first idle after any re-render
+    try {
+      window.naver?.maps?.Event?.once(map, "idle", () => {
+        attempt();
+        // a couple more short retries post-idle
+        scheduleTimeout(attempt, 60);
+        scheduleTimeout(attempt, 180);
+      });
+    } catch {}
+
+    // Try on additional map lifecycle events that often correlate with style swaps
+    try {
+      window.naver?.maps?.Event?.once(map, "tilesloaded", () => {
+        attempt();
+        scheduleTimeout(attempt, 80);
+      });
+    } catch {}
+    try {
+      window.naver?.maps?.Event?.once(map, "zoom_changed", () => {
+        attempt();
+      });
+    } catch {}
+    try {
+      window.naver?.maps?.Event?.once(map, "center_changed", () => {
+        attempt();
+      });
+    } catch {}
+
+    // Short burst interval to cover GL internal reflows
+    if (mode === "robust") {
+      scheduleInterval(attempt, 100, 3000);
+    }
   };
 
   useEffect(() => {
@@ -63,7 +118,7 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
 
     if (existing) {
       // If script tag exists but not loaded yet, hook load event
-      if (!(window as any).naver?.maps) {
+      if (!window.naver?.maps) {
         existing.addEventListener("load", onLoad);
         return () => existing.removeEventListener("load", onLoad);
       }
@@ -112,7 +167,7 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
         zoom: 16,
         customStyleId: STYLE_ID,
       });
-      applyCustomStyle(mapInstanceRef.current);
+  applyCustomStyle(mapInstanceRef.current, "robust");
       // Reveal after first stable render
       try {
         window.naver?.maps?.Event?.once(mapInstanceRef.current, "idle", () =>
@@ -121,13 +176,11 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
       } catch {
         setIsVisible(true);
       }
-      // Fallback reveal
-      window.setTimeout(() => setIsVisible(true), 220);
+      // Fallback reveal (slightly longer to avoid flashing pre-style)
+      scheduleTimeout(() => setIsVisible(true), 320);
 
-      // One-time soft reload to stabilize first paint/styles
-      window.setTimeout(() => {
-        if (didReloadRef.current) return;
-        didReloadRef.current = true;
+      // Up to two soft reloads to further guarantee style application
+      const softReload = () => {
         // Detach marker from old instance
         if (markerRef.current) {
           try {
@@ -144,8 +197,21 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
         }
         mapInstanceRef.current = null;
         setIsVisible(false);
-        setReloadToken(t => t + 1);
-      }, 120);
+        setReloadToken((t) => t + 1);
+      };
+
+    const scheduleSoftReload = (delay: number) => {
+        scheduleTimeout(() => {
+      if (reloadCountRef.current >= 4) return;
+          reloadCountRef.current += 1;
+          softReload();
+        }, delay);
+      };
+
+      scheduleSoftReload(120);
+      scheduleSoftReload(420);
+    scheduleSoftReload(900);
+    scheduleSoftReload(1800);
     } else {
       const nextCenter = new naver.maps.LatLng(centerLat, centerLng);
       if (typeof mapInstanceRef.current.panTo === "function") {
@@ -153,7 +219,8 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
       } else {
         mapInstanceRef.current.setCenter(nextCenter);
       }
-      // Keep current style; avoid redundant reapply to reduce jank
+      // Light re-apply after movement to avoid any style loss
+      applyCustomStyle(mapInstanceRef.current, "light");
     }
 
     // Update marker for the selected store
@@ -214,10 +281,10 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
 
   // Re-apply style on page return/visibility
   useEffect(() => {
-    const reapply = () => applyCustomStyle(mapInstanceRef.current);
+    const reapply = () => applyCustomStyle(mapInstanceRef.current, "robust");
     const onVisible = () => {
       if (document.visibilityState === "visible") {
-        window.setTimeout(reapply, 50);
+        scheduleTimeout(reapply, 50);
       }
     };
     window.addEventListener("pageshow", reapply);
@@ -225,6 +292,16 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
     return () => {
       window.removeEventListener("pageshow", reapply);
       document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, []);
+
+  // cleanup any timers/intervals on unmount
+  useEffect(() => {
+    return () => {
+      for (const id of timeoutsRef.current) window.clearTimeout(id);
+      for (const id of intervalsRef.current) window.clearInterval(id);
+      timeoutsRef.current = [];
+      intervalsRef.current = [];
     };
   }, []);
 
