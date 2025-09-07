@@ -25,6 +25,12 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    },
+        {
+      "src": "/android-maskable-1280x1280.png",
+      "sizes": "1280x1280",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "display": "standalone",
