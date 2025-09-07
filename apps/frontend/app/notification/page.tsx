@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { safeFetcher } from "@/lib/utils";
 import type { Notification } from "../type";
+import { AuthSheet } from "../components/AuthSheet";
 
 export default async function NotificationPage() {
   const cookieStore = await cookies();
@@ -20,6 +21,7 @@ export default async function NotificationPage() {
   console.log("notification data", data);
   return (
     <div className="flex min-h-screen flex-col bg-white">
+      <AuthSheet />
       <DetailHeader />
 
       <div className="mt-[30px] flex flex-col items-center space-y-3 p-5">
