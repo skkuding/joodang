@@ -146,7 +146,7 @@ export default function SingleStoreMap({ store }: SingleStoreMapProps) {
         src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${process.env.NEXT_PUBLIC_NAVER_ID}&submodules=gl`}
         strategy="beforeInteractive"
       />
-      <div className="relative mt-[-48px] h-screen w-screen">
+      <div className="relative mb-[-100px] mt-[-48px] h-screen w-screen">
         {/* 지도 */}
         <div className="h-full w-full" id="map" />
         <IoIosArrowBack
