@@ -165,7 +165,6 @@ export function StandByButton() {
           </Button>
         </DialogTrigger>
         <DialogContent className="py-6">
-          <AuthSheet />
           {!reservationNum ? (
             <>
               <DialogTitle>현장 대기 신청</DialogTitle>

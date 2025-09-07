@@ -2,6 +2,18 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "joodang.com",
+        pathname: "/**",
+      },
+      { protocol: "https", hostname: "storage.joodang.com", pathname: "/**" },
+      { protocol: "http", hostname: "localhost", pathname: "/**" },
+    ],
+    formats: ["image/avif", "image/webp"],
+  },
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/i,

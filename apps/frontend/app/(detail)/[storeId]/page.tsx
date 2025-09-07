@@ -37,7 +37,13 @@ export default async function Page({
 
   function StoreImage() {
     return (
-      <Image src={cheerImg} alt="Description" className="h-[240px] w-full" />
+      <Image
+        src={store.imageUrl}
+        alt="Description"
+        width={800}
+        height={240}
+        className="h-[240px] w-full object-cover"
+      />
     );
   }
 
