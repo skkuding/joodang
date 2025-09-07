@@ -8,8 +8,8 @@ interface SectionProps {
 }
 export function Section({ title, route, children }: SectionProps) {
   return (
-    <div className="p-5">
-      <div className="flex justify-between">
+    <div className="py-[30px]">
+      <div className="flex justify-between px-5">
         <span className="text-xl font-semibold">{title}</span>
         <Link href={route} className="flex items-center gap-[2px]">
           <span className="text-color-neutral-40 text-xs font-medium">

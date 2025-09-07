@@ -10,7 +10,8 @@ import { EventEmitterModule } from '@nestjs/event-emitter'
 import { ConfigModule } from '@nestjs/config'
 import { AuthModule } from '@auth/auth.module'
 import { UserModule } from './user/user.module'
-import { JobModule } from './job/job.module';
+import { JobModule } from './job/job.module'
+import { FestivalModule } from './festival/festival.module'
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { JobModule } from './job/job.module';
     AuthModule,
     UserModule,
     JobModule,
+    FestivalModule,
   ],
   controllers: [AppController],
   providers: [AppService],

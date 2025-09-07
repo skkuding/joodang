@@ -1,4 +1,5 @@
 "use client";
+import { AuthSheet } from "@/app/components/AuthSheet";
 import { FormSection } from "@/app/components/FormSection";
 import { ReservationResponse } from "@/app/type";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ import { safeFetcher } from "@/lib/utils";
 import minusIcon from "@/public/icons/icon_minus.svg";
 import plusIcon from "@/public/icons/icon_plus.svg";
 import { valibotResolver } from "@hookform/resolvers/valibot";
+import { HTTPError } from "ky";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useState } from "react";
@@ -23,9 +25,17 @@ import {
   useFormContext,
 } from "react-hook-form";
 import { toast } from "sonner";
+import { ReservationConfirmButton } from "../reservation/components/ReservationConfirmButton";
+import { ReservationInfo } from "../reservation/components/ReservationInfo";
 import { createSchema } from "./_libs/schema";
 
-function StandByButtonForm({ children }: { children: React.ReactNode }) {
+function StandByButtonForm({
+  children,
+  onSuccess,
+}: {
+  children: React.ReactNode;
+  onSuccess?: (reservationNum: string) => void;
+}) {
   interface CreateStandByInput {
     headcount: number;
     storeId: number;
@@ -51,19 +61,33 @@ function StandByButtonForm({ children }: { children: React.ReactNode }) {
         phone: `010${data.phoneMiddle}${data.phoneLast}`,
       };
 
-      console.log(standByData);
-
       const response = await safeFetcher.post("reservation/walkin", {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(standByData),
       });
       const reservationResponse: ReservationResponse = await response.json();
-      toast.success("현장 대기 생성에 성공했습니다.");
-      const reservationNum = reservationResponse.reservationNum; // 예: 응답에서 예약 ID 추출
-      //   router.push(`./reservation/success?reservationNum=${reservationNum}`);
+      onSuccess?.(reservationResponse.reservationNum.toString());
     } catch (error) {
-      console.error("Error creating stand by:", error);
-      toast.error("현장 대기 생성에 실패했습니다. 다시 시도해주세요.");
+      if (error instanceof HTTPError) {
+        try {
+          const errorData = await error.response.json();
+          console.log("Error data:", errorData);
+
+          if (error.response.status === 409) {
+            toast.error("해당 매장에 현장 대기 예약이 존재합니다.");
+          } else if (errorData.message) {
+            toast.error(errorData.message);
+          } else {
+            toast.error("현장 대기 생성에 실패했습니다. 다시 시도해주세요.");
+          }
+        } catch (parseError) {
+          console.error("Error parsing response:", parseError);
+          toast.error("현장 대기 생성에 실패했습니다. 다시 시도해주세요.");
+        }
+      } else {
+        console.error("Non-HTTP error:", error);
+        toast.error("현장 대기 생성에 실패했습니다. 다시 시도해주세요.");
+      }
     }
   };
 
@@ -77,6 +101,7 @@ function StandByButtonForm({ children }: { children: React.ReactNode }) {
 export function StandByButton() {
   const storeId = useParams().storeId;
   const [count, setCount] = useState(0);
+  const [reservationNum, setReservationNum] = useState<string | null>(null);
 
   function StandByInput() {
     const { register, setValue } = useFormContext();
@@ -132,22 +157,37 @@ export function StandByButton() {
   }
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button className="w-full" variant={"outline"}>
-          현장 대기
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="py-6">
-        <DialogTitle>현장 대기 신청</DialogTitle>
-
-        <StandByButtonForm>
-          <div className="flex h-full flex-col gap-4">
-            <StandByInput />
-            <SubmitButton />
-          </div>
-        </StandByButtonForm>
-      </DialogContent>
-    </Dialog>
+    <div>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button className="w-full" variant={"outline"}>
+            현장 대기
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="py-6">
+          <AuthSheet />
+          {!reservationNum ? (
+            <>
+              <DialogTitle>현장 대기 신청</DialogTitle>
+              <StandByButtonForm onSuccess={setReservationNum}>
+                <div className="flex flex-col gap-4">
+                  <StandByInput />
+                  <SubmitButton />
+                </div>
+              </StandByButtonForm>
+            </>
+          ) : (
+            <>
+              <DialogTitle className="hidden" />
+              <div className="flex flex-col items-center justify-center">
+                <ReservationInfo reservationNum={reservationNum} isStandBy />
+                <div className="h-10" />
+                <ReservationConfirmButton />
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }

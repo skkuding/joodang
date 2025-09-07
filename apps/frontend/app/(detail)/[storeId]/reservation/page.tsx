@@ -250,7 +250,6 @@ export default function Page() {
   return (
     <div>
       <AuthSheet />
-      <div className="h-4" />
       <CreateReservationForm>
         <StoreInfo store={store} />
         <Separator />

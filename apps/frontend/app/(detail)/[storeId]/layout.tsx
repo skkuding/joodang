@@ -8,7 +8,7 @@ export default function Layout({
   return (
     <div>
       <DetailHeader />
-      <div>{children}</div>
+      <div className="pt-10">{children}</div>
       <Toaster />
     </div>
   );

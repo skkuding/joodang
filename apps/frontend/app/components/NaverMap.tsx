@@ -3,12 +3,6 @@
 import Script from "next/script";
 import { useEffect, useRef } from "react";
 
-declare global {
-  interface Window {
-    naver: naver.maps.Map;
-  }
-}
-
 export default function NaverMap() {
   const mapRef = useRef<HTMLDivElement>(null);
 
@@ -22,7 +16,7 @@ export default function NaverMap() {
       gl: true,
       center: new naver.maps.LatLng(37.2931959, 126.9745929),
       zoom: 16,
-      customStyleId: "5ebaa70e-0bc8-4f24-b7a3-6247c307974c",
+      customStyleId: "56e070b5-b8ce-4f3f-90a7-fc9e602ba64c",
     });
 
     new naver.maps.Marker({

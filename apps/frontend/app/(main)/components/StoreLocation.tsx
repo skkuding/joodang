@@ -10,6 +10,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Store } from "../../type";
 import { StoreCard } from "./StoreCard";
 import StoreMap from "./StoreMap";
+import { Section } from "./Section";
 
 export function StoreLocation() {
   const [api, setApi] = useState<CarouselApi>();
@@ -37,32 +38,37 @@ export function StoreLocation() {
 
   return (
     <div className="flex w-full flex-col justify-center">
-      <StoreMap stores={stores} current={current} />
-      <Carousel
-        setApi={setApi}
-        opts={{
-          align: "center",
-          slidesToScroll: 1,
-          containScroll: "trimSnaps",
-        }}
-      >
-        <CarouselContent className="my-[14px] -ml-2 sm:-ml-4">
-          {stores.map(store => (
-            <CarouselItem className="basis-auto" key={store.id}>
-              <StoreCard
-                id={store.id}
-                clubName={store.organizer}
-                storeName={store.name}
-                startTime={new Date(store.startTime)}
-                endTime={new Date(store.endTime)}
-                size="medium"
-                location={store.location}
-                disabled
-              />
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-      </Carousel>
+      <Section title="주점 위치를 알아볼까요?" route="/map">
+        <div className="mx-5">
+          <StoreMap stores={stores} current={current} />
+        </div>
+
+        <Carousel
+          setApi={setApi}
+          opts={{
+            align: "center",
+            slidesToScroll: 1,
+            containScroll: "trimSnaps",
+          }}
+        >
+          <CarouselContent className="my-[14px] ml-1">
+            {stores.map(store => (
+              <CarouselItem className="basis-auto" key={store.id}>
+                <StoreCard
+                  id={store.id}
+                  clubName={store.organizer}
+                  storeName={store.name}
+                  startTime={new Date(store.startTime)}
+                  endTime={new Date(store.endTime)}
+                  size="medium"
+                  location={store.location}
+                  disabled
+                />
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
+      </Section>
     </div>
   );
 }
