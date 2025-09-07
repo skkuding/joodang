@@ -26,7 +26,7 @@ export default async function Page({
 
   function ReservationButton() {
     return (
-      <div className="pb-15 fixed bottom-0 left-0 right-0 flex flex-col gap-[6px] p-5">
+      <div className="pb-15 bottom-0 left-0 right-0 flex flex-col gap-[6px] p-5">
         <Link href={`/${storeId}/reservation`}>
           <Button className="w-full">예약하기</Button>
         </Link>
@@ -42,7 +42,7 @@ export default async function Page({
   }
 
   return (
-    <div>
+    <div className="-mb-20">
       <StoreImage />
       <StoreInfo store={store} />
       <Separator />
