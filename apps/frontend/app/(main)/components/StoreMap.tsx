@@ -21,6 +21,8 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
   const mapInstanceRef = useRef<NaverMapInstance | null>(null);
   const markerRef = useRef<NaverMarkerInstance | null>(null);
   const [isReady, setIsReady] = useState(false);
+  const didReloadRef = useRef(false);
+  const [reloadToken, setReloadToken] = useState(0);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -68,6 +70,20 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
           customStyleId: "56e070b5-b8ce-4f3f-90a7-fc9e602ba64c",
         });
       }, 50);
+
+      // One-time soft reload: recreate map shortly after first init
+      setTimeout(() => {
+        if (didReloadRef.current) return;
+        didReloadRef.current = true;
+        // Detach existing marker from old map before recreating
+        if (markerRef.current) {
+          markerRef.current.setMap(null);
+          markerRef.current = null;
+        }
+        // Null current instance to force re-creation on next effect pass
+        mapInstanceRef.current = null;
+        setReloadToken(t => t + 1);
+      }, 120);
     } else {
       const nextCenter = new naver.maps.LatLng(centerLat, centerLng);
       if (typeof mapInstanceRef.current.panTo === "function") {
@@ -115,8 +131,8 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
           content: markerContent,
           anchor: new naver.maps.Point(anchorX, anchorY),
         });
-        if (!markerRef.current.getMap()) {
-          markerRef.current.setMap(mapInstanceRef.current);
+        if (markerRef.current.getMap() !== mapInstanceRef.current) {
+          markerRef.current.setMap(mapInstanceRef.current!);
         }
       } else {
         markerRef.current = new naver.maps.Marker({
@@ -131,7 +147,7 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
     }
 
     return () => {};
-  }, [isReady, stores, current]);
+  }, [isReady, stores, current, reloadToken]);
 
   return (
     <>
