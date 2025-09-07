@@ -88,7 +88,7 @@ export default function Page() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center pt-10">
+    <div className="flex flex-col items-center justify-center">
       <div className="h-[106px]" />
       <ReservationInfo reservationNum={reservationNum} />
       <div className="fixed bottom-0 w-full">
