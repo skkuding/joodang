@@ -13,6 +13,7 @@ import { safeFetcher } from "@/lib/utils";
 import minusIcon from "@/public/icons/icon_minus.svg";
 import plusIcon from "@/public/icons/icon_plus.svg";
 import { valibotResolver } from "@hookform/resolvers/valibot";
+import { HTTPError } from "ky";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useState } from "react";
@@ -51,19 +52,37 @@ function StandByButtonForm({ children }: { children: React.ReactNode }) {
         phone: `010${data.phoneMiddle}${data.phoneLast}`,
       };
 
-      console.log(standByData);
-
       const response = await safeFetcher.post("reservation/walkin", {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(standByData),
       });
       const reservationResponse: ReservationResponse = await response.json();
       toast.success("현장 대기 생성에 성공했습니다.");
-      const reservationNum = reservationResponse.reservationNum; // 예: 응답에서 예약 ID 추출
-      //   router.push(`./reservation/success?reservationNum=${reservationNum}`);
     } catch (error) {
-      console.error("Error creating stand by:", error);
-      toast.error("현장 대기 생성에 실패했습니다. 다시 시도해주세요.");
+      console.error("Caught error:", error);
+
+      // ky의 HTTPError 처리
+      if (error instanceof HTTPError) {
+        try {
+          // HTTPError의 response에서 JSON 데이터 추출
+          const errorData = await error.response.json();
+          console.log("Error data:", errorData);
+
+          if (error.response.status === 409) {
+            toast.error("이미 해당 매장에 현장 대기 예약이 있습니다.");
+          } else if (errorData.message) {
+            toast.error(errorData.message);
+          } else {
+            toast.error("현장 대기 생성에 실패했습니다. 다시 시도해주세요.");
+          }
+        } catch (parseError) {
+          console.error("Error parsing response:", parseError);
+          toast.error("현장 대기 생성에 실패했습니다. 다시 시도해주세요.");
+        }
+      } else {
+        console.error("Non-HTTP error:", error);
+        toast.error("현장 대기 생성에 실패했습니다. 다시 시도해주세요.");
+      }
     }
   };
 
