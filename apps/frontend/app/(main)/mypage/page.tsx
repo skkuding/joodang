@@ -74,7 +74,7 @@ export default function Page() {
   }
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6 px-6 py-14">
       <div className="text-center">
         <h1 className="mb-2 text-2xl font-bold">마이페이지</h1>
         <p className="text-gray-600">현재 권한: {userRole}</p>
