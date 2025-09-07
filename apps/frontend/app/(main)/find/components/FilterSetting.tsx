@@ -3,8 +3,8 @@ import { filterVariables } from "@/app/type";
 import OrangeDot from "@/public/icons/orange_dot.svg";
 import { X } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useId, useRef, useState } from "react";
-import { formatWithComma } from "../../../../lib/utils";
+import { useEffect, useId, useState } from "react";
+import { cn, formatWithComma } from "../../../../lib/utils";
 import {
   Select,
   SelectContent,
@@ -38,11 +38,16 @@ export default function FilterSheet({
   setFilterValue,
   setIsFilterSet,
 }: FilterSheetProps) {
-  const sheetRef = useRef<HTMLDivElement>(null);
   const [newFilterValue, setNewFilterValue] =
     useState<filterVariables>(filterValue);
 
   const titleId = useId();
+
+  const [dayCandidates, setDayCandidates] = useState<string[]>([
+    "2025년 09월 11일 (목)",
+    "2025년 09월 12일 (금)",
+  ]);
+  const [selDayIdx, setSelDayIdx] = useState<number>(-1);
 
   function handleSliderValueChange(next: number[]) {
     setNewFilterValue(prev => {
@@ -54,7 +59,6 @@ export default function FilterSheet({
     setFilterValue(newFilterValue);
     setIsFilterSet(true);
     onClose();
-    console.log("잉?");
   }
 
   useEffect(() => {
@@ -77,7 +81,6 @@ export default function FilterSheet({
       aria-labelledby={titleId}
       role="dialog"
       aria-modal="true"
-      ref={sheetRef}
     >
       <div
         className={`absolute inset-x-0 bg-black/80 backdrop-blur-[10px] transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0"} `}
@@ -87,7 +90,7 @@ export default function FilterSheet({
 
       {/* 3) 시트 (오버레이와 독립적으로 top 제어) */}
       <div
-        className={`fixed left-1/2 flex max-h-full -translate-x-1/2 transform flex-col overflow-hidden rounded-t-2xl bg-white shadow-[0_0_20px_0_rgba(0,0,0,0.12)] transition-transform duration-300 ease-out ${open ? "translate-y-0" : "translate-y-full"} `}
+        className={`fixed left-1/2 flex max-h-full -translate-x-1/2 transform flex-col rounded-t-2xl bg-white transition-transform duration-300 ease-out ${open ? "translate-y-0" : "translate-y-full"} `}
         style={{ top: sheetTop, bottom: 0, width: "100%" }}
         onClick={e => e.stopPropagation()}
       >
@@ -114,7 +117,7 @@ export default function FilterSheet({
           style={{ overscrollBehavior: "contain", scrollbarGutter: "stable" }}
         >
           {children ?? (
-            <>
+            <div className="flex flex-col gap-8">
               <section>
                 <div className="mb-3 flex items-center">
                   <Image
@@ -124,18 +127,30 @@ export default function FilterSheet({
                     height={6}
                     className="mr-2"
                   />
-                  <span className="text-color-common-0 justify-start font-['Pretendard'] text-base font-medium leading-snug">
+                  <span className="text-color-common-0 justify-start text-base font-medium leading-snug">
                     날짜
                   </span>
                 </div>
-                <div className="mt-3 flex h-10 flex-row place-items-center rounded-lg text-xs text-[var(--Neutral-40,#5c5c5c)]">
-                  <div>박스 </div>
-                  <div>박스 </div>
+                <div className="grid grid-cols-2 place-items-center gap-[7px] rounded-lg">
+                  {dayCandidates.map((item, idx) => {
+                    return (
+                      <div
+                        key={idx}
+                        className={cn(
+                          "border-color-neutral-90 item-center text-color-neutral-30 flex h-[37px] w-[168px] justify-center rounded border px-4 py-2 font-normal"
+                        )}
+                      >
+                        <p className="w-[150px] text-sm leading-tight">
+                          {item}
+                        </p>
+                      </div>
+                    );
+                  })}
                 </div>
               </section>
 
               <section>
-                <div className="flex items-center">
+                <div className="mb-4 flex items-center">
                   <Image
                     src={OrangeDot}
                     alt="주황닷"
@@ -143,14 +158,14 @@ export default function FilterSheet({
                     height={6}
                     className="mr-2"
                   />
-                  <span className="text-color-neutral-10 justify-start font-['Pretendard'] text-base font-normal leading-normal">
+                  <span className="text-color-neutral-10 justify-start font-['Pretendard'] text-base font-medium leading-normal">
                     최대 입장료
                   </span>
                   <span className="text-color-common-0 ml-auto text-sm font-medium">
                     {formatWithComma(newFilterValue.maxFee)}원
                   </span>
                 </div>
-                <div className="mt-3 grid h-10 place-items-center rounded-lg text-xs text-[var(--Neutral-40,#5c5c5c)]">
+                <div className="mb-1 h-4 text-xs">
                   <PriceSlider
                     defaultValue={[15000]}
                     value={[newFilterValue.maxFee]}
@@ -160,6 +175,11 @@ export default function FilterSheet({
                     onValueChange={next => handleSliderValueChange(next)}
                     className="color-orange"
                   />
+                </div>
+                <div className="item-center text-color-neutral-60 flex flex-row justify-between text-xs font-normal">
+                  <p>10,000 원</p>
+                  <p>15,000 원</p>
+                  <p>20,000 원</p>
                 </div>
               </section>
 
@@ -172,28 +192,57 @@ export default function FilterSheet({
                     height={6}
                     className="mr-2"
                   />
-                  <div className="text-neutral-10 justify-start font-['Pretendard'] text-base font-normal leading-normal">
+                  <div className="text-neutral-10 justify-start text-base font-medium leading-normal">
                     시간대
                   </div>
                 </div>
                 <div>
                   <Select>
-                    <SelectTrigger className="data-[placeholder]:text-color-neutral-90 h-[52px] w-full shadow-[0px_4px_20px_0px_rgba(0,0,0,0.12)]">
+                    <SelectTrigger
+                      className="data-[placeholder]:text-color-neutral-90 h-[52px] w-full px-4 py-[14px] text-sm"
+                      size="custom"
+                    >
                       <SelectValue placeholder="시간대를 선택하세요" />
                     </SelectTrigger>
                     <SelectContent
                       className="z-[200] w-full"
                       avoidCollisions={true}
-                      portalContainer={sheetRef.current}
                     >
-                      <SelectItem value="light">Light</SelectItem>
-                      <SelectItem value="dark">Dark</SelectItem>
-                      <SelectItem value="sㅈystem">System</SelectItem>
+                      <SelectItem
+                        className="flex h-[49px] flex-row justify-between px-4 py-[14px] text-sm font-normal"
+                        value="light"
+                      >
+                        Light1
+                      </SelectItem>
+                      <SelectItem
+                        className="flex h-[49px] flex-row justify-between px-4 py-[14px] text-sm font-normal"
+                        value="light2"
+                      >
+                        Light2
+                      </SelectItem>
+                      <SelectItem
+                        className="flex h-[49px] flex-row justify-between px-4 py-[14px] text-sm font-normal"
+                        value="light3"
+                      >
+                        Light3
+                      </SelectItem>
+                      <SelectItem
+                        className="flex h-[49px] flex-row justify-between px-4 py-[14px] text-sm font-normal"
+                        value="light4"
+                      >
+                        Light4
+                      </SelectItem>
+                      <SelectItem
+                        className="flex h-[49px] flex-row justify-between px-4 py-[14px] text-sm font-normal"
+                        value="light5"
+                      >
+                        Light5
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </section>
-            </>
+            </div>
           )}
         </div>
 
