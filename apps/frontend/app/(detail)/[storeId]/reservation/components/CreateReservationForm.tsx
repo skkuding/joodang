@@ -1,8 +1,8 @@
 "use client";
-import { Menu, ReservationTimeSlot, User } from "@/app/type";
 import { safeFetcher } from "@/lib/utils";
 import { valibotResolver } from "@hookform/resolvers/valibot";
 
+import { ReservationResponse } from "@/app/type";
 import { useRouter } from "next/navigation";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -14,21 +14,6 @@ interface CreateReservationInput {
   timeSlotId: number;
   phoneMiddle: string;
   phoneLast: string;
-}
-
-interface ReservationResponse {
-  id: number;
-  headcount: number;
-  reservationNum: number;
-  userId: number;
-  phone: string;
-  storeId: number;
-  timeSlotId: number;
-  isconfirmed: boolean | null;
-  isDone: boolean;
-  menus: Menu[];
-  user: User;
-  timeSlot: ReservationTimeSlot;
 }
 
 export function CreateReservationForm({

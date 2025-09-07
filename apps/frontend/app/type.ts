@@ -64,6 +64,22 @@ export interface MenuData {
   Bap: Menu[];
 }
 
+export interface ReservationResponse {
+  id: number;
+  headcount: number;
+  reservationNum: number;
+  userId: number;
+  phone: string;
+  storeId: number;
+  timeSlotId: number;
+  isconfirmed: boolean | null;
+  isDone: boolean;
+  menus: Menu[];
+  user: User;
+  store: Store;
+  timeSlot: ReservationTimeSlot;
+}
+
 // API 요청/응답 타입들
 export interface CreateStoreDto {
   name: string;
