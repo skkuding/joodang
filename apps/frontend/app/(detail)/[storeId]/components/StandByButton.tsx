@@ -1,4 +1,5 @@
 "use client";
+import { AuthSheet } from "@/app/components/AuthSheet";
 import { FormSection } from "@/app/components/FormSection";
 import { ReservationResponse } from "@/app/type";
 import { Button } from "@/components/ui/button";
@@ -67,12 +68,8 @@ function StandByButtonForm({
       const reservationResponse: ReservationResponse = await response.json();
       onSuccess?.(reservationResponse.reservationNum.toString());
     } catch (error) {
-      console.error("Caught error:", error);
-
-      // ky의 HTTPError 처리
       if (error instanceof HTTPError) {
         try {
-          // HTTPError의 response에서 JSON 데이터 추출
           const errorData = await error.response.json();
           console.log("Error data:", errorData);
 
@@ -160,36 +157,37 @@ export function StandByButton() {
   }
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button className="w-full" variant={"outline"}>
-          현장 대기
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="py-6">
-        {!reservationNum ? (
-          // 예약 전 - 폼 표시
-          <>
-            <DialogTitle>현장 대기 신청</DialogTitle>
-            <StandByButtonForm onSuccess={setReservationNum}>
-              <div className="flex flex-col gap-4">
-                <StandByInput />
-                <SubmitButton />
+    <div>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button className="w-full" variant={"outline"}>
+            현장 대기
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="py-6">
+          <AuthSheet />
+          {!reservationNum ? (
+            <>
+              <DialogTitle>현장 대기 신청</DialogTitle>
+              <StandByButtonForm onSuccess={setReservationNum}>
+                <div className="flex flex-col gap-4">
+                  <StandByInput />
+                  <SubmitButton />
+                </div>
+              </StandByButtonForm>
+            </>
+          ) : (
+            <>
+              <DialogTitle className="hidden" />
+              <div className="flex flex-col items-center justify-center">
+                <ReservationInfo reservationNum={reservationNum} isStandBy />
+                <div className="h-10" />
+                <ReservationConfirmButton />
               </div>
-            </StandByButtonForm>
-          </>
-        ) : (
-          // 예약 완료 후 - 확인 버튼 표시
-          <>
-            <DialogTitle className="hidden" />
-            <div className="flex flex-col items-center justify-center">
-              <ReservationInfo reservationNum={reservationNum} isStandBy />
-              <div className="h-10" />
-              <ReservationConfirmButton />
-            </div>
-          </>
-        )}
-      </DialogContent>
-    </Dialog>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }
