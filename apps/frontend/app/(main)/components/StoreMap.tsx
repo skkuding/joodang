@@ -1,7 +1,6 @@
 "use client";
 
 import { Store } from "@/app/type";
-import Script from "next/script";
 import { useEffect, useRef, useState } from "react";
 import type { NaverMapInstance, NaverMarkerInstance } from "@/types/naver";
 
@@ -21,15 +20,70 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
   const mapInstanceRef = useRef<NaverMapInstance | null>(null);
   const markerRef = useRef<NaverMarkerInstance | null>(null);
   const [isReady, setIsReady] = useState(false);
+  const STYLE_ID = "56e070b5-b8ce-4f3f-90a7-fc9e602ba64c";
   const didReloadRef = useRef(false);
   const [reloadToken, setReloadToken] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
+
+  const applyCustomStyle = (map: NaverMapInstance | null) => {
+    if (!map) return;
+    try {
+      map.setOptions({ customStyleId: STYLE_ID });
+    } catch {}
+    try {
+      window.naver?.maps?.Event?.once(map, "idle", () => {
+        try {
+          map.setOptions({ customStyleId: STYLE_ID });
+        } catch {}
+      });
+    } catch {}
+    // Single fallback after a short delay
+    window.setTimeout(() => {
+      try {
+        map.setOptions({ customStyleId: STYLE_ID });
+      } catch {}
+    }, 150);
+  };
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     // If already loaded (e.g., from previous navigation), mark ready
-    if (window.naver?.maps) setIsReady(true);
-    // Define SDK callback to mark readiness exactly when SDK signals loaded
+    if (window.naver?.maps) {
+      setIsReady(true);
+      return;
+    }
+
+    // Define SDK callback as a fallback (in case URL uses callback later)
     window.__onNaverReady = () => setIsReady(true);
+
+    const existing = document.getElementById(
+      "naver-maps-sdk"
+    ) as HTMLScriptElement | null;
+    const onLoad = () => setIsReady(true);
+
+    if (existing) {
+      // If script tag exists but not loaded yet, hook load event
+      if (!(window as any).naver?.maps) {
+        existing.addEventListener("load", onLoad);
+        return () => existing.removeEventListener("load", onLoad);
+      }
+      setIsReady(true);
+      return;
+    }
+
+    // Dynamically inject SDK (works on client-side navigation too)
+    const script = document.createElement("script");
+    script.id = "naver-maps-sdk";
+    script.type = "text/javascript";
+    script.async = true;
+    script.defer = true;
+    script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${process.env.NEXT_PUBLIC_NAVER_ID}&submodules=gl`;
+    script.addEventListener("load", onLoad);
+    document.head.appendChild(script);
+
+    return () => {
+      script.removeEventListener("load", onLoad);
+    };
   }, []);
 
   useEffect(() => {
@@ -51,37 +105,45 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
     const centerLng = selectedStore?.longitude ?? 126.9745929;
 
     if (!mapInstanceRef.current) {
+      setIsVisible(false);
       mapInstanceRef.current = new naver.maps.Map(mapRef.current, {
         gl: true,
         center: new naver.maps.LatLng(centerLat, centerLng),
         zoom: 16,
-        customStyleId: "56e070b5-b8ce-4f3f-90a7-fc9e602ba64c",
+        customStyleId: STYLE_ID,
       });
-      mapInstanceRef.current.setOptions({
-        customStyleId: "56e070b5-b8ce-4f3f-90a7-fc9e602ba64c",
-      });
-      window.naver.maps.Event?.once(mapInstanceRef.current!, "idle", () => {
-        mapInstanceRef.current?.setOptions({
-          customStyleId: "56e070b5-b8ce-4f3f-90a7-fc9e602ba64c",
-        });
-      });
-      setTimeout(() => {
-        mapInstanceRef.current?.setOptions({
-          customStyleId: "56e070b5-b8ce-4f3f-90a7-fc9e602ba64c",
-        });
-      }, 50);
+      applyCustomStyle(mapInstanceRef.current);
+      // Reveal after first stable render
+      try {
+        window.naver?.maps?.Event?.once(mapInstanceRef.current, "idle", () =>
+          setIsVisible(true)
+        );
+      } catch {
+        setIsVisible(true);
+      }
+      // Fallback reveal
+      window.setTimeout(() => setIsVisible(true), 220);
 
-      // One-time soft reload: recreate map shortly after first init
-      setTimeout(() => {
+      // One-time soft reload to stabilize first paint/styles
+      window.setTimeout(() => {
         if (didReloadRef.current) return;
         didReloadRef.current = true;
-        // Detach existing marker from old map before recreating
+        // Detach marker from old instance
         if (markerRef.current) {
-          markerRef.current.setMap(null);
+          try {
+            markerRef.current.setMap(null);
+          } catch {}
           markerRef.current = null;
         }
-        // Null current instance to force re-creation on next effect pass
+        // Clear container and null map instance to force re-init
+        const el = mapRef.current;
+        if (el) {
+          try {
+            el.innerHTML = "";
+          } catch {}
+        }
         mapInstanceRef.current = null;
+        setIsVisible(false);
         setReloadToken(t => t + 1);
       }, 120);
     } else {
@@ -91,6 +153,7 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
       } else {
         mapInstanceRef.current.setCenter(nextCenter);
       }
+      // Keep current style; avoid redundant reapply to reduce jank
     }
 
     // Update marker for the selected store
@@ -131,8 +194,8 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
           content: markerContent,
           anchor: new naver.maps.Point(anchorX, anchorY),
         });
-        if (markerRef.current.getMap() !== mapInstanceRef.current) {
-          markerRef.current.setMap(mapInstanceRef.current!);
+        if (!markerRef.current.getMap()) {
+          markerRef.current.setMap(mapInstanceRef.current);
         }
       } else {
         markerRef.current = new naver.maps.Marker({
@@ -149,18 +212,27 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
     return () => {};
   }, [isReady, stores, current, reloadToken]);
 
+  // Re-apply style on page return/visibility
+  useEffect(() => {
+    const reapply = () => applyCustomStyle(mapInstanceRef.current);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") {
+        window.setTimeout(reapply, 50);
+      }
+    };
+    window.addEventListener("pageshow", reapply);
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      window.removeEventListener("pageshow", reapply);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, []);
+
   return (
     <>
-      <Script
-        type="text/javascript"
-        src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${process.env.NEXT_PUBLIC_NAVER_ID}&submodules=gl&callback=__onNaverReady`}
-        strategy="beforeInteractive"
-        onLoad={() => setIsReady(true)}
-        onReady={() => setIsReady(true)}
-      />
       <div
         ref={mapRef}
-        className="relative isolate z-0 my-3 aspect-[67/43] overflow-hidden rounded-md"
+        className={`relative isolate z-0 my-3 aspect-[67/43] overflow-hidden rounded-md transition-opacity duration-200 ${isVisible ? "opacity-100" : "opacity-0"}`}
       />
     </>
   );
