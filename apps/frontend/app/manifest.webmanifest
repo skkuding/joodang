@@ -10,6 +10,7 @@
     }
   ],
   "display": "standalone",
+  "orientation": "portrait",
   "start_url": "/",
   "background_color": "#FF5940",
   "theme_color": "#FF5940"
