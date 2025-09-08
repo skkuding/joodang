@@ -1,13 +1,12 @@
 "use client";
 
-import { Progress } from "@/components/ui/progress";
 import { useCreateStoreStore } from "@/app/stores/createStore";
-import StoreInfoForm from "./_components/StoreInfoForm";
-import TimeSlotForm from "./_components/TimeSlotForm";
+import { Progress } from "@/components/ui/progress";
+import { useEffect } from "react";
 import LocationForm from "./_components/LocationForm";
 import MenuForm from "./_components/MenuForm";
-import { DetailHeader } from "../../../components/DetailHeader";
-import { useEffect } from "react";
+import StoreInfoForm from "./_components/StoreInfoForm";
+import TimeSlotForm from "./_components/TimeSlotForm";
 
 export default function Page() {
   const { modalPage, setModalPage } = useCreateStoreStore(state => state);
@@ -30,9 +29,8 @@ export default function Page() {
   }, [modalPage, setModalPage]);
   return (
     <div>
-      <DetailHeader />
-      <div className="mt-[10px] px-5 py-4">
-        <div className="z-1 fixed left-0 right-0 w-full bg-white px-5 py-4">
+      <div className="px-5">
+        <div className="bg-white py-2">
           <div className="text-color-neutral-60 mb-2 text-right text-xs">
             {modalPage + 1} / 4
           </div>
@@ -41,7 +39,7 @@ export default function Page() {
             className="text-color-primary-normal"
           />
         </div>
-        <div className="mt-[80px]">
+        <div className="mt-5">
           {modalPage === 0 && <StoreInfoForm />}
           {modalPage === 1 && <TimeSlotForm />}
           {modalPage === 2 && <LocationForm />}

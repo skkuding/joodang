@@ -1,9 +1,10 @@
+import { FilterProvider } from "@/src/context/FilterContext";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "./globals.css";
-import { Viewport } from "next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -249,19 +250,21 @@ export default function RootLayout({
           href="splash_screens/4__iPhone_SE__iPod_touch_5th_generation_and_later_portrait.png"
         />
       </head>
-      <body
-        style={{
-          fontFamily: "Pretendard Variable, Pretendard",
-        }}
-      >
-        <Analytics />
-        <SpeedInsights />
-        <main
-          className={`${geistSans.variable} ${geistMono.variable} pb-20 pt-[48px] antialiased`}
+      <FilterProvider>
+        <body
+          style={{
+            fontFamily: "Pretendard Variable, Pretendard",
+          }}
         >
-          {children}
-        </main>
-      </body>
+          <Analytics />
+          <SpeedInsights />
+          <main
+            className={`${geistSans.variable} ${geistMono.variable} pb-20 pt-[48px] antialiased`}
+          >
+            {children}
+          </main>
+        </body>
+      </FilterProvider>
     </html>
   );
 }
