@@ -4,6 +4,7 @@ import { Store } from "@/app/type";
 import {
   formatDateDash2Point,
   formatWithComma,
+  kstDateTimeToUtcIso,
   safeFetcher,
 } from "@/lib/utils";
 import locationIcon from "@/public/icons/icon_location.svg";
@@ -33,14 +34,13 @@ export default function BarPage() {
 
   useEffect(() => {
     async function fetchStores() {
-      const url = `store?sort=${selOrder}&maxFee=${filterValue.maxFee}`;
-      console.log("url: ", url);
+      let url = `store?sort=${selOrder}&maxFee=${filterValue.maxFee}`;
 
-      // if (filterValue.days !== "0000-00-00") {
-      //   url += `&`;
-      // }
-
+      if (filterValue.days !== "0000-00-00") {
+        url += `&startTime=${kstDateTimeToUtcIso(filterValue.days)}&endTime=${kstDateTimeToUtcIso(filterValue.days, "23:59")}`;
+      }
       const stores: Store[] = await safeFetcher(url).json();
+      console.log("stores: ", stores);
       setStores(stores);
     }
     fetchStores();
@@ -126,27 +126,6 @@ export default function BarPage() {
               ) : (
                 <p className="text-color-common-0 ml-auto text-sm font-normal leading-normal">
                   {formatDateDash2Point(filterValue.days)}
-                </p>
-              )}
-            </div>
-            <div className="flex flex-row">
-              <Image
-                src={OrangeDot}
-                alt="주황닷"
-                width={6}
-                height={6}
-                className="mr-2"
-              />
-              <p className="text-color-neutral-30 text-sm font-normal leading-[150%] tracking-[-0.48px]">
-                시간대
-              </p>
-              {!isFilterSet ? (
-                <p className="text-color-neutral-70 ml-auto text-sm font-normal not-italic leading-[140%] tracking-[-0.48px]">
-                  00:00 ~ 00:00
-                </p>
-              ) : (
-                <p className="text-color-common-0 ml-auto text-sm font-normal leading-normal">
-                  {filterValue.startTime} ~ {filterValue.endTime}
                 </p>
               )}
             </div>

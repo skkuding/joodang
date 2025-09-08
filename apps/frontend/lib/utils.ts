@@ -114,3 +114,9 @@ export function formatDateDash2Point(dateStr: string | null) {
 // 010으로 시작하는 11자리 번호를 010-1234-5678 형태로 변환
 export const formatPhone010 = (digits: string): string =>
   digits.replace(/\D/g, "").replace(/^(\d{3})(\d{4})(\d{4}).*$/, "$1-$2-$3");
+
+// KST 시간을 UTC로 변환
+export function kstDateTimeToUtcIso(dateYmd: string, timeHm: string = "00:00") {
+  const kst = `${dateYmd}T${timeHm}:00+09:00`;
+  return new Date(kst).toISOString();
+}
