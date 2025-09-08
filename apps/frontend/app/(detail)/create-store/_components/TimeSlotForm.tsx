@@ -1,14 +1,7 @@
 "use client";
 
+import { FloatingBottomBar } from "@/app/components/FloatingBottomBar";
 import { useCreateStoreStore } from "@/app/stores/createStore";
-import { useForm } from "react-hook-form";
-import { valibotResolver } from "@hookform/resolvers/valibot";
-import * as v from "valibot";
-import { useState } from "react";
-import { cn } from "@/lib/utils";
-import { Input } from "@/components/ui/input";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -16,6 +9,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
   SelectContent,
@@ -23,7 +19,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import { valibotResolver } from "@hookform/resolvers/valibot";
 import { Plus, X } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import * as v from "valibot";
 
 const timeSlotFormSchema = v.object({
   timeSlots: v.pipe(
@@ -340,8 +341,7 @@ export default function TimeSlotForm() {
       <div className="mb-10 text-xl font-medium">
         날짜와 시간 정보를 입력해주세요
       </div>
-
-      <div className="flex flex-col gap-10">
+      <div className="mb-13 flex flex-col gap-10">
         {/* 운영 날짜 선택 */}
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
@@ -626,21 +626,11 @@ export default function TimeSlotForm() {
           )}
         </div>
       </div>
-
-      <div className="fixed bottom-0 left-0 right-0 z-20 flex h-[84px] bg-white px-5 py-4">
-        <button
-          type="submit"
-          className={cn(
-            "w-full rounded-md",
-            isValid
-              ? "bg-primary-normal text-white"
-              : "bg-color-neutral-95 text-color-neutral-70"
-          )}
-          disabled={!isValid}
-        >
+      <FloatingBottomBar>
+        <Button type="submit" disabled={!isValid}>
           다음
-        </button>
-      </div>
+        </Button>
+      </FloatingBottomBar>
     </form>
   );
 }

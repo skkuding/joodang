@@ -39,7 +39,7 @@ export default async function Page({
       <StoreInfo store={store} />
       <Separator />
       <StoreDescription />
-      <StoreActionButtons storeId={store.id} />
+      <StoreActionButtons store={store} />
     </div>
   );
 }
