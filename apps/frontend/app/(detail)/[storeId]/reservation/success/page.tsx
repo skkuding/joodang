@@ -15,7 +15,6 @@ export default function Page() {
   const [reservationData, setReservationData] =
     useState<ReservationResponse | null>(null);
 
-  const [storeData, setStoreData] = useState<StoreDetail | null>(null);
   const [amount, setAmount] = useState<number | null>(null);
   const [bankName, setBankName] = useState<string | null>(null);
 
@@ -24,25 +23,53 @@ export default function Page() {
     if (storedReservationData) {
       setReservationData(JSON.parse(storedReservationData));
     }
-    const storedStoreData = sessionStorage.getItem("storeData");
-    if (storedStoreData) {
-      setStoreData(JSON.parse(storedStoreData));
-    }
   }, []);
 
   useEffect(() => {
-    if (storeData?.reservationFee && reservationData?.headcount) {
-      setAmount(storeData.reservationFee * reservationData.headcount);
-      setBankName(BankCodes[storeData.bankCode]);
+    if (reservationData?.store.reservationFee && reservationData?.headcount) {
+      setAmount(
+        reservationData.store.reservationFee * reservationData.headcount
+      );
+      setBankName(BankCodes[reservationData.store.bankCode]);
     }
-  }, [storeData, reservationData]);
+  }, [reservationData]);
+
+  const copyAccountToClipboard = async () => {
+    const text =
+      `${bankName ?? ""} ${reservationData?.store.accountNumber ?? ""}`.trim();
+    if (!text) return;
+
+    try {
+      await navigator.clipboard.writeText(text);
+      // toast.success("계좌번호가 복사되었습니다");
+    } catch {
+      // Fallback (일부 iOS/Safari/PWA)
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.top = "-1000px";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        document.execCommand("copy");
+        // toast.success("계좌번호가 복사되었습니다");
+      } catch {
+        // toast.error("복사에 실패했습니다");
+      } finally {
+        document.body.removeChild(ta);
+      }
+    }
+  };
 
   function SendMoneyButton() {
-    const handleTossPayment = () => {
+    const handleTossPayment = async () => {
       // 토스페이 앱 스킴 URL
-      const tossAppUrl = `supertoss://send?amount=${amount ?? ""}&bank=${bankName ?? ""}&accountNo=${storeData?.accountNumber ?? ""}`;
+      const tossAppUrl = `supertoss://send?amount=${amount ?? ""}&bank=${bankName ?? ""}&accountNo=${reservationData?.store.accountNumber ?? ""}`;
       // 웹 버전 URL (앱이 설치되지 않은 경우)
       const tossWebUrl = "https://toss.me";
+
+      await copyAccountToClipboard();
 
       // 모바일에서 앱 스킴 시도
       if (
@@ -57,12 +84,13 @@ export default function Page() {
       }
     };
 
-    const handleKakaoPayment = () => {
+    const handleKakaoPayment = async () => {
       // 카카오페이 앱 스킴 URL
-      const kakaoPayUrl = `kakaopay://money/to/bank?bank_code=${storeData?.bankCode ?? ""}&bank_account_number=${storeData?.accountNumber ?? ""}&amount=${amount ?? ""}`;
+      const kakaoPayUrl = `kakaopay://money/to/bank?bank_code=${reservationData?.store.bankCode ?? ""}&bank_account_number=${reservationData?.store.accountNumber ?? ""}&amount=${amount ?? ""}`;
       // 웹 버전 URL
       const kakaoWebUrl = "https://pay.kakao.com";
 
+      await copyAccountToClipboard();
       if (
         /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
           navigator.userAgent
@@ -83,7 +111,7 @@ export default function Page() {
                 <span>입금 계좌</span>
               </div>
               {reservationData && (
-                <CopyAccountModal store={reservationData?.store} />
+                <CopyAccountModal store={reservationData.store} />
               )}
             </div>
           </div>
@@ -94,7 +122,7 @@ export default function Page() {
           >
             <div className="flex gap-2">
               <Image src={tossIcon} alt="Toss" />
-              <span>토스 페이 결제</span>
+              <span>토스로 송금하기</span>
             </div>
             <Image src={arrowIcon} alt="arrow" />
           </Button>
@@ -104,8 +132,10 @@ export default function Page() {
             onClick={handleKakaoPayment}
           >
             <div className="flex gap-2">
-              <Image src={kakaoPayIcon} alt="Kakao Pay" />
-              <span>카카오 페이 결제</span>
+              <div className="w-[61px]">
+                <Image src={kakaoPayIcon} alt="Kakao Pay" />
+              </div>
+              <span>카카오페이로 송금하기</span>
             </div>
             <Image src={arrowIcon} alt="arrow" />
           </Button>
@@ -122,8 +152,8 @@ export default function Page() {
           reservationNum={reservationData?.reservationNum.toString()}
         />
       )}
+      <SendMoneyButton />
       <div className="fixed bottom-0 w-full">
-        <SendMoneyButton />
         <div className="pb-15 w-full p-5">
           <ReservationConfirmButton />
         </div>
