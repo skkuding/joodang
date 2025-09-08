@@ -39,6 +39,8 @@ interface CreateStoreStore {
   formData: FormData;
   setModalPage: (page: number) => void;
   setFormData: (data: FormData) => void;
+  createdStoreId: number | null;
+  setCreatedStoreId: (id: number) => void;
   nextModal: () => void;
   backModal: () => void;
 }
@@ -49,8 +51,12 @@ export const useCreateStoreStore = create<CreateStoreStore>(set => ({
     name: "",
     description: "",
     organizer: "",
-    startTime: new Date().toISOString(),
-    endTime: new Date().toISOString(),
+    startTime: new Date().toLocaleString("ko-KR", {
+      timeZone: "Asia/Seoul",
+    }),
+    endTime: new Date().toLocaleString("ko-KR", {
+      timeZone: "Asia/Seoul",
+    }),
     reservationFee: 0,
     college: "",
     icon: 1,
@@ -68,6 +74,8 @@ export const useCreateStoreStore = create<CreateStoreStore>(set => ({
     representativeImagePreview: null,
     menuItems: [],
   },
+  createdStoreId: null,
+  setCreatedStoreId: (id: number) => set({ createdStoreId: id }),
   setModalPage: (page: number) => set({ modalPage: page }),
   setFormData: (data: FormData) => set({ formData: data }),
   nextModal: () =>
