@@ -14,41 +14,38 @@ interface MultiStoreMapProps {
 export default function MultiStoreMap({ stores }: MultiStoreMapProps) {
   const selectedStoreId = useSelectedStore(state => state.selectedStoreId);
   const mapRef = useRef<NaverMapInstance | null>(null);
+  const storeMarkerRef = useRef<NaverMarkerInstance | null>(null);
   const myMarkerRef = useRef<NaverMarkerInstance | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     if (!window.naver) return;
     if (stores.length === 0) return;
-    // // 선택된 가게가 없으면 첫 번째 가게를 기본으로 설정
-    // if (selectedStoreId === null) {
-    //   useSelectedStore.getState().setSelectedStoreId(stores[0].id);
-    //   return;
-    // }
-    const store: Store =
+
+    const initialStore =
       stores.find(s => s.id === selectedStoreId) ?? stores[0];
 
-    // 지도 생성
     const map = new window.naver.maps.Map("map", {
       gl: true,
-      center: new window.naver.maps.LatLng(store.latitude, store.longitude),
+      center: new window.naver.maps.LatLng(
+        initialStore.latitude,
+        initialStore.longitude
+      ),
       zoom: 16,
       customStyleId: "56e070b5-b8ce-4f3f-90a7-fc9e602ba64c",
     });
     mapRef.current = map;
 
-    // 가게 위치 마커
-    function buildIconHTML(name: string) {
-      return `
-        <div class="store-marker" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:8px;color:white;pointer-events:none;">
-          <span style="background-color:rgba(255,255,255,0.1);padding:4px 12px;font-size:14px;font-weight:600;white-space:nowrap;">
-            ${name}
-          </span>
-          <img src="/icons/icon_location.svg" alt="pin" width="35" height="35" style="display:block;" />
-        </div>`;
-    }
+    // 가게 마커 생성
+    const buildIconHTML = (name: string) => `
+      <div class="store-marker" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:8px;color:white;pointer-events:none;">
+        <span style="background-color:rgba(255,255,255,0.1);padding:4px 12px;font-size:14px;font-weight:600;white-space:nowrap;">
+          ${name}
+        </span>
+        <img src="/icons/icon_location.svg" alt="pin" width="35" height="35" style="display:block;" />
+      </div>`;
 
-    function measureHTML(html: string) {
+    const measureHTML = (html: string) => {
       const wrapper = document.createElement("div");
       wrapper.style.position = "absolute";
       wrapper.style.left = "-9999px";
@@ -62,35 +59,32 @@ export default function MultiStoreMap({ stores }: MultiStoreMapProps) {
       const height = Math.round(rect.height);
 
       document.body.removeChild(wrapper);
-
       return { html, width, height };
-    }
+    };
 
-    // storeMarker 생성 부분 대체
-    const iconHtml = buildIconHTML(store.name);
+    const iconHtml = buildIconHTML(initialStore.name);
     const measured = measureHTML(iconHtml);
 
     const storeMarker = new window.naver.maps.Marker({
-      position: new window.naver.maps.LatLng(store.latitude, store.longitude),
+      position: new window.naver.maps.LatLng(
+        initialStore.latitude,
+        initialStore.longitude
+      ),
       map,
       icon: {
         content: measured.html,
-        // 하단 중앙이 좌표에 오도록 설정
         anchor: new window.naver.maps.Point(
           Math.round(measured.width / 2),
           measured.height
         ),
       },
     });
-    window.naver.maps.Event.addListener(storeMarker, "click", () => {
-      map.setZoom(16);
-      map.setCenter(
-        new window.naver.maps.LatLng(store.latitude, store.longitude)
-      );
-    });
+    storeMarkerRef.current = storeMarker;
+
+    // 지도 중심 보정 (상단 1/3 지점)
     const storeLatLng = new window.naver.maps.LatLng(
-      store.latitude,
-      store.longitude
+      initialStore.latitude,
+      initialStore.longitude
     );
     window.naver.maps.Event.once(map, "idle", () => {
       const projection = map.getProjection();
@@ -98,27 +92,23 @@ export default function MultiStoreMap({ stores }: MultiStoreMapProps) {
         const point = projection.fromCoordToOffset(storeLatLng);
         const mapSize = map.getSize();
 
-        // 화면 높이의 1/3 만큼 y 좌표를 아래로 내려줌
         const newPoint = new window.naver.maps.Point(
           point.x,
           point.y + mapSize.height / 3
         );
-
         const newCenter = projection.fromOffsetToCoord(newPoint);
         map.setCenter(newCenter);
       }
     });
 
+    // 내 위치 마커 생성 및 업데이트
     if (navigator.geolocation) {
-      // 위치 변화 감지
       const watchId = navigator.geolocation.watchPosition(
         position => {
           const { latitude, longitude } = position.coords;
           const myLatLng = new window.naver.maps.LatLng(latitude, longitude);
 
-          const currentMarker = myMarkerRef.current;
-          if (!currentMarker) {
-            // 처음에는 새 마커 생성
+          if (!myMarkerRef.current) {
             const newMarker = new window.naver.maps.Marker({
               position: myLatLng,
               map,
@@ -129,22 +119,73 @@ export default function MultiStoreMap({ stores }: MultiStoreMapProps) {
             });
             myMarkerRef.current = newMarker;
           } else {
-            // 이후에는 위치만 갱신
-            currentMarker.setPosition(myLatLng);
+            myMarkerRef.current.setPosition(myLatLng);
           }
         },
         error => {
           console.error("위치 추적 오류:", error);
         },
         {
-          enableHighAccuracy: true, // GPS 정확도 우선
+          enableHighAccuracy: true,
           maximumAge: 0,
           timeout: 5000,
         }
       );
 
-      // cleanup (컴포넌트 언마운트 시 위치 추적 중단)
       return () => navigator.geolocation.clearWatch(watchId);
+    }
+  }, [stores]);
+
+  // 선택된 가게가 바뀔 때만 마커/센터 이동
+  useEffect(() => {
+    if (!mapRef.current || !storeMarkerRef.current || stores.length === 0)
+      return;
+
+    const store = stores.find(s => s.id === selectedStoreId) ?? stores[0];
+
+    const iconHtml = `
+      <div class="store-marker" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:8px;color:white;pointer-events:none;">
+        <span style="background-color:rgba(255,255,255,0.1);padding:4px 12px;font-size:14px;font-weight:600;white-space:nowrap;">
+          ${store.name}
+        </span>
+        <img src="/icons/icon_location.svg" alt="pin" width="35" height="35" style="display:block;" />
+      </div>`;
+
+    const measured = (() => {
+      const wrapper = document.createElement("div");
+      wrapper.style.position = "absolute";
+      wrapper.style.left = "-9999px";
+      wrapper.innerHTML = iconHtml;
+      document.body.appendChild(wrapper);
+      const rect = wrapper.firstElementChild!.getBoundingClientRect();
+      document.body.removeChild(wrapper);
+      return { html: iconHtml, width: rect.width, height: rect.height };
+    })();
+
+    // 마커 아이콘과 위치 갱신
+    storeMarkerRef.current.setIcon({
+      content: measured.html,
+      anchor: new window.naver.maps.Point(
+        Math.round(measured.width / 2),
+        measured.height
+      ),
+    });
+    const newLatLng = new window.naver.maps.LatLng(
+      store.latitude,
+      store.longitude
+    );
+    storeMarkerRef.current.setPosition(newLatLng);
+    const projection = mapRef.current.getProjection();
+    if (projection) {
+      const point = projection.fromCoordToOffset(newLatLng);
+      const mapSize = mapRef.current.getSize();
+
+      const newPoint = new window.naver.maps.Point(
+        point.x,
+        point.y + mapSize.height / 3
+      );
+      const newCenter = projection.fromOffsetToCoord(newPoint);
+      mapRef.current.setCenter(newCenter);
     }
   }, [selectedStoreId, stores]);
 
