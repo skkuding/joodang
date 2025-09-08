@@ -9,12 +9,18 @@ export function DetailHeader() {
   const { modalPage, backModal } = useCreateStoreStore(state => state);
 
   const handleBack = () => {
-    // create-store 페이지에서 모달 페이지가 0보다 크면 backModal 사용
     if (window.location.pathname.includes("/create-store") && modalPage > 0) {
       backModal();
-    } else {
-      // 그 외의 경우에는 브라우저 뒤로가기
+      return;
+    }
+
+    const ref = document.referrer;
+    const sameOrigin = ref.startsWith(window.location.origin);
+
+    if (sameOrigin) {
       router.back();
+    } else {
+      router.push("/");
     }
   };
 
