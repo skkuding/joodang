@@ -435,6 +435,36 @@ export class StoreService {
     })
   }
 
+  async getStaffs(userId: number, storeId: number) {
+    const storeOwner = await this.prisma.storeStaff.findUnique({
+      where: { 
+        userId_storeId: { 
+          userId, storeId 
+        }, 
+        role: Role.OWNER 
+      },
+    })
+    if (!storeOwner) {
+      throw new ForbiddenException('가게 스태프 목록을 볼 권한이 없습니다.')
+    }
+
+    return await this.prisma.storeStaff.findMany({
+      where: { 
+        storeId,
+        role: Role.STAFF,
+      },
+      select: {
+        user: {
+          select: {
+            id: true,
+            kakaoId: true,
+            name: true,
+          },
+        },
+      },
+    })
+  }
+
   async removeStaff(ownerId: number, storeId: number, userId: number) {
     const ownerInfo = await this.prisma.storeStaff.findUnique({
       where: { userId_storeId: { userId: ownerId, storeId } },
