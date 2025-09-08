@@ -41,7 +41,7 @@ export function StoreActionButtons({ store }: StoreActionButtonsProps) {
               <Button className="w-full">스탭 관리하기</Button>
             </Link>
           )}
-          <Link href={`/${store.id}/reservation`}>
+          <Link href={`/edit-store/${store.id}`}>
             <Button className="w-full" variant={"outline"}>
               내용 수정하기
             </Button>
