@@ -82,6 +82,7 @@ export interface ReservationResponse {
   timeSlotId: number;
   isConfirmed: boolean | null;
   isDone: boolean;
+  token: string | null;
   menus: Menu[];
   user: User;
   store: Store;

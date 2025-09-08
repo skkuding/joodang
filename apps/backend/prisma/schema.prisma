@@ -176,6 +176,7 @@ model Reservation {
 
   userId     Int?     @map("user_id")
   user       User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token      String?  @unique
   phone      String
   storeId    Int      @map("store_id")
   store      Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)

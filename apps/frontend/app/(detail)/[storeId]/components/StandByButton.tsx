@@ -65,6 +65,26 @@ function StandByButtonForm({
         body: JSON.stringify(standByData),
       });
       const reservationResponse: ReservationResponse = await response.json();
+
+      const token = reservationResponse?.token;
+      if (token) {
+        const key = "reservationToken";
+        try {
+          const existing = localStorage.getItem(key);
+          let arr = [];
+          if (existing) {
+            try {
+              const parsed = JSON.parse(existing);
+              if (Array.isArray(parsed)) arr = parsed;
+            } catch {}
+          }
+          if (!arr.includes(token)) {
+            arr.push(token);
+            localStorage.setItem(key, JSON.stringify(arr));
+          }
+        } catch {}
+      }
+
       onSuccess?.(reservationResponse.reservationNum.toString());
     } catch (error) {
       if (error instanceof HTTPError) {
