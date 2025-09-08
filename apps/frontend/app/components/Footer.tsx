@@ -24,6 +24,7 @@ export function Footer() {
     if (!pathname) return;
 
     if (
+      pathname === "/management/home" ||
       pathname === "/management/store" ||
       pathname === "/management/reservation"
     ) {
@@ -44,7 +45,7 @@ export function Footer() {
         const response: { role: string } = await safeFetcher
           .get("user/me/role")
           .json();
-        console.log(response);
+        console.log("role: ", response);
         if (response.role === RoleEnum.USER) {
           setRole(RoleEnum.USER);
         } else if (response.role === RoleEnum.STAFF) {
@@ -77,11 +78,20 @@ export function Footer() {
         <div className="-mt-2 flex w-full flex-row justify-between px-[40px]">
           <div
             onClick={() => {
-              router.push("/");
+              if (
+                role === RoleEnum.STAFF ||
+                role === RoleEnum.OWNER ||
+                role === RoleEnum.ADMIN
+              ) {
+                router.push("/management/home");
+                return;
+              } else {
+                router.push("/");
+              }
             }}
             className="flex h-[54px] w-[60px] flex-col items-center"
           >
-            {curPos === "/" ? (
+            {curPos === "/" || curPos === "/management/home" ? (
               <>
                 <Image
                   src={OrangeHouse}
