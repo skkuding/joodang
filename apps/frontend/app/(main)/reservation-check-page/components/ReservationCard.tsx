@@ -3,8 +3,9 @@
 import { ReservationResponse } from "@/app/type";
 import { formatToHHMM, formatWithComma } from "@/lib/utils";
 import Arrow from "@/public/icons/icon_arrow.svg";
-import Location from "@/public/icons/icon_location.svg";
-import Clock from "@/public/icons/orangeClock.svg";
+import Clock from "@/public/icons/icon_gray_clock.svg";
+import Location from "@/public/icons/icon_gray_location.svg";
+import Money from "@/public/icons/icon_gray_money.svg";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -16,12 +17,20 @@ export default function ReservationCard({ data }: ReservationCardProps) {
   const router = useRouter();
   return (
     <div
-      className="h-[174px] w-[335px] overflow-hidden rounded-[6px]"
+      className="h-[284px] w-[335px] overflow-hidden rounded-[6px]"
       style={{ boxShadow: "0 0 20px 0 rgba(0, 0, 0, 0.12)" }}
       onClick={() => {
         router.push(`/reservation-check-page/${data.id}`);
       }}
     >
+      <Image
+        src={data.store.imageUrl}
+        alt="Store Image"
+        className="h-[110px] object-cover object-center"
+        height={100}
+        width={335}
+      />
+
       <div className="px-5 pb-5 pt-[14px]">
         <div className="mb-[2px] text-xs font-normal leading-[140%] tracking-[-0.36px] text-[#FF5940]">
           {data.store.organizer}
@@ -37,14 +46,14 @@ export default function ReservationCard({ data }: ReservationCardProps) {
             <Image
               src={Location}
               alt="위치"
-              width={16}
-              height={16}
+              width={14}
+              height={14}
               className="mr-1"
             />
-            <p className="text-color-neutral-40 font-sans text-sm font-normal leading-[150%] tracking-[-0.56px]">
+            <p className="text-color-neutral-40 text-sm font-normal leading-[150%] tracking-[-0.56px]">
               위치
             </p>
-            <p className="text-color-neutral-20 ml-auto font-sans text-sm font-normal leading-[150%] tracking-[-0.56px]">
+            <p className="text-color-neutral-20 ml-auto text-sm font-normal leading-[150%] tracking-[-0.56px]">
               {data.store.location}
             </p>
           </div>
@@ -56,26 +65,26 @@ export default function ReservationCard({ data }: ReservationCardProps) {
               height={12}
               className="ml-[2px] mr-1"
             />
-            <p className="text-color-neutral-40 font-sans text-sm font-normal leading-[150%] tracking-[-0.56px]">
+            <p className="text-color-neutral-40 text-sm font-normal leading-[150%] tracking-[-0.56px]">
               운영 시간
             </p>
-            <p className="text-color-neutral-20 ml-auto font-sans text-sm font-normal leading-[150%] tracking-[-0.56px]">
+            <p className="text-color-neutral-20 ml-auto text-sm font-normal leading-[150%] tracking-[-0.56px]">
               {formatToHHMM(data.store.startTime)} ~{" "}
               {formatToHHMM(data.store.endTime)}
             </p>
           </div>
           <div className="flex w-full flex-row items-center">
             <Image
-              src={Location}
+              src={Money}
               alt="돈"
               width={16}
               height={16}
               className="mr-1"
             />
-            <p className="text-color-neutral-40 font-sans text-sm font-normal leading-[150%] tracking-[-0.56px]">
+            <p className="text-color-neutral-40 text-sm font-normal leading-[150%] tracking-[-0.56px]">
               입장료
             </p>
-            <p className="text-color-neutral-20 ml-auto font-sans text-sm font-normal leading-[150%] tracking-[-0.56px]">
+            <p className="text-color-neutral-20 ml-auto text-sm font-normal leading-[150%] tracking-[-0.56px]">
               인당 {formatWithComma(data.store.reservationFee)} 원
             </p>
           </div>

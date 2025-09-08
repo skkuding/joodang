@@ -46,6 +46,7 @@ export default function ReservationCheckPage() {
           })}
         </div>
       </div>
+      <div className="h-7" />
     </div>
   );
 }
