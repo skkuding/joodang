@@ -45,9 +45,9 @@ export class StoreService {
 
   /**
    * 정렬 필터에 따라 가게 목록을 조회합니다.
-   * @param sort 'popular', 'fee', 'seats'
+   * @param sort 'my', 'popular', 'fee', 'seats'
    */
-  async getStores(dto: GetStoresDto) {
+  async getStores(dto: GetStoresDto, userId?: number) {
     const { sort, minFee, maxFee, startTime, endTime } = dto
     const where: Prisma.StoreWhereInput = {
       endTime: { gte: new Date() },
@@ -69,6 +69,21 @@ export class StoreService {
     }
 
     switch (sort) {
+      case 'my': {
+        if (!userId) {
+          return []
+        }
+        
+        where.OR = [
+          { ownerId: userId },
+          { staffs: { some: { userId } } },
+        ]
+
+        return await this.prisma.store.findMany({
+          where,
+          orderBy: { id: 'asc' },
+        })
+      }
       case 'popular': {
         const stores = await this.prisma.store.findMany({
           where,
