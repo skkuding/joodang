@@ -23,21 +23,19 @@ export default function Page() {
     const storedReservationData = sessionStorage.getItem("reservationData");
     if (storedReservationData) {
       setReservationData(JSON.parse(storedReservationData));
-      // 사용 후 제거 (선택사항)
-      sessionStorage.removeItem("reservationData");
     }
     const storedStoreData = sessionStorage.getItem("storeData");
     if (storedStoreData) {
       setStoreData(JSON.parse(storedStoreData));
-      // 사용 후 제거 (선택사항)
-      sessionStorage.removeItem("storeData");
-
-      if (storeData?.reservationFee && reservationData?.headcount) {
-        setAmount(storeData?.reservationFee * reservationData?.headcount);
-        setBankName(BankCodes[storeData.bankCode]);
-      }
     }
   }, []);
+
+  useEffect(() => {
+    if (storeData?.reservationFee && reservationData?.headcount) {
+      setAmount(storeData.reservationFee * reservationData.headcount);
+      setBankName(BankCodes[storeData.bankCode]);
+    }
+  }, [storeData, reservationData]);
 
   function SendMoneyButton() {
     const handleTossPayment = () => {
@@ -61,7 +59,7 @@ export default function Page() {
 
     const handleKakaoPayment = () => {
       // 카카오페이 앱 스킴 URL
-      const kakaoPayUrl = "kakaotalk://kakaopay";
+      const kakaoPayUrl = `kakaopay://money/to/bank?bank_code=${storeData?.bankCode ?? ""}&bank_account_number=${storeData?.accountNumber ?? ""}&amount=${amount ?? ""}`;
       // 웹 버전 URL
       const kakaoWebUrl = "https://pay.kakao.com";
 
