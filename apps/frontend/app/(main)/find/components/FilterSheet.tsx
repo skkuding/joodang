@@ -104,7 +104,6 @@ export default function FilterSheet({
     async function getFestivals() {
       const festival: Festival[] = await safeFetcher("festival").json();
       if (festival && festival.length > 0) {
-        console.log("festival: ", festival);
         updateDayCandidates(festival[0].startTime, festival[0].endTime);
       }
     }

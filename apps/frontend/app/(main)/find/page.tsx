@@ -4,6 +4,7 @@ import { Store } from "@/app/type";
 import {
   formatDateDash2Point,
   formatWithComma,
+  kstDateTimeToUtcIso,
   safeFetcher,
 } from "@/lib/utils";
 import locationIcon from "@/public/icons/icon_location.svg";
@@ -33,14 +34,13 @@ export default function BarPage() {
 
   useEffect(() => {
     async function fetchStores() {
-      const url = `store?sort=${selOrder}&maxFee=${filterValue.maxFee}`;
-      console.log("url: ", url);
+      let url = `store?sort=${selOrder}&maxFee=${filterValue.maxFee}`;
 
-      // if (filterValue.days !== "0000-00-00") {
-      //   url += `&`;
-      // }
-
+      if (filterValue.days !== "0000-00-00") {
+        url += `&startTime=${kstDateTimeToUtcIso(filterValue.days)}&endTime=${kstDateTimeToUtcIso(filterValue.days, "23:59")}`;
+      }
       const stores: Store[] = await safeFetcher(url).json();
+      console.log("stores: ", stores);
       setStores(stores);
     }
     fetchStores();

@@ -121,7 +121,7 @@ export interface CreateMenuDto {
 }
 
 export interface FilterVariables {
-  days: string | null;
+  days: string;
   maxFee: number;
 }
 
@@ -139,10 +139,6 @@ export interface Notification {
   storeId: number | null;
   isRead: boolean;
   createTime: string;
-}
-
-export interface Festivals {
-  list: Festival[];
 }
 
 export interface Festival {
