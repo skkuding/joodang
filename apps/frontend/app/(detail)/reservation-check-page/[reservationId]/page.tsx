@@ -230,6 +230,7 @@ export default function ReservationDetail() {
             <StoreMap stores={[store]} current={0} />
           </div>
         </div>
+        <div className="h-10" />
 
         <FloatingBottomBar>
           <button
