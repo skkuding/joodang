@@ -10,10 +10,6 @@ get {
   auth: inherit
 }
 
-headers {
-  Cookie: {{user1}}
-}
-
 params:query {
   sort: fee
   ~minFee: 10000
@@ -22,12 +18,20 @@ params:query {
   ~endTime: 2026-01-01T03:00:00.000Z
 }
 
+headers {
+  Cookie: {{user1}}
+}
+
 docs {
   ## Get Stores
   
   전체 주점 정보를 가져옵니다.
   
   ### Filter 종류
+  
+  #### my
+  
+  로그인된 사용자가 OWNER / STAFF로 있는 주점 리스트만 가져오기
   
   #### popular
   

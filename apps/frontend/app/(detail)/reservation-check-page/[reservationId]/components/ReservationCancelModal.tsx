@@ -1,4 +1,5 @@
 "use client";
+import { safeFetcher } from "@/lib/utils";
 import CautionIcon from "@/public/icons/icon_caution.svg";
 import CloseIcon from "@/public/icons/icon_close.svg";
 import Image from "next/image";
@@ -8,10 +9,12 @@ import { useEffect } from "react";
 interface ReservationCancelModalProps {
   open: boolean;
   onClose: () => void;
+  reservationId: number | null;
 }
 export default function ReservationCancelModal({
   open,
   onClose,
+  reservationId,
 }: ReservationCancelModalProps) {
   const router = useRouter();
 
@@ -28,16 +31,23 @@ export default function ReservationCancelModal({
   }, [open]);
 
   function handleClick() {
-    // TODO: 예약 취소
-    console.log("예약 취소 api 달아라");
-    router.push("/reservation-cancel");
-    onClose();
+    async function cancelReservation() {
+      try {
+        await safeFetcher.delete(`reservation/${reservationId}`);
+
+        router.push("/reservation-cancel");
+        onClose();
+      } catch (e) {
+        console.error("Error: ", e);
+      }
+    }
+    cancelReservation();
   }
 
   return (
     <div className={`${open ? "pointer-events-auto" : "pointer-events-none"}`}>
       <div
-        className={`fixed inset-0 z-[20] bg-black/80 backdrop-blur-[10px] transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0"} `}
+        className={`fixed inset-0 z-[20] bg-black/80 backdrop-blur-[10px] transition-opacity ${open ? "opacity-100" : "opacity-0"} `}
         onClick={onClose}
       />
       <div

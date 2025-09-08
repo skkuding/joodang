@@ -64,8 +64,8 @@ export function StoreInfo({ store }: senderStoreSummaryProps) {
           <Button
             onClick={handleCopyPhone}
             variant="ghost"
+            className="w-fit"
             size="sm"
-            className="p-0"
           >
             <span className="text-sm font-normal">{store.contactInfo}</span>
           </Button>

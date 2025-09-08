@@ -250,7 +250,7 @@ export default function Page() {
   return (
     <div>
       <AuthSheet />
-      <CreateReservationForm>
+      <CreateReservationForm store={store}>
         <StoreInfo store={store} />
         <Separator />
         <ReservationForm />
