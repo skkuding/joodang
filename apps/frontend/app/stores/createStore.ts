@@ -43,6 +43,13 @@ interface CreateStoreStore {
   setCreatedStoreId: (id: number) => void;
   nextModal: () => void;
   backModal: () => void;
+  isEditMode: boolean;
+  editingStoreId: number | null;
+  initializeForEdit: (payload: {
+    storeId: number;
+    data: Partial<FormData>;
+  }) => void;
+  resetFlow: () => void;
 }
 
 export const useCreateStoreStore = create<CreateStoreStore>(set => ({
@@ -75,6 +82,8 @@ export const useCreateStoreStore = create<CreateStoreStore>(set => ({
     menuItems: [],
   },
   createdStoreId: null,
+  isEditMode: false,
+  editingStoreId: null,
   setCreatedStoreId: (id: number) => set({ createdStoreId: id }),
   setModalPage: (page: number) => set({ modalPage: page }),
   setFormData: (data: FormData) => set({ formData: data }),
@@ -85,5 +94,21 @@ export const useCreateStoreStore = create<CreateStoreStore>(set => ({
   backModal: () =>
     set((state: { modalPage: number }) => ({
       modalPage: state.modalPage - 1,
+    })),
+  initializeForEdit: ({ storeId, data }) =>
+    set(state => ({
+      isEditMode: true,
+      editingStoreId: storeId,
+      modalPage: 0,
+      formData: {
+        ...state.formData,
+        ...data,
+      } as FormData,
+    })),
+  resetFlow: () =>
+    set(() => ({
+      isEditMode: false,
+      editingStoreId: null,
+      modalPage: 0,
     })),
 }));

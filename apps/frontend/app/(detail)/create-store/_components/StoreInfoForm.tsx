@@ -24,7 +24,7 @@ import PlusIcon from "@/public/icons/icon_plus.svg";
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import { Check } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as v from "valibot";
 import ImageUploadForm from "./ImageUploadForm";
@@ -95,7 +95,7 @@ type StoreFormData = {
 };
 
 export default function StoreInfoForm() {
-  const { formData, setFormData, nextModal } = useCreateStoreStore(
+  const { formData, setFormData, nextModal, isEditMode } = useCreateStoreStore(
     state => state
   );
   const [open, setOpen] = useState(false);
@@ -118,14 +118,28 @@ export default function StoreInfoForm() {
     },
   });
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    trigger,
-    formState: { errors, isValid },
-  } = form;
+  const { register, handleSubmit, watch, setValue, trigger, reset, formState } =
+    form;
+  const { errors, isValid } = formState;
+
+  // 편집 모드에서만 formData 변경 시 폼 리셋 (생성 모드에서는 사용자의 입력을 유지)
+  useEffect(() => {
+    if (!isEditMode) return;
+    reset({
+      name: formData.name,
+      organizer: formData.organizer,
+      description: formData.description,
+      icon: formData.icon,
+      totalCapacity: formData.totalCapacity,
+      bankCode: formData.bankCode,
+      accountNumber: formData.accountNumber,
+      accountHolder: formData.accountHolder,
+      contactInfo: formData.contactInfo,
+      reservationFee: formData.reservationFee,
+      startTime: formData.startTime || "",
+      endTime: formData.endTime || "",
+    });
+  }, [formData, isEditMode, reset]);
 
   const onSubmit = (data: StoreFormData) => {
     setFormData({ ...formData, ...data });

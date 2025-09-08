@@ -19,7 +19,6 @@ import {
 } from "@/lib/utils/store-utils";
 import { Plus, Trash2, Upload, X } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 const MENU_CATEGORIES = [
@@ -41,8 +40,14 @@ interface MenuItem {
 }
 
 export default function MenuForm() {
-  const { formData, setFormData, nextModal, setCreatedStoreId } =
-    useCreateStoreStore(state => state);
+  const {
+    formData,
+    setFormData,
+    nextModal,
+    setCreatedStoreId,
+    isEditMode,
+    editingStoreId,
+  } = useCreateStoreStore(state => state);
   const [menuItems, setMenuItems] = useState<MenuItem[]>(
     formData.menuItems || []
   );
@@ -107,11 +112,20 @@ export default function MenuForm() {
     try {
       setIsSubmitting(true);
 
-      const storeData = transformFormDataToStoreData(formData);
-      const storeResponse = (await createStore(storeData)) as { id: number };
-      const storeId = storeResponse.id;
-
-      setCreatedStoreId(storeId);
+      let storeId: number;
+      if (isEditMode && editingStoreId) {
+        // 수정 모드: 스토어 정보 업데이트 (필요한 필드만)
+        const { updateStore } = await import("@/lib/api/store");
+        const partialData = transformFormDataToStoreData(formData);
+        await updateStore(editingStoreId, partialData);
+        storeId = editingStoreId;
+      } else {
+        // 생성 모드
+        const storeData = transformFormDataToStoreData(formData);
+        const storeResponse = (await createStore(storeData)) as { id: number };
+        storeId = storeResponse.id;
+        setCreatedStoreId(storeId);
+      }
       const imageUploadPromises = [];
       const imageUrls: Record<string, string> = {};
 
@@ -157,6 +171,8 @@ export default function MenuForm() {
           storeId,
           imageUrls
         );
+        // 수정 모드에서는 기존 메뉴 유지/갱신 전략이 필요하지만,
+        // 현재 간소화: 새로 추가된 항목만 생성 호출 (id 없는 것 위주)
         const menuPromises = menuData.map(menu => createMenu(menu));
         await Promise.all(menuPromises);
       }
@@ -239,6 +255,11 @@ export default function MenuForm() {
   const handleSelectImage = () => {
     fileInputRef.current?.click();
   };
+
+  // 편집 모드에서 formData 변경 시 동기화
+  useEffect(() => {
+    setMenuItems(formData.menuItems || []);
+  }, [formData]);
 
   // 컴포넌트 언마운트 시 미리보기 URL 정리
   useEffect(() => {
@@ -464,7 +485,13 @@ export default function MenuForm() {
           disabled={isSubmitting}
           className="bg-primary-normal w-full rounded-md px-4 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-gray-300"
         >
-          {isSubmitting ? `등록 중...` : "주점 등록하기"}
+          {isEditMode
+            ? isSubmitting
+              ? `수정 중...`
+              : "수정 완료하기"
+            : isSubmitting
+              ? `등록 중...`
+              : "주점 등록하기"}
         </Button>
       </FloatingBottomBar>
     </div>

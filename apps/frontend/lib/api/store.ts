@@ -96,6 +96,34 @@ export const updateStoreImageUrl = async (
   return response.json();
 };
 
+// 스토어 상세 조회
+export const getStoreDetail = async (storeId: number): Promise<StoreDetail> => {
+  const response = await safeFetcher.get(`store/${storeId}`);
+
+  if (!response.ok) {
+    throw new Error("스토어 정보를 불러오는데 실패했습니다.");
+  }
+
+  return (await response.json()) as StoreDetail;
+};
+
+// 스토어 수정
+export const updateStore = async (
+  storeId: number,
+  data: Partial<CreateStoreDto>
+) => {
+  const response = await safeFetcher.patch(`store/${storeId}`, {
+    headers: { "Content-Type": "application/json" },
+    json: data,
+  });
+
+  if (!response.ok) {
+    throw new Error("스토어 수정에 실패했습니다.");
+  }
+
+  return response.json();
+};
+
 // 사용자가 소유한 스토어 목록 조회
 export const getMyOwnedStores = async () => {
   const response = await safeFetcher.get("store");

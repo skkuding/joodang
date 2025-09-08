@@ -22,7 +22,7 @@ import {
 import { cn } from "@/lib/utils";
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import { Plus, X } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as v from "valibot";
 
@@ -40,6 +40,14 @@ const timeSlotFormSchema = v.object({
 });
 
 const generateUniqueId = () => `slot_${Date.now()}_${Math.random()}`;
+
+// YYYY-MM-DD 형식으로 날짜 키 생성 (로컬 시간 기준)
+const formatDateKey = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
 
 type TimeSlotFormData = {
   timeSlots: {
@@ -64,16 +72,12 @@ export default function TimeSlotForm() {
   >(formData.timeSlots || []);
 
   // 기존 데이터가 있으면 첫 번째 날짜를 자동 선택
-  const getInitialSelectedDate = () => {
+  const getInitialSelectedDate = useCallback(() => {
     if (formData.timeSlots && formData.timeSlots.length > 0) {
-      return formData.timeSlots[0].startTime
-        .toLocaleString("ko-KR", {
-          timeZone: "Asia/Seoul",
-        })
-        .split("T")[0];
+      return formatDateKey(formData.timeSlots[0].startTime);
     }
     return "";
-  };
+  }, [formData.timeSlots]);
 
   const [selectedDate, setSelectedDate] = useState<string>(
     getInitialSelectedDate()
@@ -82,11 +86,7 @@ export default function TimeSlotForm() {
   // 현재 선택된 날짜의 시간대들
   const currentDateTimeSlots = timeSlots.filter(slot => {
     if (!selectedDate) return false;
-    const slotDate = slot.startTime
-      .toLocaleString("ko-KR", {
-        timeZone: "Asia/Seoul",
-      })
-      .split("T")[0];
+    const slotDate = formatDateKey(slot.startTime);
     return slotDate === selectedDate;
   });
 
@@ -147,31 +147,32 @@ export default function TimeSlotForm() {
     },
   });
 
-  const {
-    handleSubmit,
-    setValue,
-    formState: { errors, isValid },
-  } = form;
+  const { handleSubmit, setValue, reset, formState } = form;
+  const { errors, isValid } = formState;
 
   // 각 날짜별 입력 방식 상태 관리 - 기존 데이터가 있으면 "manual"로 초기화
-  const getInitialDateInputTypes = () => {
+  const getInitialDateInputTypes = useCallback(() => {
     const types: Record<string, string> = {};
     if (formData.timeSlots && formData.timeSlots.length > 0) {
       formData.timeSlots.forEach(slot => {
-        const dateKey = slot.startTime
-          .toLocaleString("ko-KR", {
-            timeZone: "Asia/Seoul",
-          })
-          .split("T")[0];
+        const dateKey = formatDateKey(slot.startTime);
         types[dateKey] = "manual"; // 기존 데이터가 있으면 "manual"로 설정
       });
     }
     return types;
-  };
+  }, [formData.timeSlots]);
 
   const [dateInputTypes, setDateInputTypes] = useState<Record<string, string>>(
     getInitialDateInputTypes()
   );
+
+  // 편집 모드에서 formData 변경 시 동기화
+  useEffect(() => {
+    setTimeSlots(formData.timeSlots || []);
+    reset({ timeSlots: formData.timeSlots || [] });
+    setSelectedDate(getInitialSelectedDate());
+    setDateInputTypes(getInitialDateInputTypes());
+  }, [formData, reset, getInitialSelectedDate, getInitialDateInputTypes]);
 
   // 자동 입력 모달 상태
   const [isAutoModalOpen, setIsAutoModalOpen] = useState(false);
@@ -218,11 +219,7 @@ export default function TimeSlotForm() {
 
     // 기존 해당 날짜의 시간대 제거
     const filteredSlots = timeSlots.filter(slot => {
-      const slotDate = slot.startTime
-        .toLocaleString("ko-KR", {
-          timeZone: "Asia/Seoul",
-        })
-        .split("T")[0];
+      const slotDate = formatDateKey(slot.startTime);
       return slotDate !== selectedDate;
     });
 
@@ -256,11 +253,7 @@ export default function TimeSlotForm() {
 
     // 기존 해당 날짜의 시간대 제거
     const filteredSlots = timeSlots.filter(slot => {
-      const slotDate = slot.startTime
-        .toLocaleString("ko-KR", {
-          timeZone: "Asia/Seoul",
-        })
-        .split("T")[0];
+      const slotDate = formatDateKey(slot.startTime);
       return slotDate !== selectedDate;
     });
 
@@ -309,11 +302,7 @@ export default function TimeSlotForm() {
     if (!selectedDate) return;
 
     const currentDateSlots = timeSlots.filter(slot => {
-      const slotDate = slot.startTime
-        .toLocaleString("ko-KR", {
-          timeZone: "Asia/Seoul",
-        })
-        .split("T")[0];
+      const slotDate = formatDateKey(slot.startTime);
       return slotDate === selectedDate;
     });
 
@@ -331,11 +320,7 @@ export default function TimeSlotForm() {
 
   const removeTimeSlot = (id: string) => {
     const currentDateSlots = timeSlots.filter(slot => {
-      const slotDate = slot.startTime
-        .toLocaleString("ko-KR", {
-          timeZone: "Asia/Seoul",
-        })
-        .split("T")[0];
+      const slotDate = formatDateKey(slot.startTime);
       return slotDate === selectedDate;
     });
 
@@ -379,11 +364,7 @@ export default function TimeSlotForm() {
           <div className="grid grid-cols-2 gap-2">
             {availableDates.slice(0, 6).map(date => {
               const hasTimeSlots = timeSlots.some(slot => {
-                const slotDate = slot.startTime
-                  .toLocaleString("ko-KR", {
-                    timeZone: "Asia/Seoul",
-                  })
-                  .split("T")[0];
+                const slotDate = formatDateKey(slot.startTime);
                 return slotDate === date.value;
               });
 

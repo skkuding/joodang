@@ -129,13 +129,22 @@ export default function LocationForm() {
     },
   });
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { errors, isValid },
-  } = form;
+  const { register, handleSubmit, setValue, watch, reset, formState } = form;
+  const { errors, isValid } = formState;
+
+  // 편집 모드에서 formData 변경 시 폼 리셋 및 맵 상태 반영
+  useEffect(() => {
+    reset({
+      college: formData.college || "성균관대학교",
+      location: formData.location || "",
+      latitude: formData.latitude || 37.2931959,
+      longitude: formData.longitude || 126.9745929,
+    });
+    setCurrentPosition({
+      lat: formData.latitude || 37.2931959,
+      lng: formData.longitude || 126.9745929,
+    });
+  }, [formData, reset]);
 
   // 네이버 지도 초기화 (한 번만 실행)
   useEffect(() => {
