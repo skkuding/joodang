@@ -27,13 +27,15 @@ export default function Page() {
     const storedStoreData = sessionStorage.getItem("storeData");
     if (storedStoreData) {
       setStoreData(JSON.parse(storedStoreData));
-
-      if (storeData?.reservationFee && reservationData?.headcount) {
-        setAmount(storeData?.reservationFee * reservationData?.headcount);
-        setBankName(BankCodes[storeData.bankCode]);
-      }
     }
   }, []);
+
+  useEffect(() => {
+    if (storeData?.reservationFee && reservationData?.headcount) {
+      setAmount(storeData.reservationFee * reservationData.headcount);
+      setBankName(BankCodes[storeData.bankCode]);
+    }
+  }, [storeData, reservationData]);
 
   function SendMoneyButton() {
     const handleTossPayment = () => {
