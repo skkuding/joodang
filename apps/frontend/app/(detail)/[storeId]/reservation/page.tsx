@@ -21,6 +21,7 @@ import { useFormContext } from "react-hook-form";
 import { IoIosArrowDown } from "react-icons/io";
 import { StoreInfo } from "../../components/StoreInfo";
 import { CreateReservationForm } from "./components/CreateReservationForm";
+import { FloatingBottomBar } from "@/app/components/FloatingBottomBar";
 
 export default function Page() {
   const { storeId } = useParams();
@@ -243,7 +244,7 @@ export default function Page() {
       formState: { isValid },
     } = useFormContext();
     return (
-      <div className="pb-15 fixed bottom-0 left-0 right-0 p-5">
+      <div className="">
         <Button className="w-full" type="submit" disabled={!isValid}>
           예약하기
         </Button>
@@ -262,7 +263,9 @@ export default function Page() {
         <StoreInfo store={store} />
         <Separator />
         <ReservationForm />
-        <SubmitButton />
+        <FloatingBottomBar>
+          <SubmitButton />
+        </FloatingBottomBar>
       </CreateReservationForm>
       <div className="h-15" />
     </div>

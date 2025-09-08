@@ -118,3 +118,11 @@
     @apply bg-background text-foreground;
   }
 }
+
+:root { --kb: 0px; }
+.floating-bottom {
+  position: fixed;
+  left: 0; right: 0;
+  /* 키보드 높이(or 0)와 iOS 안전영역을 고려 */
+  bottom: max(env(safe-area-inset-bottom), var(--kb, 0px));
+}
