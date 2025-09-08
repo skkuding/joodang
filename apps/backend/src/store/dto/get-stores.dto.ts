@@ -1,7 +1,7 @@
 import { IsEnum, IsOptional, IsInt, IsDate, Min } from 'class-validator'
 import { Type } from 'class-transformer'
 
-const storeSortFilter = ['popular', 'fee', 'seats'] as const
+const storeSortFilter = ['my', 'popular', 'fee', 'seats'] as const
 export type StoreSortFilter = (typeof storeSortFilter)[number]
 
 export class GetStoresDto {
