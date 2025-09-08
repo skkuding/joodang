@@ -58,7 +58,7 @@ export class NotificationService {
       title,
       message,
       storeId: reservationInfo.store.id,
-      type: 'Reservation',
+      type: 'ReservationReminder',
       url: `/reservation-check-page/${reservationId}`,
     })
 
@@ -241,7 +241,7 @@ export class NotificationService {
         title,
         message,
         storeId: reservation.store.id,
-        type: 'Reservation',
+        type: 'ReservationReminder',
         url: `/reservation-check-page/${reservationId}`,
       })
 
@@ -294,15 +294,15 @@ export class NotificationService {
       title,
       message,
       storeId: reservation.store.id,
-      type: 'Reservation',
-      url: `/reservation-check-page/${reservationId}`,
+      type: 'OwnerReservation',
+      url: `/management/reservation/${reservationId}`,
     })
 
     await this.sendPushNotification(
       receivers,
       title,
       message,
-      `/reservation-check-page/${reservationId}`,
+      `/management/reservation/${reservationId}`,
     )
   }
 
@@ -335,15 +335,15 @@ export class NotificationService {
       title,
       message,
       storeId: reservation.store.id,
-      type: 'Reservation',
-      url: `/reservation-check-page/${reservationId}`,
+      type: 'OwnerReservation',
+      url: `/management/reservation/${reservationId}`,
     })
 
     await this.sendPushNotification(
       receivers,
       title,
       message,
-      `/reservation-check-page/${reservationId}`,
+      `/management/reservation/${reservationId}`,
     )
   }
 
@@ -361,7 +361,7 @@ export class NotificationService {
     if (!reservation.userId) return
 
     const title = reservation.store.name ?? '예약 확정 알림'
-    const message = `예약이 확정되었습니다.`
+    const message = `예약이 확정되었어요`
 
     await this.saveNotification({
       userIds: [reservation.userId],
@@ -447,7 +447,7 @@ export class NotificationService {
     if (!user) return
 
     const title = '점주 승인 알림'
-    const message = `${user.name}님, 점주 신청이 승인되었습니다.`
+    const message = `관리자 계정으로 변경 가능해요`
 
     await this.saveNotification({
       userIds: [userId],

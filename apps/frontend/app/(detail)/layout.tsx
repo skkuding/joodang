@@ -1,5 +1,5 @@
-import { Toaster } from "../../../components/ui/sonner";
-import { DetailHeader } from "../../components/DetailHeader";
+import { Toaster } from "../../components/ui/sonner";
+import { DetailHeader } from "../components/DetailHeader";
 export default function Layout({
   children,
 }: Readonly<{

@@ -80,7 +80,7 @@ export interface ReservationResponse {
   phone: string;
   storeId: number;
   timeSlotId: number;
-  isconfirmed: boolean | null;
+  isConfirmed: boolean | null;
   isDone: boolean;
   menus: Menu[];
   user: User;
@@ -120,7 +120,7 @@ export interface CreateMenuDto {
   imageUrl?: string;
 }
 
-export interface filterVariables {
+export interface FilterVariables {
   days: string | null;
   maxFee: number;
   startTime: string;
