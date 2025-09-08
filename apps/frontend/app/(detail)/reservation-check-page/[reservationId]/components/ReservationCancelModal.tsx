@@ -37,7 +37,7 @@ export default function ReservationCancelModal({
   return (
     <div className={`${open ? "pointer-events-auto" : "pointer-events-none"}`}>
       <div
-        className={`fixed inset-0 z-[20] bg-black/80 backdrop-blur-[10px] transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0"} `}
+        className={`fixed inset-0 z-[20] bg-black/80 backdrop-blur-[10px] transition-opacity ${open ? "opacity-100" : "opacity-0"} `}
         onClick={onClose}
       />
       <div
