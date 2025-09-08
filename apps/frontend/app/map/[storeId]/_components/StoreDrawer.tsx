@@ -14,6 +14,7 @@ interface StoreDrawerProps {
 }
 
 export function StoreDrawer({ store, mylocationfunc }: StoreDrawerProps) {
+  console.log("store in drawer", store);
   const router = useRouter();
   const [height, setHeight] = useState(0.9);
   const formattedStartTime = formatTimeToKST(store.startTime);
@@ -68,7 +69,7 @@ export function StoreDrawer({ store, mylocationfunc }: StoreDrawerProps) {
           {store.organizer}
         </h2>
         <h1 className="mt-1 text-xl font-medium">{store.name}</h1>
-        <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
+        <div className="mt-4 grid grid-cols-2 gap-1 text-sm">
           <div className="flex items-center gap-2">
             <Image
               src="/icons/icon_location.svg"
@@ -119,7 +120,7 @@ export function StoreDrawer({ store, mylocationfunc }: StoreDrawerProps) {
               />
               <h3 className="text-sm">주점 연락처</h3>
             </div>
-            <span className="text-sm text-gray-800">010-1111-1111</span>
+            <span className="text-sm text-gray-800">{store.contactInfo}</span>
           </div>
           <div className="flex justify-between">
             <div className="flex gap-2">
