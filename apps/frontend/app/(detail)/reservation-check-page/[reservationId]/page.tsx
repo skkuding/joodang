@@ -202,32 +202,33 @@ export default function ReservationDetail() {
             <p className="text-color-common-0">{reservation?.headcount}명</p>
           </div>
         </div>
-        <div className="flex">
-          <Image src={OrangeDot} alt="주황닷" width={6} height={6} />
-          <div className="ml-2 flex w-full justify-between">
-            <p>주점 위치</p>
-            <Link href={"/map/1"} className="mt-2">
-              <div className="relative flex flex-row gap-[2px] pl-[10px]">
-                <p
-                  className={cn(
-                    "text-color-neutral-40 flex items-center text-xs font-normal",
-                    "after:absolute after:-inset-3 after:rounded-full after:content-['']"
-                  )}
-                >
-                  길찾기
-                </p>
-                <Image src={Arrow} alt="arrow" width={13} height={13} />
-              </div>
-            </Link>
+        <div className="flex flex-col space-y-2">
+          <div className="flex">
+            <Image src={OrangeDot} alt="주황닷" width={6} height={6} />
+            <div className="ml-2 flex w-full justify-between">
+              <p>주점 위치</p>
+              <Link href={"/map/1"} className="mt-2">
+                <div className="relative flex flex-row gap-[2px] pl-[10px]">
+                  <p
+                    className={cn(
+                      "text-color-neutral-40 flex items-center text-xs font-normal",
+                      "after:absolute after:-inset-3 after:rounded-full after:content-['']"
+                    )}
+                  >
+                    길찾기
+                  </p>
+                  <Image src={Arrow} alt="arrow" width={13} height={13} />
+                </div>
+              </Link>
+            </div>
+          </div>
+          <div className="h-[215px] w-[335px] overflow-hidden rounded-md">
+            <StoreMap stores={[store]} current={0} />
           </div>
         </div>
 
-        <section className="h-[215px] w-[335px] overflow-hidden rounded-md">
-          <StoreMap stores={[store]} current={0} />
-        </section>
-
         <div className="flex flex-col">
-          <div className="mb-[40px] mt-[60px]">
+          <div className="mb-[40px] mt-[50px]">
             <button
               className="h-11 w-full rounded-xl bg-[#FF5940] text-sm font-medium text-white"
               onClick={() => {
