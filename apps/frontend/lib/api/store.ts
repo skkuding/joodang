@@ -1,4 +1,4 @@
-import { CreateStoreDto } from "@/app/type";
+import { CreateStoreDto, Store, StoreDetail, TimeSlot } from "@/app/type";
 import { safeFetcher } from "../utils";
 
 // 스토어 생성
@@ -94,4 +94,63 @@ export const updateStoreImageUrl = async (
   }
 
   return response.json();
+};
+
+// 사용자가 소유한 스토어 목록 조회
+export const getMyOwnedStores = async () => {
+  const response = await safeFetcher.get("store");
+
+  if (!response.ok) {
+    throw new Error("스토어 목록을 불러오는데 실패했습니다.");
+  }
+
+  const allStores = (await response.json()) as Store[];
+
+  // 현재 사용자 정보 가져오기
+  const { getCurrentUser } = await import("./user");
+  const currentUser = await getCurrentUser();
+
+  // 내가 소유한 스토어만 필터링
+  const myStores = allStores.filter(
+    (store: Store) => store.ownerId === currentUser.id
+  );
+
+  return myStores;
+};
+
+// 사용자가 관리하는 스토어 목록 조회 (소유 + 스태프)
+export const getMyManagedStores = async () => {
+  const response = await safeFetcher.get("store");
+
+  if (!response.ok) {
+    throw new Error("스토어 목록을 불러오는데 실패했습니다.");
+  }
+
+  const allStores = (await response.json()) as Store[];
+
+  // 현재 사용자 정보 가져오기
+  const { getCurrentUser } = await import("./user");
+  const currentUser = await getCurrentUser();
+
+  // 내가 소유하거나 스태프인 스토어 필터링
+  // TODO: 백엔드에서 스태프 정보도 함께 반환하도록 수정 필요
+  const myStores = allStores.filter(
+    (store: Store) => store.ownerId === currentUser.id
+  );
+
+  return myStores;
+};
+
+// 스토어의 타임슬롯 조회
+export const getStoreTimeSlots = async (
+  storeId: number
+): Promise<TimeSlot[]> => {
+  const response = await safeFetcher.get(`store/${storeId}`);
+
+  if (!response.ok) {
+    throw new Error("스토어 정보를 불러오는데 실패했습니다.");
+  }
+
+  const storeData = (await response.json()) as StoreDetail;
+  return storeData.timeSlots || [];
 };
