@@ -105,10 +105,37 @@ export default function Page() {
     );
   }
 
+  interface InvitationResponse {
+    message: string;
+    invitationLink: string;
+    inviteCode: string;
+    expiresAt: string;
+  }
+
   function AddStaffButton() {
+    const handleAddStaff = async () => {
+      try {
+        const response: InvitationResponse = await safeFetcher
+          .get(`store/${storeId}/staff/invitation`)
+          .json();
+
+        const shareData = {
+          title: "Joodang",
+          text: "주당에서 스탭으로 초대합니다",
+          url: `http://localhost:5525/invite-staff?inviteCode=${response.inviteCode}`,
+        };
+
+        await navigator.share(shareData);
+      } catch (error) {
+        console.error("Error sharing:", error);
+      }
+    };
+
     return (
       <div className="pb-15 fixed bottom-0 left-0 right-0 p-5">
-        <Button className="w-full">스탭 추가하기</Button>
+        <Button className="w-full" onClick={handleAddStaff}>
+          스탭 추가하기
+        </Button>
       </div>
     );
   }
