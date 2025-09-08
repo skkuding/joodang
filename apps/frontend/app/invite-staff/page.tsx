@@ -2,9 +2,10 @@
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect } from "react";
 import InviteStaffContent from "./InviteStaffContent";
-export default function Page() {
+
+function InviteCodeSaver() {
   const searchParams = useSearchParams();
-  const inviteCode = searchParams.get("coinviteCodede");
+  const inviteCode = searchParams.get("inviteCode");
 
   useEffect(() => {
     if (inviteCode) {
@@ -12,8 +13,13 @@ export default function Page() {
     }
   }, [inviteCode]);
 
+  return null;
+}
+
+export default function Page() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
+      <InviteCodeSaver />
       <InviteStaffContent />
     </Suspense>
   );
