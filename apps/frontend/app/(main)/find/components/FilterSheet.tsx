@@ -1,5 +1,5 @@
 "use client";
-import { filterVariables } from "@/app/type";
+import { FilterVariables } from "@/app/type";
 import { Button } from "@/components/ui/button";
 import { cn, formatDateWithDay, formatWithComma } from "@/lib/utils";
 import OrangeDot from "@/public/icons/orange_dot.svg";
@@ -23,8 +23,8 @@ interface FilterSheetProps {
   maxWidth?: number | string;
   title?: string;
   children?: React.ReactNode;
-  filterValue: filterVariables;
-  setFilterValue: React.Dispatch<React.SetStateAction<filterVariables>>;
+  filterValue: FilterVariables;
+  setFilterValue: React.Dispatch<React.SetStateAction<FilterVariables>>;
   setIsFilterSet: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -40,7 +40,7 @@ export default function FilterSheet({
   setIsFilterSet,
 }: FilterSheetProps) {
   const [newFilterValue, setNewFilterValue] =
-    useState<filterVariables>(filterValue);
+    useState<FilterVariables>(filterValue);
 
   const titleId = useId();
 
