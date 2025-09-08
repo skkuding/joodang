@@ -1,4 +1,5 @@
 "use client";
+import StoreMap from "@/app/(main)/components/StoreMap";
 import CopyAccountModal from "@/app/components/CopyAccountModal";
 import { ReservationResponse, Store, StoreDetail } from "@/app/type";
 import {
@@ -221,7 +222,9 @@ export default function ReservationDetail() {
           </div>
         </div>
 
-        <section className="h-[215px] w-[335px] overflow-hidden rounded-md"></section>
+        <section className="h-[215px] w-[335px] overflow-hidden rounded-md">
+          <StoreMap stores={[store]} current={0} />
+        </section>
 
         <div className="flex flex-col">
           <div className="mb-[40px] mt-[60px]">
