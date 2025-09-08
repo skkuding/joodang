@@ -1,7 +1,12 @@
 "use client";
-import { FilterVariables } from "@/app/type";
+import { Festival, FilterVariables } from "@/app/type";
 import { Button } from "@/components/ui/button";
-import { cn, formatDateWithDay, formatWithComma } from "@/lib/utils";
+import {
+  cn,
+  formatDateWithDay,
+  formatWithComma,
+  safeFetcher,
+} from "@/lib/utils";
 import OrangeDot from "@/public/icons/orange_dot.svg";
 import { X } from "lucide-react";
 import Image from "next/image";
@@ -61,6 +66,26 @@ export default function FilterSheet({
     onClose();
   }
 
+  function updateDayCandidates(startTime: string, endTime: string) {
+    if (!startTime || !endTime) return;
+
+    const start = new Date(startTime);
+    const end = new Date(endTime);
+
+    const days: string[] = [];
+    const current = new Date(start);
+
+    while (current <= end) {
+      const y = current.getFullYear();
+      const m = String(current.getMonth() + 1).padStart(2, "0");
+      const d = String(current.getDate()).padStart(2, "0");
+      days.push(`${y}-${m}-${d}`);
+
+      current.setDate(current.getDate() + 1);
+    }
+    setDayCandidates(days);
+  }
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -74,6 +99,17 @@ export default function FilterSheet({
       document.body.style.overflow = prevOverflow;
     };
   }, [open, onClose]);
+
+  useEffect(() => {
+    async function getFestivals() {
+      const festival: Festival[] = await safeFetcher("festival").json();
+      if (festival && festival.length > 0) {
+        console.log("festival: ", festival);
+        updateDayCandidates(festival[0].startTime, festival[0].endTime);
+      }
+    }
+    getFestivals();
+  }, []);
 
   return (
     <div

@@ -140,3 +140,18 @@ export interface Notification {
   isRead: boolean;
   createTime: string;
 }
+
+export interface Festivals {
+  list: Festival[];
+}
+
+export interface Festival {
+  id: number;
+  name: string;
+  description: string;
+  startTime: string;
+  endTime: string;
+  location: string;
+  latitude: number;
+  longitude: number;
+}
