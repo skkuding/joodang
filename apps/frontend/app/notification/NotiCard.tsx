@@ -1,11 +1,19 @@
 import Image from "next/image";
-import type { Notification } from "../type";
+import type { Notification, StoreDetail } from "../type";
 import Link from "next/link";
+import { safeFetcher } from "@/lib/utils";
 
 interface NotiCardProps {
   noti: Notification;
 }
-export default function NotiCard({ noti }: NotiCardProps) {
+export default async function NotiCard({ noti }: NotiCardProps) {
+  let storeData: StoreDetail | null = null;
+  if (noti.storeId !== null) {
+    storeData = (await safeFetcher
+      .get(`store/${noti.storeId}`)
+      .json()) as StoreDetail;
+    console.log("storeData", storeData);
+  }
   return (
     <div
       key={noti.id}
@@ -19,7 +27,7 @@ export default function NotiCard({ noti }: NotiCardProps) {
             width={24}
             height={24}
           />
-          <h2 className="max-w-[180px] text-base font-semibold text-red-500">
+          <h2 className="max-w-[200px] break-keep text-base font-semibold text-red-500">
             {noti.message}
           </h2>
         </div>
@@ -31,7 +39,7 @@ export default function NotiCard({ noti }: NotiCardProps) {
         </Link>
       </div>
 
-      {noti.type !== "Reservation" ? (
+      {noti.type === "OwnerReservation" || "ReservationReminder" ? (
         <div className="mt-2 flex flex-col gap-2 whitespace-pre-line rounded-md bg-[#f5f5f5] p-2 text-sm text-gray-700">
           <div className="flex justify-between">
             <div className="flex gap-1">
@@ -44,21 +52,21 @@ export default function NotiCard({ noti }: NotiCardProps) {
               />
               <p>주점명</p>
             </div>
-            <p>{noti.title}</p>
+            <p>{storeData?.name}</p>
           </div>
-          {/* <div className="flex justify-between">
-                  <div className="flex gap-1">
-                    <Image
-                      src="icons/icon_gray_location.svg"
-                      alt="Location Icon"
-                      width={16}
-                      height={16}
-                      className="mr-1 inline-block"
-                    />
-                    <p>위치</p>
-                  </div>
-                  <p>{noti.location}</p>
-                </div> */}
+          <div className="flex justify-between">
+            <div className="flex gap-1">
+              <Image
+                src="icons/icon_gray_location.svg"
+                alt="Location Icon"
+                width={16}
+                height={16}
+                className="mr-1 inline-block"
+              />
+              <p>위치</p>
+            </div>
+            <p>{storeData?.location}</p>
+          </div>
         </div>
       ) : (
         ""

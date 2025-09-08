@@ -1,7 +1,6 @@
 import { cookies } from "next/headers";
 import { DetailHeader } from "../components/DetailHeader";
 import Image from "next/image";
-import Link from "next/link";
 import { safeFetcher } from "@/lib/utils";
 import type { Notification } from "../type";
 import { AuthSheet } from "../components/AuthSheet";
@@ -9,9 +8,9 @@ import NotiCard from "./NotiCard";
 
 export default async function NotificationPage() {
   const cookieStore = await cookies();
-  //const token = cookieStore.get("token")?.value;
-  const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImtha2FvSWQiOiJrYWthb18yMDIwMTIzNDU2IiwiaWF0IjoxNzU2NzE4NzkxLCJleHAiOjE3ODgyNTQ3OTF9.Ulf0QSeLAmh0kFtHwsi9ilM9S2PFFW4cnEkq5PONc1I";
+  const token = cookieStore.get("token")?.value;
+  // const token =
+  //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImtha2FvSWQiOiJrYWthb18yMDIwMTIzNDU2IiwiaWF0IjoxNzU2NzE4NzkxLCJleHAiOjE3ODgyNTQ3OTF9.Ulf0QSeLAmh0kFtHwsi9ilM9S2PFFW4cnEkq5PONc1I";
   if (!token) return <p>로그인 에러.</p>;
 
   const res = await safeFetcher("notification", {
