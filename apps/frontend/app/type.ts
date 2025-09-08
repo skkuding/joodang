@@ -119,7 +119,7 @@ export interface CreateMenuDto {
   imageUrl?: string;
 }
 
-export interface filterVariables {
+export interface FilterVariables {
   days: string | null;
   maxFee: number;
   startTime: string;
