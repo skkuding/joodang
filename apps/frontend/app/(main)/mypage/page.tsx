@@ -9,6 +9,7 @@ import defaultProfileIcon from "@/public/icons/icon_default_profile.svg";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Separator } from "../components/Separator";
+import { RequestRoleButton } from "./components/RequestRoleButton";
 
 export default function Page() {
   const [user, setUser] = useState<User | null>(null);
@@ -24,9 +25,8 @@ export default function Page() {
         const user: User = await safeFetcher.get("user/me").json();
         setUser(user);
       } catch {}
-
-      fetchUser();
     };
+    fetchUser();
   }, []);
 
   const handleAuth = () => {
@@ -90,7 +90,13 @@ export default function Page() {
             </div>
           </div>
           <span className="text-color-neutral-60 text-sm font-normal">
-            비회원 상태
+            {user?.role === "ADMIN"
+              ? "관리자"
+              : user?.role === "OWNER"
+                ? "주점 운영자"
+                : user?.role === "USER"
+                  ? "일반 사용자"
+                  : "비회원"}
           </span>
         </div>
       </div>
@@ -118,9 +124,7 @@ export default function Page() {
             </div>
           </a>
         </Button>
-        <Button disabled={!user} className="mt-[30px]">
-          관리자 계정으로 변경
-        </Button>
+        {user && <RequestRoleButton user={user} />}
       </div>
     );
   }
