@@ -75,13 +75,14 @@ export class StoreService {
           _count: {
             id: true,
           },
-          having: {
-            id: {
-              _count: {
-                gte: 5, // 최소 예약 수 (추후 초기 기획인 40으로 수정)
-              },
-            },
-          },
+          // ToDo: having 조건 다시 활성화
+          // having: {
+          //   id: {
+          //     _count: {
+          //       gte: 5, // 최소 예약 수 (추후 초기 기획인 40으로 수정)
+          //     },
+          //   },
+          // },
         })
 
         popularStoresData.sort((a, b) => {
