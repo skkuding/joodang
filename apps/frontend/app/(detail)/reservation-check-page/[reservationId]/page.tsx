@@ -7,11 +7,10 @@ import Money from "@/public/icons/orangeMoney.svg";
 import OrangeDot from "@/public/icons/orange_dot.svg";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
+import ReservationCancelModal from "./components/ReservationCancelModal";
 
 export default function ReservationDetail() {
-  const router = useRouter();
   const [store, setStore] = useState<Store>({
     id: 1,
     name: "",
@@ -35,8 +34,17 @@ export default function ReservationDetail() {
     totalCapacity: 0,
   });
 
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+
   return (
     <div className="bg-color-neutral-99 flex min-h-screen flex-col">
+      <ReservationCancelModal
+        open={isModalVisible}
+        onClose={() => {
+          setIsModalVisible(false);
+          return;
+        }}
+      />
       <div className="h-[28px]" />
 
       {/* 윗 부분 */}
@@ -142,7 +150,7 @@ export default function ReservationDetail() {
             <button
               className="h-11 w-full rounded-xl bg-[#FF5940] text-sm font-medium text-white"
               onClick={() => {
-                router.back();
+                setIsModalVisible(true);
               }}
             >
               예약 취소
