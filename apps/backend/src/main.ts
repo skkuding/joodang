@@ -77,7 +77,7 @@ async function bootstrap() {
       'https://joodang.com',
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    allowedHeaders: ['Content-Type'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   })
 

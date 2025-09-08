@@ -33,7 +33,7 @@ export function StoreActionButtons({ store }: StoreActionButtonsProps) {
 
   // TODO: staff계정으로 로그인시 버튼이 잘 나오는지 확인
   return (
-    <div className="pb-15 fixed bottom-0 left-0 right-0 p-5">
+    <div className="w-full">
       {user && (store.ownerId === user.id || staffIds.includes(user.id)) ? (
         <div className="flex flex-col gap-[6px]">
           {store.ownerId === user.id && (

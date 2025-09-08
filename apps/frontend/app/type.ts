@@ -133,7 +133,12 @@ export interface Notification {
   title: string;
   message: string;
   url: string;
-  type: "Reservation" | "OwnerApplication" | "Other";
+  type:
+    | "OwnerApplication"
+    | "OwnerReservation"
+    | "Reservation"
+    | "ReservationReminder";
+  storeId: number | null;
   isRead: boolean;
   createTime: string;
 }

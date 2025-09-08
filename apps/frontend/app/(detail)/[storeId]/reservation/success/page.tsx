@@ -86,10 +86,8 @@ export default function Page() {
 
     const handleKakaoPayment = async () => {
       // 카카오페이 앱 스킴 URL
-      const kakaoPayUrl = `kakaopay://money/to/bank?bank_code=${reservationData?.store.bankCode ?? ""}&bank_account_number=${reservationData?.store.accountNumber ?? ""}&amount=${amount ?? ""}`;
+      const kakaoPayUrl = `https://link.kakaopay.com/t/money/to/bank?amount=${amount ?? ""}&bank_code=${reservationData?.store.bankCode ?? ""}&bank_account_number=${reservationData?.store.accountNumber ?? ""}`;
       // 웹 버전 URL
-      const kakaoWebUrl = "https://pay.kakao.com";
-
       await copyAccountToClipboard();
       if (
         /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
@@ -98,7 +96,7 @@ export default function Page() {
       ) {
         window.location.href = kakaoPayUrl;
       } else {
-        window.open(kakaoWebUrl, "_blank");
+        window.open(kakaoPayUrl, "_blank");
       }
     };
     return (
@@ -121,7 +119,7 @@ export default function Page() {
             onClick={handleTossPayment}
           >
             <div className="flex gap-2">
-              <Image src={tossIcon} alt="Toss" />
+              <object data="/icons/icon_toss.svg" />
               <span>토스로 송금하기</span>
             </div>
             <Image src={arrowIcon} alt="arrow" />
@@ -133,7 +131,7 @@ export default function Page() {
           >
             <div className="flex gap-2">
               <div className="w-[61px]">
-                <Image src={kakaoPayIcon} alt="Kakao Pay" />
+                <object data="/icons/icon_kakao_pay.svg" />
               </div>
               <span>카카오페이로 송금하기</span>
             </div>
@@ -145,14 +143,16 @@ export default function Page() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className="h-[106px]" />
-      {reservationData && (
-        <ReservationInfo
-          reservationNum={reservationData?.reservationNum.toString()}
-        />
-      )}
+    <div className="flex h-screen flex-col items-center justify-center">
+      <div className="pb-15 flex flex-col items-center justify-center">
+        {reservationData && (
+          <ReservationInfo
+            reservationNum={reservationData?.reservationNum.toString()}
+          />
+        )}
+      </div>
       <SendMoneyButton />
+      <div className="h-[130px]" />
       <div className="fixed bottom-0 w-full">
         <div className="pb-15 w-full p-5">
           <ReservationConfirmButton />

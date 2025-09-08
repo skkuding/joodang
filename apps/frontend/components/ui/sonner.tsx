@@ -8,29 +8,27 @@ const Toaster = ({ ...props }: ToasterProps) => {
 
   return (
     <Sonner
+      className="!bottom-3 !left-0 !right-0 !flex !w-screen !transform-none !justify-center"
       theme={theme as ToasterProps["theme"]}
-      className="flex justify-center"
-      style={
-        {
-          "--normal-bg": "var(--popover)",
-          "--normal-text": "var(--popover-foreground)",
-          "--normal-border": "var(--border)",
-        } as React.CSSProperties
-      }
       position="bottom-center"
       duration={3000}
       visibleToasts={1}
       offset={80}
       toastOptions={{
+        classNames: {
+          toast: "!mx-auto",
+        },
         style: {
           background: "rgba(0, 0, 0, 0.8)",
           color: "white",
           border: "none",
           borderRadius: "1000px",
           padding: "10px 20px",
-          margin: "0 auto",
-          width: "fit-content",
-        },
+          maxWidth: "min(92vw, 420px)",
+          width: "max-content",
+          height: "auto",
+          minHeight: "auto",
+        } as React.CSSProperties,
       }}
       {...props}
     />

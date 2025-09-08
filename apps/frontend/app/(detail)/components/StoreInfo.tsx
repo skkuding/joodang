@@ -1,7 +1,6 @@
 "use client";
 import CopyAccountModal from "@/app/components/CopyAccountModal";
 import { Button } from "@/components/ui/button";
-import clockIcon from "@/public/icons/icon_clock.svg";
 import locationIcon from "@/public/icons/icon_location.svg";
 import moneyIcon from "@/public/icons/icon_money.svg";
 import Image from "next/image";
@@ -39,7 +38,7 @@ export function StoreInfo({ store }: senderStoreSummaryProps) {
         </div>
         <div className="flex justify-between">
           <div className="flex items-center gap-1">
-            <Image src={clockIcon} alt="Clock" className="h-3 w-4" />
+            <object data="/icons/icon_clock.svg" className="h-3 w-4" />
             <span>운영 시간</span>
           </div>
           <span>

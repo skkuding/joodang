@@ -5,6 +5,7 @@ import { Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "./globals.css";
+import KeyboardInsetWatcher from "./components/KeyboardInsetWatcher";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -261,6 +262,7 @@ export default function RootLayout({
           <main
             className={`${geistSans.variable} ${geistMono.variable} pb-20 pt-[48px] antialiased`}
           >
+            <KeyboardInsetWatcher />
             {children}
           </main>
         </body>
