@@ -108,3 +108,7 @@ export function formatDateDash2Point(dateStr: string | null) {
   const [year, month, day] = dateStr.split("-");
   return `${year}.${month}.${day}`;
 }
+
+// 010으로 시작하는 11자리 번호를 010-1234-5678 형태로 변환
+export const formatPhone010 = (digits: string): string =>
+  digits.replace(/\D/g, "").replace(/^(\d{3})(\d{4})(\d{4}).*$/, "$1-$2-$3");

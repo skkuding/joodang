@@ -79,7 +79,7 @@ export interface ReservationResponse {
   phone: string;
   storeId: number;
   timeSlotId: number;
-  isconfirmed: boolean | null;
+  isConfirmed: boolean | null;
   isDone: boolean;
   menus: Menu[];
   user: User;

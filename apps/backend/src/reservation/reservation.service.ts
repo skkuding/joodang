@@ -112,9 +112,24 @@ export class ReservationService {
     createWalkInReservationDto: CreateWalkInReservationDto,
     userId?: number,
   ) {
-    const dayStart = new Date()
+    const store = await this.prisma.store.findUnique({
+      where: { id: createWalkInReservationDto.storeId },
+      select: { startTime: true, endTime: true },
+    })
+    if (!store) {
+      throw new NotFoundException('Store not found')
+    }
+
+    const now = new Date()
+    if (now < store.startTime || now > store.endTime) {
+      throw new UnprocessableEntityException(
+        'This is not a store opening time. Walk-In not available.',
+      )
+    }
+
+    const dayStart = now
     dayStart.setHours(0, 0, 0, 0)
-    const dayEnd = new Date()
+    const dayEnd = now
     dayEnd.setHours(23, 59, 59, 999)
 
     if (userId) {
@@ -288,7 +303,35 @@ export class ReservationService {
       )
     }
 
-    return reservation
+    const isWalkIn = reservation.timeSlot.totalCapacity === -1 && reservation.timeSlot.availableSeats === 0
+    if (!isWalkIn) {
+      return reservation
+    }
+
+    // walk-in 예약인 경우, 대기 인원 산정
+    const dayStart = new Date()
+    dayStart.setHours(0, 0, 0, 0)
+    const dayEnd = new Date()
+    dayEnd.setHours(23, 59, 59, 999)
+
+    const waitingOrder = await this.prisma.reservation.count({
+      where: {
+        storeId: reservation.storeId,
+        isDone: false,
+        id: {
+          lt: reservation.id,
+        },
+        timeSlot: {
+          totalCapacity: -1,
+          startTime: {
+            gte: dayStart,
+            lte: dayEnd,
+          },
+        },
+      },
+    })
+
+    return { ...reservation, waitingOrder }
   }
 
   async removeReservation(id: number, userId: number) {
@@ -372,6 +415,15 @@ export class ReservationService {
         isDone: !isConfirm,
       },
     })
+
+    if (!isConfirm) {
+      await this.prisma.timeSlot.update({
+        where: { id: reservation.timeSlotId },
+        data: {
+          availableSeats: { increment: reservation.headcount },
+        },
+      })
+    }
 
     this.eventEmitter.emit(
       isConfirm ? 'reservation.confirmed' : 'reservation.declined',

@@ -45,6 +45,7 @@ async function main() {
       college: '성균관대학교',
       major: '문헌정보학과',
       name: '방승현',
+      role: Role.STAFF,
     },
   })
 
@@ -55,6 +56,7 @@ async function main() {
       college: '성균관대학교',
       major: '기계공학과',
       name: '신보민',
+      role: Role.STAFF
     },
   })
 
@@ -102,6 +104,13 @@ async function main() {
         },
       },
     } as any,
+  })
+
+  await prisma.storeStaff.createMany({
+    data: [
+      { userId: user2.id, storeId: store1.id, role: Role.STAFF },
+      { userId: user3.id, storeId: store1.id, role: Role.STAFF },
+    ],
   })
 
   const store2 = await prisma.store.create({
