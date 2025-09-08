@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import CopyAccountModal from "@/app/components/CopyAccountModal";
 
 interface StoreDrawerProps {
   store: StoreDetail;
@@ -29,7 +30,7 @@ export function StoreDrawer({ store, mylocationfunc }: StoreDrawerProps) {
 
   return (
     <motion.div
-      className="fixed bottom-[-390px] left-0 right-0 z-50 mx-auto max-w-md rounded-t-2xl border bg-white shadow-lg"
+      className="fixed bottom-[-390px] left-0 right-0 z-10 mx-auto max-w-md rounded-t-2xl border bg-white shadow-lg"
       style={{ height: `${height * 100}vh` }}
       drag="y"
       dragConstraints={{ top: 0, bottom: 0 }}
@@ -132,12 +133,9 @@ export function StoreDrawer({ store, mylocationfunc }: StoreDrawerProps) {
               />
               <h3 className="text-sm">입금 계좌</h3>
             </div>
-            <Button
-              variant="link"
-              className="h-auto p-0 text-sm text-orange-500"
-            >
-              자세히 보기
-            </Button>
+            <div className="z-9999">
+              <CopyAccountModal store={store} />
+            </div>
           </div>
         </div>
         <Button

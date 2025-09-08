@@ -27,7 +27,7 @@ export default function CopyAccountModal({ store }: CopyAccountModalProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <span className="text-error text-sm font-normal underline">
+        <span className="text-error cursor-pointer text-sm font-normal underline">
           자세히 보기
         </span>
       </DialogTrigger>
@@ -40,7 +40,10 @@ export default function CopyAccountModal({ store }: CopyAccountModalProps) {
             </p>
             <p>예금주 {store.accountHolder}</p>
           </div>
-          <Button className="mb-1 w-full" onClick={handleCopyAccount}>
+          <Button
+            className="mb-1 w-full cursor-pointer"
+            onClick={handleCopyAccount}
+          >
             복사하기
           </Button>
         </div>
