@@ -20,7 +20,7 @@ import {
 import type { Request } from 'express'
 import { JwtAuthGuard } from '@app/auth/guards/jwt.guard'
 import { OptionalJwtAuthGuard } from '@app/auth/guards/optional-jwt.guard'
-import { Public } from '@app/auth/public.decorator'
+import { Public } from '@auth/public.decorator'
 import { TokensDto } from './dto/token.dto'
 
 @UseGuards(JwtAuthGuard)
@@ -49,15 +49,20 @@ export class ReservationController {
     return this.reservationService.getReservations(req.user.id)
   }
 
-  @Get(':id')
-  getReservation(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
-    return this.reservationService.getReservation(id, req.user.id)
+  @Get('/token')
+  @Public()
+  getReservationWithTokens(@Query('reservationTokens') tokens: string[]) {
+    return this.reservationService.getReservationWithTokens(tokens)
   }
 
-  @Get('token')
-  @Public()
-  getReservationWithTokens(@Query('reservationTokens') token: string[]) {
-    return this.reservationService.getReservationWithTokens(token)
+  @Get(':id')
+  @UseGuards(OptionalJwtAuthGuard)
+  getReservation(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: Request,
+    @Query('reservationTokens') tokens: string[],
+  ) {
+    return this.reservationService.getReservation(id, req.user?.id, tokens)
   }
 
   @Get('/store/:storeId')

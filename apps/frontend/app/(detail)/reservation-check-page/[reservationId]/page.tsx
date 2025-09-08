@@ -20,6 +20,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import ReservationCancelModal from "./components/ReservationCancelModal";
+import { HTTPError } from "ky";
 
 export default function ReservationDetail() {
   const [store, setStore] = useState<Store>({
@@ -59,24 +60,61 @@ export default function ReservationDetail() {
   );
 
   useEffect(() => {
-    async function getReservationById() {
-      const reservation: ReservationResponse | null = await safeFetcher(
-        `reservation/${params.reservationId}`
-      ).json();
-      if (reservation) {
-        setStore(reservation.store);
-        setReservation(reservation);
-
-        const fetchedStoreDetail: StoreDetail | null = await safeFetcher(
-          `store/${reservation.store.id}`
-        ).json();
-        if (fetchedStoreDetail) {
-          setStoreDetail(fetchedStoreDetail);
-        }
+    async function checkLogin(): Promise<boolean> {
+      try {
+        await safeFetcher("user/me/role").json();
+        return true;
+      } catch (e) {
+        if (e instanceof HTTPError && e.response.status === 401) return false;
+        return false;
       }
     }
-    getReservationById();
-  }, []);
+
+    function readTokensFromLocalStorage(): string[] {
+      if (typeof window === "undefined") return [];
+      try {
+        const raw = localStorage.getItem("reservationToken");
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          return parsed.filter(t => typeof t === "string" && t.length > 0);
+        }
+        return [];
+      } catch {
+        return [];
+      }
+    }
+
+    async function fetchReservationById(id: string, tokens?: string[]) {
+      let url = `reservation/${id}`;
+      if (tokens && tokens.length) {
+        const qs = new URLSearchParams();
+        tokens.forEach(t => qs.append("reservationTokens", t));
+        url += `?${qs.toString()}`;
+      }
+      return (await safeFetcher(url).json()) as ReservationResponse | null;
+    }
+
+    (async () => {
+      const loggedIn = await checkLogin();
+      const tokens = loggedIn ? [] : readTokensFromLocalStorage();
+      try {
+        const reservation = await fetchReservationById(
+          params.reservationId as string,
+          tokens
+        );
+        if (reservation) {
+          setStore(reservation.store);
+          setReservation(reservation);
+          const fetchedStoreDetail: StoreDetail | null = await safeFetcher(
+            `store/${reservation.store.id}`
+          ).json();
+          if (fetchedStoreDetail) setStoreDetail(fetchedStoreDetail);
+        } else if (!loggedIn && !tokens.length) {
+        }
+      } catch (e) {}
+    })();
+  }, [params.reservationId]);
 
   useEffect(() => {
     window.scrollTo(0, 0);

@@ -312,7 +312,10 @@ export class ReservationService {
     return reservations
   }
 
-  async getReservation(id: number, userId: number) {
+  async getReservation(id: number, userId?: number, tokens?: string[]) {
+    if (tokens && !Array.isArray(tokens)) {
+      tokens = [tokens]
+    }
     const reservation = await this.prisma.reservation.findUnique({
       where: { id },
       include: {
@@ -326,7 +329,16 @@ export class ReservationService {
       throw new NotFoundException('Reservation not found')
     }
 
-    if (reservation.userId !== userId) {
+    if (userId && reservation.userId !== userId) {
+      throw new ForbiddenException(
+        'You are not allowed to access this reservation',
+      )
+    }
+
+    if (
+      !userId &&
+      (!reservation.token || !tokens?.includes(reservation.token))
+    ) {
       throw new ForbiddenException(
         'You are not allowed to access this reservation',
       )
@@ -365,7 +377,11 @@ export class ReservationService {
     return { ...reservation, waitingOrder }
   }
 
-  async getReservationWithTokens(tokens: string[]) {
+  async getReservationWithTokens(tokens: string[] | string) {
+    if (!Array.isArray(tokens)) {
+      tokens = [tokens]
+    }
+
     const reservations = await this.prisma.reservation.findMany({
       where: {
         token: {

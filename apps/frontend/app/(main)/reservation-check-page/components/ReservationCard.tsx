@@ -3,7 +3,6 @@
 import { ReservationResponse } from "@/app/type";
 import { formatToHHMM, formatWithComma } from "@/lib/utils";
 import Arrow from "@/public/icons/icon_arrow.svg";
-import Clock from "@/public/icons/icon_gray_clock.svg";
 import Location from "@/public/icons/icon_gray_location.svg";
 import Money from "@/public/icons/icon_gray_money.svg";
 import Image from "next/image";
@@ -58,9 +57,8 @@ export default function ReservationCard({ data }: ReservationCardProps) {
             </p>
           </div>
           <div className="flex w-full flex-row items-center">
-            <Image
-              src={Clock}
-              alt="시간"
+            <object
+              data="icons/icon_gray_clock.svg"
               width={12}
               height={12}
               className="ml-[2px] mr-1"
