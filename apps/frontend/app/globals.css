@@ -119,14 +119,6 @@
   }
 }
 
-:root { --kb: 0px; }
-
-/* 하단 바 고정 */
-.floating-bottom {
-  position: fixed;
-  left: 0; right: 0;
-  bottom: max(env(safe-area-inset-bottom), var(--kb, 0px));
-}
 
 /* 바운스/앵커 튐 완화 */
 html, body { height: 100%; }
