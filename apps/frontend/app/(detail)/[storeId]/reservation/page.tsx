@@ -113,6 +113,7 @@ export default function Page() {
 
                 return (
                   <Button
+                    type="button"
                     key={dateKey}
                     variant={selectedDate === dateKey ? "selected" : "outline"}
                     className="h-[37px]"
@@ -136,6 +137,7 @@ export default function Page() {
           <FormSection title="시간대">
             <DropdownMenu>
               <DropdownMenuTrigger
+                type="button"
                 aria-placeholder="시간대를 선택해주세요"
                 className="flex h-[52px] items-center justify-between rounded-md border pl-5 pr-[14px] text-sm font-normal"
               >
@@ -191,26 +193,32 @@ export default function Page() {
 
           <FormSection title="총 인원" isRow>
             <div className="flex items-center gap-5">
-              <Button variant="counter" className="h-[38px] w-[38px] p-[7px]">
-                <Image
-                  src={minusIcon}
-                  alt="Remove"
-                  onClick={() => {
-                    setCount(prev => Math.max(prev - 1, 0));
-                    setValue("headcount", count - 1, { shouldValidate: true });
-                  }}
-                />
+              <Button
+                variant="counter"
+                type="button"
+                className="h-[38px] w-[38px] p-[7px]"
+                onClick={() => {
+                  const next = Math.max(count - 1, 0);
+                  setCount(next);
+                  setValue("headcount", next, {
+                    shouldValidate: true,
+                  });
+                }}
+              >
+                <Image src={minusIcon} alt="Remove" />
               </Button>
               <span className="text-base font-medium">{count}</span>
-              <Button variant="counter" className="h-[38px] w-[38px] p-[7px]">
-                <Image
-                  src={plusIcon}
-                  alt="Add"
-                  onClick={() => {
-                    setCount(prev => prev + 1);
-                    setValue("headcount", count + 1, { shouldValidate: true });
-                  }}
-                />
+              <Button
+                variant="counter"
+                type="button"
+                className="h-[38px] w-[38px] p-[7px]"
+                onClick={() => {
+                  const next = count + 1;
+                  setCount(next);
+                  setValue("headcount", next, { shouldValidate: true });
+                }}
+              >
+                <Image src={plusIcon} alt="Add" />
               </Button>
             </div>
           </FormSection>
