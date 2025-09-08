@@ -34,6 +34,7 @@ export default function ReservationDetail() {
     longitude: 0,
     icon: 1,
     totalCapacity: 0,
+    festivalId: 0,
   });
 
   const params = useParams<{ reservationId: string }>();
