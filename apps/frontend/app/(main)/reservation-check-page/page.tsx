@@ -13,7 +13,6 @@ export default function ReservationCheckPage() {
     async function getReservations() {
       const reservations: ReservationResponse[] =
         await safeFetcher("reservation").json();
-      console.log("reservations:", reservations);
       setReservations(reservations);
     }
     getReservations();

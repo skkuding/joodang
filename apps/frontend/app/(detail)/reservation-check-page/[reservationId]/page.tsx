@@ -1,12 +1,15 @@
 "use client";
+import StoreMap from "@/app/(main)/components/StoreMap";
 import CopyAccountModal from "@/app/components/CopyAccountModal";
-import { ReservationResponse, Store } from "@/app/type";
+import { ReservationResponse, Store, StoreDetail } from "@/app/type";
 import {
+  cn,
   formatDateWithDay,
   formatToHHMM,
   formatWithComma,
   safeFetcher,
 } from "@/lib/utils";
+import Arrow from "@/public/icons/icon_arrow.svg";
 import Location from "@/public/icons/icon_location.svg";
 import Clock from "@/public/icons/orangeClock.svg";
 import Money from "@/public/icons/orangeMoney.svg";
@@ -45,6 +48,7 @@ export default function ReservationDetail() {
     totalCapacity: 0,
     festivalId: 0,
   });
+  const [storeDetail, setStoreDetail] = useState<StoreDetail | null>(null);
 
   const params = useParams<{ reservationId: string }>();
 
@@ -61,8 +65,16 @@ export default function ReservationDetail() {
       if (reservation) {
         setStore(reservation.store);
         setReservation(reservation);
+
+        const fetchedStoreDetail: StoreDetail | null = await safeFetcher(
+          `store/${reservation.store.id}`
+        ).json();
+        if (fetchedStoreDetail) {
+          setStoreDetail(fetchedStoreDetail);
+        }
       }
     }
+
     getReservationById();
   }, []);
 
@@ -190,13 +202,33 @@ export default function ReservationDetail() {
             <p className="text-color-common-0">{reservation?.headcount}명</p>
           </div>
         </div>
+        <div className="flex flex-col space-y-2">
+          <div className="flex">
+            <Image src={OrangeDot} alt="주황닷" width={6} height={6} />
+            <div className="ml-2 flex w-full justify-between">
+              <p>주점 위치</p>
+              <Link href={"/map/1"} className="mt-2">
+                <div className="relative flex flex-row gap-[2px] pl-[10px]">
+                  <p
+                    className={cn(
+                      "text-color-neutral-40 flex items-center text-xs font-normal",
+                      "after:absolute after:-inset-3 after:rounded-full after:content-['']"
+                    )}
+                  >
+                    길찾기
+                  </p>
+                  <Image src={Arrow} alt="arrow" width={13} height={13} />
+                </div>
+              </Link>
+            </div>
+          </div>
+          <div className="h-[215px] w-[335px] overflow-hidden rounded-md">
+            <StoreMap stores={[store]} current={0} />
+          </div>
+        </div>
+
         <div className="flex flex-col">
-          <Link href={"/map/1"} className="mt-2">
-            <button className="h-11 w-full rounded-xl border border-[#FF5940] bg-white text-sm font-medium text-[#FF5940]">
-              위치 안내
-            </button>
-          </Link>
-          <div className="mb-[40px] mt-[60px]">
+          <div className="mb-[40px] mt-[50px]">
             <button
               className="h-11 w-full rounded-xl bg-[#FF5940] text-sm font-medium text-white"
               onClick={() => {
