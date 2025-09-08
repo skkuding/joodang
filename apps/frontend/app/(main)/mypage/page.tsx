@@ -1,11 +1,11 @@
 "use client";
 
 import { AuthSheet } from "@/app/components/AuthSheet";
-import { useState, useEffect } from "react";
-import { safeFetcher } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { safeFetcher } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
 interface UserRole {
   role: string;
@@ -145,7 +145,7 @@ export default function Page() {
       {(userRole === "OWNER" || userRole === "ADMIN") && (
         <div className="text-center">
           <Button
-            onClick={() => (window.location.href = "/mypage/create-store")}
+            onClick={() => (window.location.href = "/create-store")}
             className="w-full max-w-md"
           >
             주점 등록하기

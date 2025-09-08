@@ -1,13 +1,13 @@
 "use client";
 
-import { Progress } from "@/components/ui/progress";
+import { DetailHeader } from "@/app/components/DetailHeader";
 import { useCreateStoreStore } from "@/app/stores/createStore";
-import StoreInfoForm from "./_components/StoreInfoForm";
-import TimeSlotForm from "./_components/TimeSlotForm";
+import { Progress } from "@/components/ui/progress";
+import { useEffect } from "react";
 import LocationForm from "./_components/LocationForm";
 import MenuForm from "./_components/MenuForm";
-import { DetailHeader } from "../../../components/DetailHeader";
-import { useEffect } from "react";
+import StoreInfoForm from "./_components/StoreInfoForm";
+import TimeSlotForm from "./_components/TimeSlotForm";
 
 export default function Page() {
   const { modalPage, setModalPage } = useCreateStoreStore(state => state);
