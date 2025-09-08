@@ -28,10 +28,7 @@ export function StoreInfo({ store }: senderStoreSummaryProps) {
 
   return (
     <div className="p-5 pb-[30px]">
-      <span className="text-primary-normal text-xs font-normal">
-        {store.organizer}
-      </span>
-      <p className="mb-3 truncate text-xl font-medium">{store.name}</p>
+      <StoreInfoHeader store={store} />
       <div className="mb-3 flex flex-col gap-1 text-sm font-normal">
         <div className="flex justify-between">
           <div className="flex items-center gap-1">
@@ -82,5 +79,22 @@ export function StoreInfo({ store }: senderStoreSummaryProps) {
         </div>
       </div>
     </div>
+  );
+}
+
+interface StoreInfoHeaderProps {
+  store: Pick<StoreDetail, "college" | "organizer" | "name">;
+}
+
+export function StoreInfoHeader({ store }: StoreInfoHeaderProps) {
+  return (
+    <>
+      <span className="text-primary-normal text-xs font-normal">
+        {store.college}
+        {" | "}
+        {store.organizer}
+      </span>
+      <p className="mb-3 truncate text-xl font-medium">{store.name}</p>
+    </>
   );
 }

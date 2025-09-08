@@ -224,11 +224,7 @@ export default function BarPage() {
           </div>
           <div className="flex flex-col items-center gap-2">
             {stores.map((store, idx) => {
-              return (
-                <Link href={`/${String(store.id)}`} key={idx}>
-                  <BarCard store={store} />
-                </Link>
-              );
+              return <BarCard store={store} key={idx} />;
             })}
           </div>
         </div>
