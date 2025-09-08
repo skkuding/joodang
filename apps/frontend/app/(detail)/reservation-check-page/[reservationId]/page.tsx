@@ -1,6 +1,7 @@
 "use client";
 import StoreMap from "@/app/(main)/components/StoreMap";
 import CopyAccountModal from "@/app/components/CopyAccountModal";
+import { FloatingBottomBar } from "@/app/components/FloatingBottomBar";
 import { ReservationResponse, Store, StoreDetail } from "@/app/type";
 import {
   cn,
@@ -74,8 +75,11 @@ export default function ReservationDetail() {
         }
       }
     }
-
     getReservationById();
+  }, []);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
   }, []);
 
   return (
@@ -226,19 +230,18 @@ export default function ReservationDetail() {
             <StoreMap stores={[store]} current={0} />
           </div>
         </div>
+        <div className="h-10" />
 
-        <div className="flex flex-col">
-          <div className="mb-[40px] mt-[50px]">
-            <button
-              className="h-11 w-full rounded-xl bg-[#FF5940] text-sm font-medium text-white"
-              onClick={() => {
-                setIsModalVisible(true);
-              }}
-            >
-              예약 취소
-            </button>
-          </div>
-        </div>
+        <FloatingBottomBar>
+          <button
+            className="h-11 w-full rounded-xl bg-[#FF5940] text-sm font-medium text-white"
+            onClick={() => {
+              setIsModalVisible(true);
+            }}
+          >
+            예약 취소
+          </button>
+        </FloatingBottomBar>
       </div>
     </div>
   );
