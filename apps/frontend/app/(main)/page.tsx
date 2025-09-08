@@ -30,6 +30,14 @@ export default function Home() {
 
   useEffect(() => {
     fetchStores();
+    const inviteCode = localStorage.getItem("inviteCode");
+    if (inviteCode) {
+      // inviteCode를 사용한 로직 실행
+      console.log("Saved invite code:", inviteCode);
+
+      // 사용 후 제거 (선택사항)
+      localStorage.removeItem("inviteCode");
+    }
   }, []);
 
   return (

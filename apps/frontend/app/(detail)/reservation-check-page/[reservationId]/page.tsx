@@ -27,8 +27,12 @@ export default function ReservationDetail() {
     organizer: "",
     ownerId: 0,
     imageUrl: "https://joodang.com/store_image.png",
-    startTime: new Date().toISOString(),
-    endTime: new Date().toISOString(),
+    startTime: new Date().toLocaleString("ko-KR", {
+      timeZone: "Asia/Seoul",
+    }),
+    endTime: new Date().toLocaleString("ko-KR", {
+      timeZone: "Asia/Seoul",
+    }),
     isAvailable: true,
     reservationFee: 0,
     bankCode: "088",

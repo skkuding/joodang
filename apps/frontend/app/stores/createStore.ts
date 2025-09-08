@@ -51,8 +51,12 @@ export const useCreateStoreStore = create<CreateStoreStore>(set => ({
     name: "",
     description: "",
     organizer: "",
-    startTime: new Date().toISOString(),
-    endTime: new Date().toISOString(),
+    startTime: new Date().toLocaleString("ko-KR", {
+      timeZone: "Asia/Seoul",
+    }),
+    endTime: new Date().toLocaleString("ko-KR", {
+      timeZone: "Asia/Seoul",
+    }),
     reservationFee: 0,
     college: "",
     icon: 1,

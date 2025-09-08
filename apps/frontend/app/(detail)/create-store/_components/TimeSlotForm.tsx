@@ -66,7 +66,11 @@ export default function TimeSlotForm() {
   // 기존 데이터가 있으면 첫 번째 날짜를 자동 선택
   const getInitialSelectedDate = () => {
     if (formData.timeSlots && formData.timeSlots.length > 0) {
-      return formData.timeSlots[0].startTime.toISOString().split("T")[0];
+      return formData.timeSlots[0].startTime
+        .toLocaleString("ko-KR", {
+          timeZone: "Asia/Seoul",
+        })
+        .split("T")[0];
     }
     return "";
   };
@@ -78,7 +82,11 @@ export default function TimeSlotForm() {
   // 현재 선택된 날짜의 시간대들
   const currentDateTimeSlots = timeSlots.filter(slot => {
     if (!selectedDate) return false;
-    const slotDate = slot.startTime.toISOString().split("T")[0];
+    const slotDate = slot.startTime
+      .toLocaleString("ko-KR", {
+        timeZone: "Asia/Seoul",
+      })
+      .split("T")[0];
     return slotDate === selectedDate;
   });
 
@@ -150,7 +158,11 @@ export default function TimeSlotForm() {
     const types: Record<string, string> = {};
     if (formData.timeSlots && formData.timeSlots.length > 0) {
       formData.timeSlots.forEach(slot => {
-        const dateKey = slot.startTime.toISOString().split("T")[0];
+        const dateKey = slot.startTime
+          .toLocaleString("ko-KR", {
+            timeZone: "Asia/Seoul",
+          })
+          .split("T")[0];
         types[dateKey] = "manual"; // 기존 데이터가 있으면 "manual"로 설정
       });
     }
@@ -206,7 +218,11 @@ export default function TimeSlotForm() {
 
     // 기존 해당 날짜의 시간대 제거
     const filteredSlots = timeSlots.filter(slot => {
-      const slotDate = slot.startTime.toISOString().split("T")[0];
+      const slotDate = slot.startTime
+        .toLocaleString("ko-KR", {
+          timeZone: "Asia/Seoul",
+        })
+        .split("T")[0];
       return slotDate !== selectedDate;
     });
 
@@ -240,7 +256,11 @@ export default function TimeSlotForm() {
 
     // 기존 해당 날짜의 시간대 제거
     const filteredSlots = timeSlots.filter(slot => {
-      const slotDate = slot.startTime.toISOString().split("T")[0];
+      const slotDate = slot.startTime
+        .toLocaleString("ko-KR", {
+          timeZone: "Asia/Seoul",
+        })
+        .split("T")[0];
       return slotDate !== selectedDate;
     });
 
@@ -289,7 +309,11 @@ export default function TimeSlotForm() {
     if (!selectedDate) return;
 
     const currentDateSlots = timeSlots.filter(slot => {
-      const slotDate = slot.startTime.toISOString().split("T")[0];
+      const slotDate = slot.startTime
+        .toLocaleString("ko-KR", {
+          timeZone: "Asia/Seoul",
+        })
+        .split("T")[0];
       return slotDate === selectedDate;
     });
 
@@ -307,7 +331,11 @@ export default function TimeSlotForm() {
 
   const removeTimeSlot = (id: string) => {
     const currentDateSlots = timeSlots.filter(slot => {
-      const slotDate = slot.startTime.toISOString().split("T")[0];
+      const slotDate = slot.startTime
+        .toLocaleString("ko-KR", {
+          timeZone: "Asia/Seoul",
+        })
+        .split("T")[0];
       return slotDate === selectedDate;
     });
 
@@ -351,7 +379,11 @@ export default function TimeSlotForm() {
           <div className="grid grid-cols-2 gap-2">
             {availableDates.slice(0, 6).map(date => {
               const hasTimeSlots = timeSlots.some(slot => {
-                const slotDate = slot.startTime.toISOString().split("T")[0];
+                const slotDate = slot.startTime
+                  .toLocaleString("ko-KR", {
+                    timeZone: "Asia/Seoul",
+                  })
+                  .split("T")[0];
                 return slotDate === date.value;
               });
 
