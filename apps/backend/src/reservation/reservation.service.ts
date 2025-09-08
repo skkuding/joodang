@@ -373,6 +373,15 @@ export class ReservationService {
       },
     })
 
+    if (!isConfirm) {
+      await this.prisma.timeSlot.update({
+        where: { id: reservation.timeSlotId },
+        data: {
+          availableSeats: { increment: reservation.headcount },
+        },
+      })
+    }
+
     this.eventEmitter.emit(
       isConfirm ? 'reservation.confirmed' : 'reservation.declined',
       {
