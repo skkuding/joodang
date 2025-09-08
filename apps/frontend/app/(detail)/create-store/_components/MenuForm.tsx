@@ -1,24 +1,26 @@
 "use client";
 
+import { FloatingBottomBar } from "@/app/components/FloatingBottomBar";
 import { useCreateStoreStore } from "@/app/stores/createStore";
-import { useState, useRef, useEffect } from "react";
-import { cn } from "@/lib/utils";
-import { Trash2, Upload, Plus, X } from "lucide-react";
-import Image from "next/image";
+import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { useRouter } from "next/navigation";
+import { createMenu } from "@/lib/api/menu";
 import {
   createStore,
-  getStoreImagePresignedUrl,
   getMenuImagePresignedUrl,
-  uploadToS3,
+  getStoreImagePresignedUrl,
   updateStoreImageUrl,
+  uploadToS3,
 } from "@/lib/api/store";
-import { createMenu } from "@/lib/api/menu";
+import { cn } from "@/lib/utils";
 import {
   transformFormDataToStoreData,
   transformMenuItemsToMenuData,
 } from "@/lib/utils/store-utils";
+import { Plus, Trash2, Upload, X } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 const MENU_CATEGORIES = [
   "탕/전골",
@@ -425,7 +427,7 @@ export default function MenuForm() {
 
       {/* 등록된 메뉴 목록 */}
       {menuItems.length > 0 && (
-        <div className="space-y-4">
+        <div className="mb-13 space-y-4">
           <div className="flex items-center gap-2">
             <div className="bg-primary-normal h-1.5 w-1.5 rounded-full" />
             <label className="font-medium">
@@ -472,16 +474,16 @@ export default function MenuForm() {
         </div>
       )}
 
-      <div className="fixed bottom-0 left-0 right-0 z-20 flex h-[84px] bg-white px-5 py-4">
-        <button
+      <FloatingBottomBar>
+        <Button
           type="button"
           onClick={handleFinalSubmit}
           disabled={isSubmitting}
           className="bg-primary-normal hover:bg-primary-normal/90 w-full rounded-md px-4 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-gray-300"
         >
           {isSubmitting ? `등록 중... ${progress}%` : "주점 등록하기"}
-        </button>
-      </div>
+        </Button>
+      </FloatingBottomBar>
     </div>
   );
 }

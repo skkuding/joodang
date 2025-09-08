@@ -1,28 +1,7 @@
 "use client";
 
+import { FloatingBottomBar } from "@/app/components/FloatingBottomBar";
 import { useCreateStoreStore } from "@/app/stores/createStore";
-import { useForm } from "react-hook-form";
-import { valibotResolver } from "@hookform/resolvers/valibot";
-import * as v from "valibot";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import {
-  PawIcon,
-  HeartIcon,
-  NoodleIcon,
-  LeafIcon,
-  DumbbellIcon,
-  BagIcon,
-  MonitorIcon,
-  HospitalIcon,
-  HouseIcon,
-  KeyIcon,
-} from "./StoreIcons";
-import PlusIcon from "@/public/icons/icon_plus.svg";
-import MinusIcon from "@/public/icons/icon_minus.svg";
-import { cn } from "@/lib/utils";
-import Image from "next/image";
-import { BankCodes } from "@/constant";
-import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -36,9 +15,31 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useState } from "react";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { BankCodes } from "@/constant";
+import { cn } from "@/lib/utils";
 import Arrow from "@/public/icons/icon_arrow.svg";
+import MinusIcon from "@/public/icons/icon_minus.svg";
+import PlusIcon from "@/public/icons/icon_plus.svg";
+import { valibotResolver } from "@hookform/resolvers/valibot";
+import { Check } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import * as v from "valibot";
 import ImageUploadForm from "./ImageUploadForm";
+import {
+  BagIcon,
+  DumbbellIcon,
+  HeartIcon,
+  HospitalIcon,
+  HouseIcon,
+  KeyIcon,
+  LeafIcon,
+  MonitorIcon,
+  NoodleIcon,
+  PawIcon,
+} from "./StoreIcons";
 
 const Icons = [
   PawIcon,
@@ -135,7 +136,7 @@ export default function StoreInfoForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="text-primary-normal mb-[2px] text-xs">1단계</div>
       <div className="mb-10 text-xl font-medium">주점 정보를 입력해주세요</div>
-      <div className="flex flex-col gap-10">
+      <div className="mb-10 flex flex-col gap-10">
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
             <div className="bg-primary-normal h-1.5 w-1.5 rounded-full" />
@@ -412,20 +413,11 @@ export default function StoreInfoForm() {
         </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 z-20 flex h-[84px] bg-white px-5 py-4">
-        <button
-          type="submit"
-          className={cn(
-            "w-full rounded-md",
-            isValid
-              ? "bg-primary-normal text-white"
-              : "bg-color-neutral-95 text-color-neutral-70"
-          )}
-          disabled={!isValid}
-        >
+      <FloatingBottomBar>
+        <Button type="submit" disabled={!isValid}>
           다음
-        </button>
-      </div>
+        </Button>
+      </FloatingBottomBar>
     </form>
   );
 }

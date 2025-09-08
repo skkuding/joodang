@@ -1,7 +1,12 @@
 "use client";
 import CopyAccountModal from "@/app/components/CopyAccountModal";
 import { ReservationResponse, Store } from "@/app/type";
-import { formatToHHMM, formatWithComma, safeFetcher } from "@/lib/utils";
+import {
+  formatDateWithDay,
+  formatToHHMM,
+  formatWithComma,
+  safeFetcher,
+} from "@/lib/utils";
 import Location from "@/public/icons/icon_location.svg";
 import Clock from "@/public/icons/orangeClock.svg";
 import Money from "@/public/icons/orangeMoney.svg";
@@ -50,7 +55,6 @@ export default function ReservationDetail() {
         `reservation/${params.reservationId}`
       ).json();
       if (reservation) {
-        console.log("reservatio!xn:", reservation);
         setStore(reservation.store);
         setReservation(reservation);
       }
@@ -66,6 +70,7 @@ export default function ReservationDetail() {
           setIsModalVisible(false);
           return;
         }}
+        reservationId={reservation ? reservation.id : null}
       />
 
       {/* 윗 부분 */}
@@ -157,21 +162,28 @@ export default function ReservationDetail() {
           <Image src={OrangeDot} alt="주황닷" width={6} height={6} />
           <div className="ml-2 flex w-full justify-between">
             <p>날짜</p>
-            <p className="text-color-common-0">2025년 01월 01일 (목)</p>
+            <p className="text-color-common-0">
+              {formatDateWithDay(
+                reservation ? reservation.timeSlot.startTime : ""
+              )}
+            </p>
           </div>
         </div>
         <div className="flex">
           <Image src={OrangeDot} alt="주황닷" width={6} height={6} />
           <div className="ml-2 flex w-full justify-between">
             <p>시간대</p>
-            <p className="text-color-common-0">13:00 ~ 15:00</p>
+            <p className="text-color-common-0">
+              {formatToHHMM(reservation ? reservation.timeSlot.startTime : "")}{" "}
+              ~ {formatToHHMM(reservation ? reservation.timeSlot.endTime : "")}
+            </p>
           </div>
         </div>
         <div className="flex">
           <Image src={OrangeDot} alt="주황닷" width={6} height={6} />
           <div className="ml-2 flex w-full justify-between">
             <p>총 인원</p>
-            <p className="text-color-common-0">5명</p>
+            <p className="text-color-common-0">{reservation?.headcount}명</p>
           </div>
         </div>
         <div className="flex flex-col">

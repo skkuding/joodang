@@ -13,7 +13,6 @@ interface ReservationCardProps {
 }
 
 export default function ReservationCard({ data }: ReservationCardProps) {
-  console.log("data: ", data);
   const router = useRouter();
   return (
     <div
