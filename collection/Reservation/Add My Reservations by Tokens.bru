@@ -1,0 +1,28 @@
+meta {
+  name: Add My Reservations by Tokens
+  type: http
+  seq: 13
+}
+
+patch {
+  url: {{baseUrl}}/reservation/token
+  body: json
+  auth: inherit
+}
+
+headers {
+  Cookie: {{user1}}
+}
+
+body:json {
+  {
+    "tokens": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    ]
+  }
+}
+
+settings {
+  encodeUrl: true
+}

@@ -12,6 +12,7 @@ import {
 import { PrismaService } from 'prisma/prisma.service'
 import { EventEmitter2 } from '@nestjs/event-emitter'
 import { randomBytes } from 'crypto'
+import { TokensDto } from './dto/token.dto'
 
 @Injectable()
 export class ReservationService {
@@ -364,6 +365,26 @@ export class ReservationService {
     return { ...reservation, waitingOrder }
   }
 
+  async getReservationWithTokens(tokens: string[]) {
+    const reservations = await this.prisma.reservation.findMany({
+      where: {
+        token: {
+          in: tokens,
+        },
+      },
+      include: {
+        menus: true,
+        store: true,
+      },
+    })
+
+    if (reservations.length === 0) {
+      throw new NotFoundException('Reservation Not Found')
+    }
+
+    return reservations
+  }
+
   async removeReservation(id: number, userId: number) {
     const reservation = await this.prisma.reservation.findUnique({
       where: { id },
@@ -463,5 +484,19 @@ export class ReservationService {
     )
 
     return reservation
+  }
+
+  async addMyReservationWithToken(tokensDto: TokensDto, userId: number) {
+    return this.prisma.reservation.updateMany({
+      where: {
+        token: {
+          in: tokensDto.tokens,
+        },
+      },
+      data: {
+        userId,
+        token: null,
+      },
+    })
   }
 }

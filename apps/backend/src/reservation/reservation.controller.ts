@@ -20,6 +20,8 @@ import {
 import type { Request } from 'express'
 import { JwtAuthGuard } from '@app/auth/guards/jwt.guard'
 import { OptionalJwtAuthGuard } from '@app/auth/guards/optional-jwt.guard'
+import { Public } from '@app/auth/public.decorator'
+import { TokensDto } from './dto/token.dto'
 
 @UseGuards(JwtAuthGuard)
 @Controller('reservation')
@@ -47,6 +49,17 @@ export class ReservationController {
     return this.reservationService.getReservations(req.user.id)
   }
 
+  @Get(':id')
+  getReservation(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
+    return this.reservationService.getReservation(id, req.user.id)
+  }
+
+  @Get('token')
+  @Public()
+  getReservationWithTokens(@Query('reservationTokens') token: string[]) {
+    return this.reservationService.getReservationWithTokens(token)
+  }
+
   @Get('/store/:storeId')
   getStoreReservations(
     @Req() req: Request,
@@ -67,11 +80,6 @@ export class ReservationController {
     })
   }
 
-  @Get(':id')
-  getReservation(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
-    return this.reservationService.getReservation(id, req.user.id)
-  }
-
   @Delete(':id')
   removeReservation(
     @Param('id', ParseIntPipe) id: number,
@@ -90,6 +98,14 @@ export class ReservationController {
       id,
       req.user.id,
       isConfirm,
+    )
+  }
+
+  @Patch('token')
+  addMyReservationWithToken(@Body() tokensDto: TokensDto, @Req() req: Request) {
+    return this.reservationService.addMyReservationWithToken(
+      tokensDto,
+      req.user.id,
     )
   }
 
