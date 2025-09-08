@@ -23,7 +23,7 @@ export default function BarPage() {
     days: "0000-00-00",
     maxFee: 15000,
     startTime: "00:00",
-    maxStartTime: "00:00",
+    endTime: "00:00",
   });
 
   const [selOrder, SetSelOrder] = useState("popular");
@@ -143,7 +143,7 @@ export default function BarPage() {
                 </p>
               ) : (
                 <p className="text-color-common-0 ml-auto text-sm font-normal leading-normal">
-                  {filterValue.startTime} ~ {filterValue.maxStartTime}
+                  {filterValue.startTime} ~ {filterValue.endTime}
                 </p>
               )}
             </div>
