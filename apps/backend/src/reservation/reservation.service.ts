@@ -11,6 +11,7 @@ import {
 } from './dto/create-reservation.dto'
 import { PrismaService } from 'prisma/prisma.service'
 import { EventEmitter2 } from '@nestjs/event-emitter'
+import { randomBytes } from 'crypto'
 
 @Injectable()
 export class ReservationService {
@@ -18,6 +19,29 @@ export class ReservationService {
     private readonly prisma: PrismaService,
     private readonly eventEmitter: EventEmitter2,
   ) {}
+
+  private generateReservationToken(): string {
+    return randomBytes(32).toString('hex')
+  }
+
+  private async generateUniqueReservationToken(): Promise<string> {
+    let token = this.generateReservationToken()
+    let isUnique = false
+
+    while (!isUnique) {
+      const existingReservation = await this.prisma.reservation.findUnique({
+        where: { token },
+        select: { id: true },
+      })
+      if (existingReservation) {
+        token = this.generateReservationToken()
+      } else {
+        isUnique = true
+      }
+    }
+
+    return token
+  }
 
   async createReservation(
     createReservationDto: CreateReservationDto,
@@ -131,6 +155,7 @@ export class ReservationService {
     dayStart.setHours(0, 0, 0, 0)
     const dayEnd = now
     dayEnd.setHours(23, 59, 59, 999)
+    let token: string | undefined = undefined
 
     if (userId) {
       const alreadyBooked = await this.prisma.reservation.findFirst({
@@ -150,6 +175,8 @@ export class ReservationService {
           'You have already made a walk-in reservation for this store',
         )
       }
+    } else {
+      token = await this.generateUniqueReservationToken()
     }
 
     const createdReservation = await this.prisma.$transaction(async (tx) => {
@@ -200,6 +227,7 @@ export class ReservationService {
           userId,
           timeSlotId: timeSlotExist ? timeSlotExist.id : timeSlotCreated.id,
           reservationNum,
+          token,
           ...(menuIds?.length
             ? { menus: { connect: menuIds.map((id) => ({ id })) } }
             : {}),
@@ -303,7 +331,9 @@ export class ReservationService {
       )
     }
 
-    const isWalkIn = reservation.timeSlot.totalCapacity === -1 && reservation.timeSlot.availableSeats === 0
+    const isWalkIn =
+      reservation.timeSlot.totalCapacity === -1 &&
+      reservation.timeSlot.availableSeats === 0
     if (!isWalkIn) {
       return reservation
     }
