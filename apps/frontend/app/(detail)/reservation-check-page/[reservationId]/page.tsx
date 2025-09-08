@@ -32,6 +32,7 @@ export default function ReservationDetail() {
     longitude: 0,
     icon: 1,
     totalCapacity: 0,
+    festivalId: 1,
   });
 
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
