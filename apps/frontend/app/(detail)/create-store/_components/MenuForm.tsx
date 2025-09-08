@@ -1,24 +1,26 @@
 "use client";
 
+import { FloatingBottomBar } from "@/app/components/FloatingBottomBar";
 import { useCreateStoreStore } from "@/app/stores/createStore";
-import { useState, useRef, useEffect } from "react";
-import { cn } from "@/lib/utils";
-import { Trash2, Upload, Plus, X } from "lucide-react";
-import Image from "next/image";
+import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { useRouter } from "next/navigation";
+import { createMenu } from "@/lib/api/menu";
 import {
   createStore,
-  getStoreImagePresignedUrl,
   getMenuImagePresignedUrl,
-  uploadToS3,
+  getStoreImagePresignedUrl,
   updateStoreImageUrl,
+  uploadToS3,
 } from "@/lib/api/store";
-import { createMenu } from "@/lib/api/menu";
+import { cn } from "@/lib/utils";
 import {
   transformFormDataToStoreData,
   transformMenuItemsToMenuData,
 } from "@/lib/utils/store-utils";
+import { Plus, Trash2, Upload, X } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 const MENU_CATEGORIES = [
   "탕/전골",
@@ -39,8 +41,8 @@ interface MenuItem {
 }
 
 export default function MenuForm() {
-  const { formData, setFormData } = useCreateStoreStore(state => state);
-  const router = useRouter();
+  const { formData, setFormData, nextModal, setCreatedStoreId } =
+    useCreateStoreStore(state => state);
   const [menuItems, setMenuItems] = useState<MenuItem[]>(
     formData.menuItems || []
   );
@@ -55,7 +57,6 @@ export default function MenuForm() {
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [progress, setProgress] = useState(0);
 
   // 메뉴 아이템 추가
   const handleAddMenuItem = () => {
@@ -105,22 +106,15 @@ export default function MenuForm() {
   const handleFinalSubmit = async () => {
     try {
       setIsSubmitting(true);
-      setProgress(0);
 
-      setProgress(10);
-
-      // 2. 스토어 데이터 변환 및 생성
       const storeData = transformFormDataToStoreData(formData);
       const storeResponse = (await createStore(storeData)) as { id: number };
       const storeId = storeResponse.id;
 
-      setProgress(30);
-
-      // 3. 이미지 업로드 (병렬 처리)
+      setCreatedStoreId(storeId);
       const imageUploadPromises = [];
       const imageUrls: Record<string, string> = {};
 
-      // 대표 이미지 업로드
       if (formData.representativeImage) {
         const storeImagePromise = (async () => {
           const presignedData = (await getStoreImagePresignedUrl(storeId, {
@@ -136,7 +130,6 @@ export default function MenuForm() {
         imageUploadPromises.push(storeImagePromise);
       }
 
-      // 메뉴 이미지들 업로드
       menuItems.forEach((menuItem, index) => {
         if (menuItem.image) {
           const menuImagePromise = (async () => {
@@ -156,11 +149,8 @@ export default function MenuForm() {
         }
       });
 
-      // 모든 이미지 업로드 완료 대기
       await Promise.all(imageUploadPromises);
-      setProgress(70);
 
-      // 4. 메뉴 생성
       if (menuItems.length > 0) {
         const menuData = transformMenuItemsToMenuData(
           menuItems,
@@ -171,17 +161,12 @@ export default function MenuForm() {
         await Promise.all(menuPromises);
       }
 
-      setProgress(100);
-
-      // 5. 성공 처리
-      alert("주점이 성공적으로 등록되었습니다!");
-      router.push("/mypage");
+      nextModal();
     } catch (error) {
       console.error("주점 등록 실패:", error);
       alert("주점 등록에 실패했습니다. 다시 시도해주세요.");
     } finally {
       setIsSubmitting(false);
-      setProgress(0);
     }
   };
 
@@ -425,7 +410,7 @@ export default function MenuForm() {
 
       {/* 등록된 메뉴 목록 */}
       {menuItems.length > 0 && (
-        <div className="space-y-4">
+        <div className="mb-13 space-y-4">
           <div className="flex items-center gap-2">
             <div className="bg-primary-normal h-1.5 w-1.5 rounded-full" />
             <label className="font-medium">
@@ -472,16 +457,16 @@ export default function MenuForm() {
         </div>
       )}
 
-      <div className="fixed bottom-0 left-0 right-0 z-20 flex h-[84px] bg-white px-5 py-4">
-        <button
+      <FloatingBottomBar>
+        <Button
           type="button"
           onClick={handleFinalSubmit}
           disabled={isSubmitting}
-          className="bg-primary-normal hover:bg-primary-normal/90 w-full rounded-md px-4 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-gray-300"
+          className="bg-primary-normal w-full rounded-md px-4 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-gray-300"
         >
-          {isSubmitting ? `등록 중... ${progress}%` : "주점 등록하기"}
-        </button>
-      </div>
+          {isSubmitting ? `등록 중...` : "주점 등록하기"}
+        </Button>
+      </FloatingBottomBar>
     </div>
   );
 }

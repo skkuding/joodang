@@ -1,6 +1,6 @@
 "use client";
 import CopyAccountModal from "@/app/components/CopyAccountModal";
-import { ReservationResponse } from "@/app/type";
+import { ReservationResponse, StoreDetail } from "@/app/type";
 import { Button } from "@/components/ui/button";
 import arrowIcon from "@/public/icons/icon_arrow.svg";
 import kakaoPayIcon from "@/public/icons/icon_kakao_pay.svg";
@@ -9,26 +9,67 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { ReservationConfirmButton } from "../components/ReservationConfirmButton";
 import { ReservationInfo } from "../components/ReservationInfo";
+import { BankCodes } from "@/constant";
 
 export default function Page() {
   const [reservationData, setReservationData] =
     useState<ReservationResponse | null>(null);
 
+  const [amount, setAmount] = useState<number | null>(null);
+  const [bankName, setBankName] = useState<string | null>(null);
+
   useEffect(() => {
-    const storedData = sessionStorage.getItem("reservationData");
-    if (storedData) {
-      setReservationData(JSON.parse(storedData));
-      // 사용 후 제거 (선택사항)
-      sessionStorage.removeItem("reservationData");
+    const storedReservationData = sessionStorage.getItem("reservationData");
+    if (storedReservationData) {
+      setReservationData(JSON.parse(storedReservationData));
     }
   }, []);
 
+  useEffect(() => {
+    if (reservationData?.store.reservationFee && reservationData?.headcount) {
+      setAmount(
+        reservationData.store.reservationFee * reservationData.headcount
+      );
+      setBankName(BankCodes[reservationData.store.bankCode]);
+    }
+  }, [reservationData]);
+
+  const copyAccountToClipboard = async () => {
+    const text =
+      `${bankName ?? ""} ${reservationData?.store.accountNumber ?? ""}`.trim();
+    if (!text) return;
+
+    try {
+      await navigator.clipboard.writeText(text);
+      // toast.success("계좌번호가 복사되었습니다");
+    } catch {
+      // Fallback (일부 iOS/Safari/PWA)
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.top = "-1000px";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        document.execCommand("copy");
+        // toast.success("계좌번호가 복사되었습니다");
+      } catch {
+        // toast.error("복사에 실패했습니다");
+      } finally {
+        document.body.removeChild(ta);
+      }
+    }
+  };
+
   function SendMoneyButton() {
-    const handleTossPayment = () => {
+    const handleTossPayment = async () => {
       // 토스페이 앱 스킴 URL
-      const tossAppUrl = "supertoss://send";
+      const tossAppUrl = `supertoss://send?amount=${amount ?? ""}&bank=${bankName ?? ""}&accountNo=${reservationData?.store.accountNumber ?? ""}`;
       // 웹 버전 URL (앱이 설치되지 않은 경우)
       const tossWebUrl = "https://toss.me";
+
+      await copyAccountToClipboard();
 
       // 모바일에서 앱 스킴 시도
       if (
@@ -37,35 +78,25 @@ export default function Page() {
         )
       ) {
         window.location.href = tossAppUrl;
-
-        // 앱이 설치되지 않은 경우를 대비해 웹 버전으로 fallback
-        setTimeout(() => {
-          window.location.href = tossWebUrl;
-        }, 1000);
       } else {
         // 데스크톱에서는 웹 버전으로 바로 이동
         window.open(tossWebUrl, "_blank");
       }
     };
 
-    const handleKakaoPayment = () => {
+    const handleKakaoPayment = async () => {
       // 카카오페이 앱 스킴 URL
-      const kakaoPayUrl = "kakaotalk://kakaopay";
+      const kakaoPayUrl = `https://link.kakaopay.com/t/money/to/bank?amount=${amount ?? ""}&bank_code=${reservationData?.store.bankCode ?? ""}&bank_account_number=${reservationData?.store.accountNumber ?? ""}`;
       // 웹 버전 URL
-      const kakaoWebUrl = "https://pay.kakao.com";
-
+      await copyAccountToClipboard();
       if (
         /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
           navigator.userAgent
         )
       ) {
         window.location.href = kakaoPayUrl;
-
-        setTimeout(() => {
-          window.location.href = kakaoWebUrl;
-        }, 1000);
       } else {
-        window.open(kakaoWebUrl, "_blank");
+        window.open(kakaoPayUrl, "_blank");
       }
     };
     return (
@@ -78,7 +109,7 @@ export default function Page() {
                 <span>입금 계좌</span>
               </div>
               {reservationData && (
-                <CopyAccountModal store={reservationData?.store} />
+                <CopyAccountModal store={reservationData.store} />
               )}
             </div>
           </div>
@@ -88,8 +119,8 @@ export default function Page() {
             onClick={handleTossPayment}
           >
             <div className="flex gap-2">
-              <Image src={tossIcon} alt="Toss" />
-              <span>토스 페이 결제</span>
+              <object data="/icons/icon_toss.svg" />
+              <span>토스로 송금하기</span>
             </div>
             <Image src={arrowIcon} alt="arrow" />
           </Button>
@@ -99,8 +130,10 @@ export default function Page() {
             onClick={handleKakaoPayment}
           >
             <div className="flex gap-2">
-              <Image src={kakaoPayIcon} alt="Kakao Pay" />
-              <span>카카오 페이 결제</span>
+              <div className="w-[61px]">
+                <object data="/icons/icon_kakao_pay.svg" />
+              </div>
+              <span>카카오페이로 송금하기</span>
             </div>
             <Image src={arrowIcon} alt="arrow" />
           </Button>
@@ -110,15 +143,17 @@ export default function Page() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className="h-[106px]" />
-      {reservationData && (
-        <ReservationInfo
-          reservationNum={reservationData?.reservationNum.toString()}
-        />
-      )}
+    <div className="flex h-screen flex-col items-center justify-center">
+      <div className="pb-15 flex flex-col items-center justify-center">
+        {reservationData && (
+          <ReservationInfo
+            reservationNum={reservationData?.reservationNum.toString()}
+          />
+        )}
+      </div>
+      <SendMoneyButton />
+      <div className="h-[130px]" />
       <div className="fixed bottom-0 w-full">
-        <SendMoneyButton />
         <div className="pb-15 w-full p-5">
           <ReservationConfirmButton />
         </div>

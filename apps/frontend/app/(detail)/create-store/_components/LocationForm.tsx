@@ -1,14 +1,8 @@
 "use client";
 
+import { FloatingBottomBar } from "@/app/components/FloatingBottomBar";
 import { useCreateStoreStore } from "@/app/stores/createStore";
-import { useForm } from "react-hook-form";
-import { valibotResolver } from "@hookform/resolvers/valibot";
-import * as v from "valibot";
-import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
-import Script from "next/script";
-import Image from "next/image";
 import {
   Select,
   SelectContent,
@@ -16,6 +10,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import { Button } from "@/ui/button";
+import { valibotResolver } from "@hookform/resolvers/valibot";
+import Image from "next/image";
+import Script from "next/script";
+import { useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import * as v from "valibot";
 
 // 네이버 지도 API 타입 정의
 interface NaverMap {
@@ -380,7 +382,7 @@ export default function LocationForm() {
           상세 위치는 최대 20자까지 등록 가능합니다
         </div>
 
-        <div className="space-y-4">
+        <div className="mb-15 space-y-4">
           <div>
             <div className="flex items-center gap-2">
               <div className="bg-primary-normal h-1.5 w-1.5 rounded-full" />
@@ -466,20 +468,11 @@ export default function LocationForm() {
           </div>
         </div>
 
-        <div className="fixed bottom-0 left-0 right-0 z-20 flex h-[84px] bg-white px-5 py-4">
-          <button
-            type="submit"
-            className={cn(
-              "w-full rounded-md",
-              isValid
-                ? "bg-primary-normal text-white"
-                : "bg-color-neutral-95 text-color-neutral-70"
-            )}
-            disabled={!isValid}
-          >
+        <FloatingBottomBar>
+          <Button type="submit" disabled={!isValid}>
             다음
-          </button>
-        </div>
+          </Button>
+        </FloatingBottomBar>
       </form>
     </>
   );

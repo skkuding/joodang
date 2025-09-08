@@ -82,6 +82,9 @@ export const getDateRange = (start: string, end: string) => {
  * @returns isoString에서 HH:MM을 추출합니다.
  */
 export function formatToHHMM(isoString: string): string {
+  if (isoString.length === 0) {
+    return "";
+  }
   const date = new Date(isoString);
   const hours = String(date.getHours()).padStart(2, "0");
   const minutes = String(date.getMinutes()).padStart(2, "0");
@@ -91,12 +94,11 @@ export function formatToHHMM(isoString: string): string {
 // UTC 시간을 한국 시간 HH:MM 형태로 변환하는 함수
 export const formatTimeToKST = (utcTimeString: string) => {
   const utcDate = new Date(utcTimeString);
-  // 한국 시간으로 변환 (UTC+9)
-  const kstDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000);
-  return kstDate.toLocaleTimeString("ko-KR", {
+  return utcDate.toLocaleTimeString("ko-KR", {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
+    timeZone: "Asia/Seoul",
   });
 };
 
@@ -108,3 +110,7 @@ export function formatDateDash2Point(dateStr: string | null) {
   const [year, month, day] = dateStr.split("-");
   return `${year}.${month}.${day}`;
 }
+
+// 010으로 시작하는 11자리 번호를 010-1234-5678 형태로 변환
+export const formatPhone010 = (digits: string): string =>
+  digits.replace(/\D/g, "").replace(/^(\d{3})(\d{4})(\d{4}).*$/, "$1-$2-$3");

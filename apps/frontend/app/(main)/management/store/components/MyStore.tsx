@@ -1,10 +1,10 @@
 "use client";
 
 import BarCard from "@/app/(main)/find/components/BarCard";
+import { EmptyRecord } from "@/app/components/EmptyRecord";
 import { Store, User } from "@/app/type";
 import { safeFetcher } from "@/lib/utils";
-import cautionIcon from "@/public/icons/icon_gray_caution.svg";
-import Image from "next/image";
+
 import { useEffect, useState } from "react";
 
 export function MyStore() {
@@ -25,12 +25,7 @@ export function MyStore() {
       <p className="mb-3 text-lg font-medium">내 주점 기록</p>
       <div className="flex justify-center py-[30px]">
         {(stores?.length ?? 0) === 0 ? (
-          <div className="flex flex-col items-center gap-1">
-            <Image src={cautionIcon} alt="caution" />
-            <p className="text-color-neutral-70 text-sm font-medium">
-              등록된 주점 기록이 없어요
-            </p>
-          </div>
+          <EmptyRecord description="등록된 주점 기록이 없어요" />
         ) : (
           stores?.map(store => <BarCard key={store.id} store={store} />)
         )}

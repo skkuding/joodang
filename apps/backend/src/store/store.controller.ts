@@ -11,7 +11,6 @@ import {
   ValidationPipe,
   UseGuards,
   Req,
-  BadRequestException,
 } from '@nestjs/common'
 import { StoreService } from './store.service'
 import { GetStoresDto } from './dto/get-stores.dto'
@@ -23,13 +22,16 @@ import type { Request } from 'express'
 import { OwnerGuard } from '@app/auth/guards/owner.guard'
 import { StaffGuard } from '@app/auth/guards/staff.guard'
 import { UploadStoreImageDto } from './dto/upload-store-image.dto'
+import { OptionalJwtAuthGuard } from '@app/auth/guards/optional-jwt.guard'
 
 @Controller('store')
 export class StoreController {
   constructor(private readonly storeService: StoreService) {}
 
   @Get()
+  @UseGuards(OptionalJwtAuthGuard)
   async getStores(
+    @Req() req: Request,
     @Query(
       new ValidationPipe({
         transform: true,
@@ -38,7 +40,7 @@ export class StoreController {
     )
     query: GetStoresDto,
   ) {
-    return this.storeService.getStores(query)
+    return this.storeService.getStores(query, req.user?.id)
   }
 
   @Get(':id')

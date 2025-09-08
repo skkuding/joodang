@@ -4,6 +4,7 @@ import { safeFetcher } from "../../../lib/utils";
 import { StoreDetail } from "../../type";
 import { StoreInfo } from "../components/StoreInfo";
 import { StoreActionButtons } from "./components/StoreActionButtons";
+import { FloatingBottomBar } from "@/app/components/FloatingBottomBar";
 
 export default async function Page({
   params,
@@ -39,7 +40,9 @@ export default async function Page({
       <StoreInfo store={store} />
       <Separator />
       <StoreDescription />
-      <StoreActionButtons storeId={store.id} />
+      <FloatingBottomBar>
+        <StoreActionButtons store={store} />
+      </FloatingBottomBar>
     </div>
   );
 }

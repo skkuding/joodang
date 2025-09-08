@@ -45,9 +45,9 @@ export class StoreService {
 
   /**
    * 정렬 필터에 따라 가게 목록을 조회합니다.
-   * @param sort 'popular', 'fee', 'seats'
+   * @param sort 'my', 'popular', 'fee', 'seats'
    */
-  async getStores(dto: GetStoresDto) {
+  async getStores(dto: GetStoresDto, userId?: number) {
     const { sort, minFee, maxFee, startTime, endTime } = dto
     const where: Prisma.StoreWhereInput = {
       endTime: { gte: new Date() },
@@ -69,40 +69,69 @@ export class StoreService {
     }
 
     switch (sort) {
+      case 'my': {
+        if (!userId) {
+          return []
+        }
+        
+        where.OR = [
+          { ownerId: userId },
+          { staffs: { some: { userId } } },
+        ]
+
+        return await this.prisma.store.findMany({
+          where,
+          orderBy: { id: 'asc' },
+        })
+      }
       case 'popular': {
-        const popularStoresData = await this.prisma.reservation.groupBy({
-          by: ['storeId'],
-          _count: {
-            id: true,
+        const stores = await this.prisma.store.findMany({
+          where,
+          include: {
+            _count: { select: { Reservation: true } },
           },
-          // ToDo: having 조건 다시 활성화
-          // having: {
-          //   id: {
-          //     _count: {
-          //       gte: 5, // 최소 예약 수 (추후 초기 기획인 40으로 수정)
-          //     },
-          //   },
-          // },
+          orderBy: [
+            { Reservation: { _count: 'desc' } },
+            { id: 'asc' },
+          ],
         })
-
-        popularStoresData.sort((a, b) => {
-          if (b._count.id !== a._count.id) return b._count.id - a._count.id
-          return a.storeId - b.storeId
+        return stores.map((store) => {
+          const { _count, ...storeData } = store
+          return storeData
         })
+        // TODO: having 조건 다시 활성화
+        // const popularStoresData = await this.prisma.reservation.groupBy({
+        //   by: ['storeId'],
+        //   _count: {
+        //     id: true,
+        //   },
+        //   having: {
+        //     id: {
+        //       _count: {
+        //         gte: 5, // 최소 예약 수 (추후 초기 기획인 40으로 수정)
+        //       },
+        //     },
+        //   },
+        // })
 
-        const sortedStoreIds = popularStoresData.map((data) => data.storeId)
-        if (sortedStoreIds.length === 0) return []
+        // popularStoresData.sort((a, b) => {
+        //   if (b._count.id !== a._count.id) return b._count.id - a._count.id
+        //   return a.storeId - b.storeId
+        // })
 
-        const popularStores = await this.prisma.store.findMany({
-          where: {
-            id: { in: sortedStoreIds },
-            ...where,
-          },
-        })
+        // const sortedStoreIds = popularStoresData.map((data) => data.storeId)
+        // if (sortedStoreIds.length === 0) return []
 
-        return sortedStoreIds
-          .map((id) => popularStores.find((store) => store.id === id))
-          .filter(Boolean)
+        // const popularStores = await this.prisma.store.findMany({
+        //   where: {
+        //     id: { in: sortedStoreIds },
+        //     ...where,
+        //   },
+        // })
+
+        // return sortedStoreIds
+        //   .map((id) => popularStores.find((store) => store.id === id))
+        //   .filter(Boolean)
       }
 
       case 'fee': {
