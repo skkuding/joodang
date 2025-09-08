@@ -55,7 +55,6 @@ export default function ReservationDetail() {
         `reservation/${params.reservationId}`
       ).json();
       if (reservation) {
-        console.log("reservatio!xn:", reservation);
         setStore(reservation.store);
         setReservation(reservation);
       }
@@ -71,6 +70,7 @@ export default function ReservationDetail() {
           setIsModalVisible(false);
           return;
         }}
+        reservationId={reservation ? reservation.id : null}
       />
 
       {/* 윗 부분 */}
