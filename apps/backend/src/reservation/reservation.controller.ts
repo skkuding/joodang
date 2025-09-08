@@ -44,8 +44,6 @@ export class ReservationController {
     return this.reservationService.callReservation(id, req.user.id)
   }
 
-
-
   @Get()
   getReservations(@Req() req: Request) {
     return this.reservationService.getReservations(req.user.id)
@@ -53,15 +51,19 @@ export class ReservationController {
 
   @Get('/token')
   @Public()
-  getReservationWithTokens(@Query('reservationTokens') token: string[]) {
-    return this.reservationService.getReservationWithTokens(token)
+  getReservationWithTokens(@Query('reservationTokens') tokens: string[]) {
+    return this.reservationService.getReservationWithTokens(tokens)
   }
 
   @Get(':id')
-  getReservation(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
-    return this.reservationService.getReservation(id, req.user.id)
+  @UseGuards(OptionalJwtAuthGuard)
+  getReservation(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: Request,
+    @Query('reservationTokens') tokens: string[],
+  ) {
+    return this.reservationService.getReservation(id, req.user?.id, tokens)
   }
-
 
   @Get('/store/:storeId')
   getStoreReservations(
