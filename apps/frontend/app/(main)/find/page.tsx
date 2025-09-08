@@ -31,13 +31,13 @@ export default function BarPage() {
 
   useEffect(() => {
     async function fetchStores() {
-      let url = `store?sort=${selOrder}&maxFee=${filterValue.maxFee}`;
+      const url = `store?sort=${selOrder}&maxFee=${filterValue.maxFee}`;
 
-      if (filterValue.days !== "0000-00-00") {
-        url += `&`;
-      }
+      // if (filterValue.days !== "0000-00-00") {
+      //   url += `&`;
+      // }
 
-      const stores: Store[] = await safeFetcher("store").json();
+      const stores: Store[] = await safeFetcher(url).json();
       setStores(stores);
     }
     fetchStores();
