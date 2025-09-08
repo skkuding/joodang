@@ -44,8 +44,7 @@ export default function Page() {
     fetchStore();
   }, [storeId]);
 
-  // TODO: OWNER로 수정할것
-  if (role !== RoleEnum.ADMIN) {
+  if (role !== RoleEnum.OWNER) {
     return;
   }
 

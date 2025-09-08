@@ -19,6 +19,7 @@ export interface Store {
   location: string;
   latitude: number;
   longitude: number;
+  festivalId: number | null;
 }
 
 export interface StoreDetail extends Store {
@@ -79,7 +80,7 @@ export interface ReservationResponse {
   phone: string;
   storeId: number;
   timeSlotId: number;
-  isconfirmed: boolean | null;
+  isConfirmed: boolean | null;
   isDone: boolean;
   menus: Menu[];
   user: User;

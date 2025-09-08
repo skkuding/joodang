@@ -82,6 +82,9 @@ export const getDateRange = (start: string, end: string) => {
  * @returns isoString에서 HH:MM을 추출합니다.
  */
 export function formatToHHMM(isoString: string): string {
+  if (isoString.length === 0) {
+    return "";
+  }
   const date = new Date(isoString);
   const hours = String(date.getHours()).padStart(2, "0");
   const minutes = String(date.getMinutes()).padStart(2, "0");
@@ -108,3 +111,7 @@ export function formatDateDash2Point(dateStr: string | null) {
   const [year, month, day] = dateStr.split("-");
   return `${year}.${month}.${day}`;
 }
+
+// 010으로 시작하는 11자리 번호를 010-1234-5678 형태로 변환
+export const formatPhone010 = (digits: string): string =>
+  digits.replace(/\D/g, "").replace(/^(\d{3})(\d{4})(\d{4}).*$/, "$1-$2-$3");

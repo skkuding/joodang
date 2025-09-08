@@ -1,13 +1,15 @@
 "use client";
 import CopyAccountModal from "@/app/components/CopyAccountModal";
-import { Store } from "@/app/type";
+import { ReservationResponse, Store } from "@/app/type";
+import { formatToHHMM, formatWithComma, safeFetcher } from "@/lib/utils";
 import Location from "@/public/icons/icon_location.svg";
 import Clock from "@/public/icons/orangeClock.svg";
 import Money from "@/public/icons/orangeMoney.svg";
 import OrangeDot from "@/public/icons/orange_dot.svg";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import ReservationCancelModal from "./components/ReservationCancelModal";
 
 export default function ReservationDetail() {
@@ -32,9 +34,29 @@ export default function ReservationDetail() {
     longitude: 0,
     icon: 1,
     totalCapacity: 0,
+    festivalId: 0,
   });
 
+  const params = useParams<{ reservationId: string }>();
+
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [reservation, setReservation] = useState<ReservationResponse | null>(
+    null
+  );
+
+  useEffect(() => {
+    async function getReservationById() {
+      const reservation: ReservationResponse | null = await safeFetcher(
+        `reservation/${params.reservationId}`
+      ).json();
+      if (reservation) {
+        console.log("reservatio!xn:", reservation);
+        setStore(reservation.store);
+        setReservation(reservation);
+      }
+    }
+    getReservationById();
+  }, []);
 
   return (
     <div className="bg-color-neutral-99 flex min-h-screen flex-col">
@@ -45,16 +67,15 @@ export default function ReservationDetail() {
           return;
         }}
       />
-      <div className="h-[28px]" />
 
       {/* 윗 부분 */}
       <div className="bg-color-common-100 mb-[10px] p-5">
         <div>
           <p className="justify-start font-['Pretendard'] text-xs font-normal leading-none text-red-500">
-            성균관대학교 | SKKUDING
+            {reservation?.store.college} | {reservation?.store.organizer}
           </p>
           <p className="mb-3 h-7 w-64 justify-start font-['Pretendard'] text-xl font-medium leading-7 text-black">
-            모태솔로지만 연애는 하고 싶어
+            {reservation?.store.name}
           </p>
         </div>
         <div className="text-color-neutral-40 justify-start space-y-1 font-['Pretendard'] text-sm font-normal leading-tight">
@@ -68,7 +89,9 @@ export default function ReservationDetail() {
             />
             <div className="flex w-full justify-between">
               <p>위치</p>
-              <p className="text-color-neutral-20">경영관 테라스</p>
+              <p className="text-color-neutral-20">
+                {reservation?.store.location}
+              </p>
             </div>
           </div>
           <div className="flex">
@@ -81,7 +104,10 @@ export default function ReservationDetail() {
             />
             <div className="flex w-full justify-between">
               <p>운영 시간</p>
-              <p className="text-color-neutral-20">14:00 ~ 22:00</p>
+              <p className="text-color-neutral-20">
+                {formatToHHMM(reservation ? reservation.store.startTime : "")} ~{" "}
+                {formatToHHMM(reservation ? reservation.store.endTime : "")}
+              </p>
             </div>
           </div>
           <div className="flex">
@@ -94,7 +120,13 @@ export default function ReservationDetail() {
             />
             <div className="flex w-full justify-between">
               <p>입장료</p>
-              <p className="text-color-neutral-20">인당 20,000원</p>
+              <p className="text-color-neutral-20">
+                인당{" "}
+                {formatWithComma(
+                  reservation ? reservation.store.reservationFee : 0
+                )}
+                원
+              </p>
             </div>
           </div>
         </div>
@@ -104,7 +136,9 @@ export default function ReservationDetail() {
             <Image src={OrangeDot} alt="주황닷" width={6} height={6} />
             <div className="ml-2 flex w-full justify-between">
               <p>주점 연락처</p>
-              <p className="text-color-neutral-20">010-0000-0000</p>
+              <p className="text-color-neutral-20">
+                {reservation?.store.contactInfo}
+              </p>
             </div>
           </div>
           <div className="flex">

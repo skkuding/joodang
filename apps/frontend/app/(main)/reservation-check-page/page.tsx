@@ -1,17 +1,26 @@
+"use client";
+
 import { AuthSheet } from "@/app/components/AuthSheet";
-// import { safeFetcher } from "@/lib/utils";
+import { ReservationResponse } from "@/app/type";
+import { safeFetcher } from "@/lib/utils";
 import Checkbox from "@/public/icons/orangeCheckbox.svg";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import ReservationCard from "./components/ReservationCard";
 
 export default function ReservationCheckPage() {
-  // const reservations = await safeFetcher("reservation").json();
-  // console.log("reservations:", reservations);
+  useEffect(() => {
+    async function getReservations() {
+      const reservations: ReservationResponse[] =
+        await safeFetcher("reservation").json();
+      console.log("reservations:", reservations);
+      setReservations(reservations);
+    }
+    getReservations();
+  }, []);
 
-  // const token =
-  //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIyLCJrYWthb0lkIjoiNDQyMzQxOTQxMyIsImlhdCI6MTc1NzI0NTgzNiwiZXhwIjoxNzU4NDU1NDM2fQ.1UijpIjs9Bo_zmfKd6oPJuMP9QLmpKnCKfx-XWpbLy4";
-  // const payload = JSON.parse(atob(token.split(".")[1]));
-  // console.log("페이로드: ", payload);
+  const [reservations, setReservations] = useState<ReservationResponse[]>([]);
+
   return (
     <div className="mt-[60px] px-5">
       <AuthSheet />
@@ -33,9 +42,9 @@ export default function ReservationCheckPage() {
       </div>
       <div className="flex justify-center">
         <div className="item-center flex flex-col justify-center gap-3">
-          <ReservationCard />
-          <ReservationCard />
-          <ReservationCard />
+          {reservations.map((reservation, idx) => {
+            return <ReservationCard key={idx} data={reservation} />;
+          })}
         </div>
       </div>
     </div>
