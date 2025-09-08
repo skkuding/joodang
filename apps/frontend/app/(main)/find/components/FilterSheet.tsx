@@ -1,7 +1,7 @@
 "use client";
 import { filterVariables } from "@/app/type";
 import { Button } from "@/components/ui/button";
-import { formatDateWithDay, formatWithComma } from "@/lib/utils";
+import { cn, formatDateWithDay, formatWithComma } from "@/lib/utils";
 import OrangeDot from "@/public/icons/orange_dot.svg";
 import { X } from "lucide-react";
 import Image from "next/image";
@@ -146,7 +146,12 @@ export default function FilterSheet({
                         variant={
                           selectedDate === dateKey ? "selected" : "outline"
                         }
-                        className="h-[37px]"
+                        className={cn(
+                          "h-[37px]",
+                          selectedDate === dateKey
+                            ? ""
+                            : "border-color-neutral-95 text-color-neutral-30"
+                        )}
                         onClick={() => {
                           setSelectedDate(dateKey);
                           handleDayChange(dateKey);
