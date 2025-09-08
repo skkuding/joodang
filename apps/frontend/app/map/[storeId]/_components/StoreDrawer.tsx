@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import CopyAccountModal from "@/app/components/CopyAccountModal";
 
 interface StoreDrawerProps {
   store: StoreDetail;
@@ -14,6 +15,7 @@ interface StoreDrawerProps {
 }
 
 export function StoreDrawer({ store, mylocationfunc }: StoreDrawerProps) {
+  console.log("store in drawer", store);
   const router = useRouter();
   const [height, setHeight] = useState(0.9);
   const formattedStartTime = formatTimeToKST(store.startTime);
@@ -28,7 +30,7 @@ export function StoreDrawer({ store, mylocationfunc }: StoreDrawerProps) {
 
   return (
     <motion.div
-      className="fixed bottom-[-390px] left-0 right-0 z-50 mx-auto max-w-md rounded-t-2xl border bg-white shadow-lg"
+      className="fixed bottom-[-390px] left-0 right-0 z-10 mx-auto max-w-md rounded-t-2xl border bg-white shadow-lg"
       style={{ height: `${height * 100}vh` }}
       drag="y"
       dragConstraints={{ top: 0, bottom: 0 }}
@@ -68,7 +70,7 @@ export function StoreDrawer({ store, mylocationfunc }: StoreDrawerProps) {
           {store.organizer}
         </h2>
         <h1 className="mt-1 text-xl font-medium">{store.name}</h1>
-        <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
+        <div className="mt-4 grid grid-cols-2 gap-1 text-sm">
           <div className="flex items-center gap-2">
             <Image
               src="/icons/icon_location.svg"
@@ -119,7 +121,7 @@ export function StoreDrawer({ store, mylocationfunc }: StoreDrawerProps) {
               />
               <h3 className="text-sm">주점 연락처</h3>
             </div>
-            <span className="text-sm text-gray-800">010-1111-1111</span>
+            <span className="text-sm text-gray-800">{store.contactInfo}</span>
           </div>
           <div className="flex justify-between">
             <div className="flex gap-2">
@@ -131,12 +133,9 @@ export function StoreDrawer({ store, mylocationfunc }: StoreDrawerProps) {
               />
               <h3 className="text-sm">입금 계좌</h3>
             </div>
-            <Button
-              variant="link"
-              className="h-auto p-0 text-sm text-orange-500"
-            >
-              자세히 보기
-            </Button>
+            <div className="z-9999">
+              <CopyAccountModal store={store} />
+            </div>
           </div>
         </div>
         <Button

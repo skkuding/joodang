@@ -2,7 +2,7 @@
 import { safeFetcher } from "@/lib/utils";
 import { valibotResolver } from "@hookform/resolvers/valibot";
 
-import { ReservationResponse } from "@/app/type";
+import { ReservationResponse, Store, StoreDetail } from "@/app/type";
 import { HTTPError } from "ky";
 import { useRouter } from "next/navigation";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
@@ -19,8 +19,10 @@ interface CreateReservationInput {
 
 export function CreateReservationForm({
   children,
+  store,
 }: {
   children: React.ReactNode;
+  store: StoreDetail;
 }) {
   const router = useRouter();
   const methods = useForm<CreateReservationInput>({
@@ -55,6 +57,8 @@ export function CreateReservationForm({
         "reservationData",
         JSON.stringify(reservationResponse)
       );
+      sessionStorage.setItem("storeData", JSON.stringify(store));
+
       router.push("./reservation/success");
     } catch (error) {
       console.error("Error creating reservation:", error);

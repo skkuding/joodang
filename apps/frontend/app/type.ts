@@ -19,6 +19,7 @@ export interface Store {
   location: string;
   latitude: number;
   longitude: number;
+  festivalId: number | null;
 }
 
 export interface StoreDetail extends Store {

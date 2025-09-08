@@ -1,6 +1,6 @@
 "use client";
 import CopyAccountModal from "@/app/components/CopyAccountModal";
-import { ReservationResponse } from "@/app/type";
+import { ReservationResponse, StoreDetail } from "@/app/type";
 import { Button } from "@/components/ui/button";
 import arrowIcon from "@/public/icons/icon_arrow.svg";
 import kakaoPayIcon from "@/public/icons/icon_kakao_pay.svg";
@@ -9,24 +9,40 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { ReservationConfirmButton } from "../components/ReservationConfirmButton";
 import { ReservationInfo } from "../components/ReservationInfo";
+import { BankCodes } from "@/constant";
 
 export default function Page() {
   const [reservationData, setReservationData] =
     useState<ReservationResponse | null>(null);
 
+  const [storeData, setStoreData] = useState<StoreDetail | null>(null);
+  const [amount, setAmount] = useState<number | null>(null);
+  const [bankName, setBankName] = useState<string | null>(null);
+
   useEffect(() => {
-    const storedData = sessionStorage.getItem("reservationData");
-    if (storedData) {
-      setReservationData(JSON.parse(storedData));
+    const storedReservationData = sessionStorage.getItem("reservationData");
+    if (storedReservationData) {
+      setReservationData(JSON.parse(storedReservationData));
       // 사용 후 제거 (선택사항)
       sessionStorage.removeItem("reservationData");
+    }
+    const storedStoreData = sessionStorage.getItem("storeData");
+    if (storedStoreData) {
+      setStoreData(JSON.parse(storedStoreData));
+      // 사용 후 제거 (선택사항)
+      sessionStorage.removeItem("storeData");
+
+      if (storeData?.reservationFee && reservationData?.headcount) {
+        setAmount(storeData?.reservationFee * reservationData?.headcount);
+        setBankName(BankCodes[storeData.bankCode]);
+      }
     }
   }, []);
 
   function SendMoneyButton() {
     const handleTossPayment = () => {
       // 토스페이 앱 스킴 URL
-      const tossAppUrl = "supertoss://send";
+      const tossAppUrl = `supertoss://send?amount=${amount ?? ""}&bank=${bankName ?? ""}&accountNo=${storeData?.accountNumber ?? ""}`;
       // 웹 버전 URL (앱이 설치되지 않은 경우)
       const tossWebUrl = "https://toss.me";
 
@@ -37,11 +53,6 @@ export default function Page() {
         )
       ) {
         window.location.href = tossAppUrl;
-
-        // 앱이 설치되지 않은 경우를 대비해 웹 버전으로 fallback
-        setTimeout(() => {
-          window.location.href = tossWebUrl;
-        }, 1000);
       } else {
         // 데스크톱에서는 웹 버전으로 바로 이동
         window.open(tossWebUrl, "_blank");
@@ -60,10 +71,6 @@ export default function Page() {
         )
       ) {
         window.location.href = kakaoPayUrl;
-
-        setTimeout(() => {
-          window.location.href = kakaoWebUrl;
-        }, 1000);
       } else {
         window.open(kakaoWebUrl, "_blank");
       }

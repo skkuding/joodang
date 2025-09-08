@@ -82,6 +82,9 @@ export const getDateRange = (start: string, end: string) => {
  * @returns isoString에서 HH:MM을 추출합니다.
  */
 export function formatToHHMM(isoString: string): string {
+  if (isoString.length === 0) {
+    return "";
+  }
   const date = new Date(isoString);
   const hours = String(date.getHours()).padStart(2, "0");
   const minutes = String(date.getMinutes()).padStart(2, "0");
