@@ -12,7 +12,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import BarCard from "./components/BarCard";
-import FilterSheet from "./components/FilterSetting";
+import FilterSheet from "./components/FilterSheet";
 
 // alert! 시간 값을 보내줄 때는 UTC로 보내줘야합니다.
 
@@ -31,7 +31,13 @@ export default function BarPage() {
 
   useEffect(() => {
     async function fetchStores() {
-      const stores: Store[] = await safeFetcher("store").json();
+      const url = `store?sort=${selOrder}&maxFee=${filterValue.maxFee}`;
+
+      // if (filterValue.days !== "0000-00-00") {
+      //   url += `&`;
+      // }
+
+      const stores: Store[] = await safeFetcher(url).json();
       setStores(stores);
     }
     fetchStores();
@@ -224,11 +230,7 @@ export default function BarPage() {
           </div>
           <div className="flex flex-col items-center gap-2">
             {stores.map((store, idx) => {
-              return (
-                <Link href={`/${String(store.id)}`} key={idx}>
-                  <BarCard store={store} />
-                </Link>
-              );
+              return <BarCard store={store} key={idx} />;
             })}
           </div>
         </div>

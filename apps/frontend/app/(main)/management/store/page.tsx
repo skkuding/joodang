@@ -2,7 +2,8 @@ import { Button } from "@/components/ui/button";
 import storeIcon from "@/public/icons/icon_orange_store.svg";
 import Image from "next/image";
 import { Separator } from "../../components/Separator";
-import { MyStore } from "./MyStore";
+import { MyStore } from "./components/MyStore";
+
 export default function Page() {
   function RegisterStore() {
     return (
