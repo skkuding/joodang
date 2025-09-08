@@ -123,8 +123,6 @@ export interface CreateMenuDto {
 export interface FilterVariables {
   days: string | null;
   maxFee: number;
-  startTime: string;
-  endTime: string;
 }
 
 export interface Notification {

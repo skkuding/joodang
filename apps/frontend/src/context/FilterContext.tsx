@@ -23,8 +23,6 @@ const STORAGE_KEY = "joodang:filters:v1";
 const defaultFilter: FilterVariables = {
   days: "0000-00-00",
   maxFee: 15000,
-  startTime: "00:00",
-  endTime: "00:00",
 };
 
 export function FilterProvider({ children }: { children: React.ReactNode }) {

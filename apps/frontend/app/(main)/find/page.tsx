@@ -129,27 +129,6 @@ export default function BarPage() {
                 </p>
               )}
             </div>
-            <div className="flex flex-row">
-              <Image
-                src={OrangeDot}
-                alt="주황닷"
-                width={6}
-                height={6}
-                className="mr-2"
-              />
-              <p className="text-color-neutral-30 text-sm font-normal leading-[150%] tracking-[-0.48px]">
-                시간대
-              </p>
-              {!isFilterSet ? (
-                <p className="text-color-neutral-70 ml-auto text-sm font-normal not-italic leading-[140%] tracking-[-0.48px]">
-                  00:00 ~ 00:00
-                </p>
-              ) : (
-                <p className="text-color-common-0 ml-auto text-sm font-normal leading-normal">
-                  {filterValue.startTime} ~ {filterValue.endTime}
-                </p>
-              )}
-            </div>
           </div>
           <button className="text-color-common-100 flex h-10 w-full items-center justify-center rounded-md bg-[#FF5940]">
             <p

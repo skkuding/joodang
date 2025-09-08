@@ -6,13 +6,6 @@ import OrangeDot from "@/public/icons/orange_dot.svg";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useId, useState } from "react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../../../ui/select";
 import PriceSlider from "./PriceSlider";
 
 interface FilterSheetProps {
@@ -197,66 +190,6 @@ export default function FilterSheet({
                   <p>10,000 원</p>
                   <p>15,000 원</p>
                   <p>20,000 원</p>
-                </div>
-              </section>
-
-              <section className="mb-5 flex flex-col">
-                <div className="mb-3 flex h-[24px] items-center">
-                  <Image
-                    src={OrangeDot}
-                    alt="주황닷"
-                    width={6}
-                    height={6}
-                    className="mr-2"
-                  />
-                  <div className="text-neutral-10 justify-start text-base font-medium leading-normal">
-                    시간대
-                  </div>
-                </div>
-                <div>
-                  <Select>
-                    <SelectTrigger
-                      className="data-[placeholder]:text-color-neutral-90 h-[52px] w-full px-4 py-[14px] text-sm"
-                      size="custom"
-                    >
-                      <SelectValue placeholder="시간대를 선택하세요" />
-                    </SelectTrigger>
-                    <SelectContent
-                      className="z-[200] w-full"
-                      avoidCollisions={true}
-                    >
-                      <SelectItem
-                        className="flex h-[49px] flex-row justify-between px-4 py-[14px] text-sm font-normal"
-                        value="light"
-                      >
-                        Light1
-                      </SelectItem>
-                      <SelectItem
-                        className="flex h-[49px] flex-row justify-between px-4 py-[14px] text-sm font-normal"
-                        value="light2"
-                      >
-                        Light2
-                      </SelectItem>
-                      <SelectItem
-                        className="flex h-[49px] flex-row justify-between px-4 py-[14px] text-sm font-normal"
-                        value="light3"
-                      >
-                        Light3
-                      </SelectItem>
-                      <SelectItem
-                        className="flex h-[49px] flex-row justify-between px-4 py-[14px] text-sm font-normal"
-                        value="light4"
-                      >
-                        Light4
-                      </SelectItem>
-                      <SelectItem
-                        className="flex h-[49px] flex-row justify-between px-4 py-[14px] text-sm font-normal"
-                        value="light5"
-                      >
-                        Light5
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
                 </div>
               </section>
             </div>
