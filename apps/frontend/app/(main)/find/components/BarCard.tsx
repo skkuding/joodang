@@ -1,5 +1,6 @@
 "use client";
 
+import { Store } from "@/app/type";
 import { formatToHHMM, formatWithComma } from "@/lib/utils";
 import Arrow from "@/public/icons/icon_arrow.svg";
 import Location from "@/public/icons/icon_location.svg";
@@ -8,34 +9,30 @@ import Money from "@/public/icons/orangeMoney.svg";
 import Image from "next/image";
 
 interface BarCardProps {
-  id: number;
-  organizer: string;
-  name: string;
-  location?: string;
-  startTime: string;
-  endTime: string;
-  reservationFee: number;
-  imageUrl?: string;
+  store: Store;
 }
 
-export default function BarCard(information: BarCardProps) {
+export default function BarCard({ store }: BarCardProps) {
   return (
     <div
       className="h-[284px] w-[335px] overflow-hidden rounded-[6px]"
       style={{ boxShadow: "0 0 20px 0 rgba(0, 0, 0, 0.12)" }}
     >
-      <div
-        className="h-[110px] w-full bg-cover bg-center"
-        style={{ backgroundImage: `url(${information.imageUrl})` }}
-      ></div>
+      <Image
+        src={store.imageUrl}
+        alt="Store Image"
+        className="h-[110px] object-cover object-center"
+        height={100}
+        width={335}
+      />
 
       <div className="px-5 pb-5 pt-[14px]">
         <div className="text-xs font-normal leading-[140%] tracking-[-0.36px] text-[#FF5940]">
-          {information.organizer}
+          {store.organizer}
         </div>
         <div className="mb-3 flex h-[22px] flex-row justify-between">
           <div className="text-color-common-0 text-base font-medium leading-[140%] tracking-[-0.48px]">
-            {information.name}
+            {store.name}
           </div>
           <Image src={Arrow} alt="화살표" width={18} height={18} />
         </div>
@@ -52,7 +49,7 @@ export default function BarCard(information: BarCardProps) {
               위치
             </p>
             <p className="text-color-neutral-20 ml-auto font-sans text-sm font-normal leading-[150%] tracking-[-0.56px]">
-              {information.location}
+              {store.location}
             </p>
           </div>
           <div className="flex w-full flex-row items-center">
@@ -67,8 +64,7 @@ export default function BarCard(information: BarCardProps) {
               운영 시간
             </p>
             <p className="text-color-neutral-20 ml-auto font-sans text-sm font-normal leading-[150%] tracking-[-0.56px]">
-              {formatToHHMM(information.startTime)} ~{" "}
-              {formatToHHMM(information.endTime)}
+              {formatToHHMM(store.startTime)} ~ {formatToHHMM(store.endTime)}
             </p>
           </div>
           <div className="flex w-full flex-row items-center">
@@ -83,7 +79,7 @@ export default function BarCard(information: BarCardProps) {
               입장료
             </p>
             <p className="text-color-neutral-20 ml-auto font-sans text-sm font-normal leading-[150%] tracking-[-0.56px]">
-              인당 {formatWithComma(information.reservationFee)} 원
+              인당 {formatWithComma(store.reservationFee)} 원
             </p>
           </div>
         </div>

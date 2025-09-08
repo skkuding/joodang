@@ -72,6 +72,14 @@ export class AuthController {
       maxAge: maxAgeMs,
     })
 
+    res.cookie(cookieName, jwt, {
+      httpOnly: true,
+      sameSite: isProd ? 'none' : 'lax',
+      domain: 'localhost',
+      path: '/',
+      maxAge: maxAgeMs,
+    })
+
     const redirectBase =
       this.config.get<string>('KAKAO_REDIRECT_URL') ||
       'https://joodang.com/auth/kakao'

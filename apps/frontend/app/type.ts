@@ -27,6 +27,13 @@ export interface StoreDetail extends Store {
   currentAvailableSeats: number | null;
 }
 
+export enum RoleEnum {
+  ADMIN = "ADMIN",
+  OWNER = "OWNER",
+  STAFF = "STAFF",
+  USER = "USER",
+}
+
 export interface User {
   id: number;
   kakaoId: string;
@@ -36,7 +43,7 @@ export interface User {
   college: string;
   major: string;
   profileImageUrl: string | null;
-  role: "ADMIN" | "OWNER" | "STAFF" | "USER";
+  role: RoleEnum;
 }
 
 export interface TimeSlot {

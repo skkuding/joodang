@@ -9,8 +9,8 @@ async function main() {
     INSERT INTO "festival" ("id", "name", "description", "start_time", "end_time", "location", "latitude", "longitude")
     VALUES (
       1,
+      '성균관대학교',
       '성균관대학교 대동제',
-      NULL,
       TIMESTAMPTZ '2025-09-11 00:00:00+09',
       TIMESTAMPTZ '2025-09-12 23:59:59+09',
       '대운동장',
@@ -87,6 +87,8 @@ async function main() {
       accountNumber: '1101234567890',
       accountHolder: user1.name,
       ownerId: user1.id,
+      imageUrl:
+        'https://storage.joodang.com/joodang-assets/public/store/1/main_image.jpg',
       icon: 1,
       contactInfo: '@skkuding',
       startTime: new Date('2026-01-01T18:00:00.000Z'),
@@ -111,6 +113,8 @@ async function main() {
       accountNumber: '1101234567891',
       accountHolder: user1.name,
       ownerId: user1.id,
+      imageUrl:
+        'https://storage.joodang.com/joodang-assets/public/store/2/main_image.jpg',
       latitude: 37.2930059,
       longitude: 126.9748929,
       icon: 2,
@@ -163,6 +167,8 @@ async function main() {
       accountNumber: '1101234567893',
       accountHolder: user1.name,
       ownerId: user1.id,
+      imageUrl:
+        'https://storage.joodang.com/joodang-assets/public/store/4/main_image.jpg',
       latitude: 37.295226,
       longitude: 126.970964,
       icon: 4,

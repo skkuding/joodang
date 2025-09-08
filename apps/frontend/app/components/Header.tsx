@@ -9,6 +9,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
+import { requestPermissionAndSubscribe } from "@/lib/push-subscription";
 
 export function Header() {
   const router = useRouter();
@@ -26,8 +27,13 @@ export function Header() {
       <Image
         src={notiIcon}
         alt="Notification"
-        onClick={() => {
+        onClick={async () => {
           router.push("/notification");
+          try {
+            await requestPermissionAndSubscribe();
+          } catch (e) {
+            console.error("푸시 구독 실패:", e);
+          }
         }}
       />
     </div>

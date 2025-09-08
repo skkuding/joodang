@@ -11,7 +11,7 @@ export enum MenuCategory {
   Beverage = "Beverage", // 음료
 }
 
-// 카테고리 매핑
+// 카테고리 매핑 (한글 라벨/영문 키 모두 허용)
 export const mapCategoryToEnum = (category: string): MenuCategory => {
   const mapping: Record<string, MenuCategory> = {
     "탕/전골": MenuCategory.Tang,
@@ -20,6 +20,18 @@ export const mapCategoryToEnum = (category: string): MenuCategory => {
     과일: MenuCategory.Fruit,
     마른안주: MenuCategory.Maroon5,
     음료: MenuCategory.Beverage,
+  };
+  return mapping[category];
+};
+
+const mapCategoryToImage = (category: MenuCategory): string => {
+  const mapping: Record<MenuCategory, string> = {
+    [MenuCategory.Tang]: "https://joodang.com/menu_image/tang.png",
+    [MenuCategory.Tuiguim]: "https://joodang.com/menu_image/tuiguim.png",
+    [MenuCategory.Bap]: "https://joodang.com/menu_image/bap.png",
+    [MenuCategory.Fruit]: "https://joodang.com/menu_image/fruit.png",
+    [MenuCategory.Maroon5]: "https://joodang.com/menu_image/maroon5.png",
+    [MenuCategory.Beverage]: "https://joodang.com/menu_image/beverage.png",
   };
   return mapping[category];
 };
@@ -58,13 +70,19 @@ export const transformMenuItemsToMenuData = (
   storeId: number,
   imageUrls: Record<string, string> = {}
 ): CreateMenuDto[] => {
-  return menuItems.map(menuItem => ({
-    name: menuItem.name,
-    price: menuItem.price,
-    category: mapCategoryToEnum(menuItem.category),
-    storeId: storeId,
-    imageUrl: imageUrls[menuItem.id] || undefined,
-  }));
+  return menuItems.map(menuItem => {
+    const categoryEnum = mapCategoryToEnum(menuItem.category);
+
+    const data: CreateMenuDto = {
+      name: menuItem.name,
+      price: menuItem.price,
+      category: categoryEnum,
+      storeId: storeId,
+      imageUrl: imageUrls[menuItem.id] || mapCategoryToImage(categoryEnum),
+    };
+
+    return data;
+  });
 };
 
 // 폼 데이터 검증

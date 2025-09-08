@@ -229,18 +229,10 @@ export default function BarPage() {
             )}
           </div>
           <div className="flex flex-col items-center gap-2">
-            {stores.map((item, idx) => {
+            {stores.map((store, idx) => {
               return (
-                <Link href={`/${String(item.id)}`} key={idx}>
-                  <BarCard
-                    id={item.id}
-                    organizer={item.organizer}
-                    name={item.name}
-                    location={item.location}
-                    startTime={item.startTime}
-                    endTime={item.endTime}
-                    reservationFee={item.reservationFee}
-                  />
+                <Link href={`/${String(store.id)}`} key={idx}>
+                  <BarCard store={store} />
                 </Link>
               );
             })}
