@@ -1,20 +1,25 @@
 "use client";
 
 import { AuthSheet } from "@/app/components/AuthSheet";
+import { ReservationResponse } from "@/app/type";
 import { safeFetcher } from "@/lib/utils";
 import Checkbox from "@/public/icons/orangeCheckbox.svg";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import ReservationCard from "./components/ReservationCard";
 
 export default function ReservationCheckPage() {
   useEffect(() => {
     async function getReservations() {
-      const reservations = await safeFetcher("reservation").json();
+      const reservations: ReservationResponse[] =
+        await safeFetcher("reservation").json();
       console.log("reservations:", reservations);
+      setReservations(reservations);
     }
     getReservations();
   }, []);
+
+  const [reservations, setReservations] = useState<ReservationResponse[]>([]);
 
   return (
     <div className="mt-[60px] px-5">
@@ -37,9 +42,9 @@ export default function ReservationCheckPage() {
       </div>
       <div className="flex justify-center">
         <div className="item-center flex flex-col justify-center gap-3">
-          <ReservationCard />
-          <ReservationCard />
-          <ReservationCard />
+          {reservations.map((reservation, idx) => {
+            return <ReservationCard key={idx} data={reservation} />;
+          })}
         </div>
       </div>
     </div>
