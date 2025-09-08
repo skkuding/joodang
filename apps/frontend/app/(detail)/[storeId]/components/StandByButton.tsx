@@ -74,8 +74,8 @@ function StandByButtonForm({
 
           if (error.response.status === 409) {
             toast.error("해당 매장에 현장 대기 예약이 존재합니다.");
-          } else if (errorData.message) {
-            toast.error(errorData.message);
+          } else if (error.response.status === 422) {
+            toast.error("매장 오픈 시간이 아닙니다.");
           } else {
             toast.error("현장 대기 생성에 실패했습니다. 다시 시도해주세요.");
           }

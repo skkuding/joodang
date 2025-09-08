@@ -11,17 +11,217 @@ import plusIcon from "@/public/icons/icon_plus.svg";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuLabel,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/ui/dropdown-menu";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { IoIosArrowDown } from "react-icons/io";
 import { StoreInfo } from "../../components/StoreInfo";
 import { CreateReservationForm } from "./components/CreateReservationForm";
 import { FloatingBottomBar } from "@/app/components/FloatingBottomBar";
+
+const ReservationForm = memo(
+  ({
+    store,
+    availableDates,
+    timeSlotsMap,
+    selectedDate,
+    setSelectedDate,
+    setSelectedTimeSlotId,
+    selectedTimeSlot,
+    selectedTimeSlotIndex,
+    selectedDateSlots,
+  }: {
+    store: StoreDetail;
+    availableDates: string[];
+    timeSlotsMap: Map<string, TimeSlot[]>;
+    selectedDate: string | null;
+    setSelectedDate: (date: string | null) => void;
+    setSelectedTimeSlotId: (id: number | null) => void;
+    selectedTimeSlot: TimeSlot | null;
+    selectedTimeSlotIndex: number;
+    selectedDateSlots: TimeSlot[];
+  }) => {
+    const { register, setValue } = useFormContext();
+    const [isDropdownOpen, setDropdownOpen] = useState(false);
+
+    useEffect(() => {
+      setValue("storeId", store.id);
+    }, [store.id, setValue]);
+
+    return (
+      <div className="flex flex-col gap-10 p-5">
+        <FormSection title="날짜">
+          <div className="grid grid-cols-2 gap-2">
+            {availableDates.map(dateKey => {
+              const firstSlot = timeSlotsMap.get(dateKey)?.[0];
+              if (!firstSlot) return null;
+
+              return (
+                <Button
+                  type="button"
+                  key={dateKey}
+                  variant={selectedDate === dateKey ? "selected" : "outline"}
+                  className="h-[37px]"
+                  disabled={timeSlotsMap
+                    .get(dateKey)
+                    ?.every(slot => slot.availableSeats === 0)}
+                  onClick={() => {
+                    setSelectedDate(dateKey);
+                    setSelectedTimeSlotId(null);
+                  }}
+                >
+                  <span className="text-sm font-normal">
+                    {formatDateWithDay(firstSlot.startTime)}
+                  </span>
+                </Button>
+              );
+            })}
+          </div>
+        </FormSection>
+
+        <FormSection title="시간대">
+          <DropdownMenu open={isDropdownOpen} onOpenChange={setDropdownOpen}>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                onPointerDown={e => e.preventDefault()}
+                onClick={() => setDropdownOpen(true)}
+                aria-placeholder="시간대를 선택해주세요"
+                className="flex h-[52px] w-full items-center justify-between rounded-md border pl-5 pr-[14px] text-sm font-normal"
+              >
+                {selectedTimeSlot ? (
+                  <div className="flex gap-2">
+                    <span>타임 {selectedTimeSlotIndex}</span>
+                    <span className="text-primary-normal">
+                      {formatTimeToKST(selectedTimeSlot.startTime)} ~{" "}
+                      {formatTimeToKST(selectedTimeSlot.endTime)}
+                    </span>
+                  </div>
+                ) : (
+                  <span className="text-color-neutral-90">
+                    시간대를 선택해주세요
+                  </span>
+                )}
+
+                <IoIosArrowDown className="h-4 w-4" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)]">
+              {selectedDate ? (
+                selectedDateSlots.map((slot, index) => (
+                  <DropdownMenuItem
+                    key={slot.id}
+                    className="flex cursor-pointer flex-col items-start py-3 hover:bg-gray-100"
+                    onSelect={() => {
+                      setSelectedTimeSlotId(slot.id);
+                      setValue("timeSlotId", slot.id, {
+                        shouldValidate: true,
+                      });
+                    }}
+                  >
+                    <span className="text-xs text-gray-500">
+                      타임 {index + 1}
+                    </span>
+                    <span className="text-sm">
+                      {formatTimeToKST(slot.startTime)} ~{" "}
+                      {formatTimeToKST(slot.endTime)}
+                    </span>
+                    <span className="text-xs text-blue-600">
+                      {slot.availableSeats}석 남음
+                    </span>
+                  </DropdownMenuItem>
+                ))
+              ) : (
+                <div className="p-4 text-sm">먼저 날짜를 선택해주세요</div>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </FormSection>
+      </div>
+    );
+  }
+);
+ReservationForm.displayName = "ReservationForm";
+
+const Counter = memo(
+  ({
+    count,
+    setCount,
+  }: {
+    count: number;
+    setCount: (fn: (prev: number) => number) => void;
+  }) => {
+    const { setValue } = useFormContext();
+
+    const handleCountChange = useCallback(
+      (newCount: number) => {
+        setCount(() => newCount);
+        setValue("headcount", newCount, { shouldValidate: true });
+      },
+      [setCount, setValue]
+    );
+
+    return (
+      <FormSection title="총 인원" isRow>
+        <div className="flex items-center gap-5">
+          <Button
+            variant="counter"
+            type="button"
+            className="h-[38px] w-[38px] p-[7px]"
+            onClick={() => handleCountChange(Math.max(count - 1, 0))}
+          >
+            <Image src={minusIcon} alt="Remove" />
+          </Button>
+          <span className="text-base font-medium">{count}</span>
+          <Button
+            variant="counter"
+            type="button"
+            className="h-[38px] w-[38px] p-[7px]"
+            onClick={() => handleCountChange(count + 1)}
+          >
+            <Image src={plusIcon} alt="Add" />
+          </Button>
+        </div>
+      </FormSection>
+    );
+  }
+);
+Counter.displayName = "Counter";
+
+const PhoneInput = memo(() => {
+  const { register } = useFormContext();
+  return (
+    <FormSection
+      title="본인 전화번호"
+      description="주점에서 연락이 갈 수 있어요! 연락 가능한 번호를 작성해주세요"
+    >
+      <div className="flex gap-1">
+        <Input type="number" placeholder="010" disabled />
+        <Input type="tel" maxLength={4} {...register("phoneMiddle")} />
+        <Input type="tel" maxLength={4} {...register("phoneLast")} />
+      </div>
+    </FormSection>
+  );
+});
+PhoneInput.displayName = "PhoneInput";
+
+const SubmitButton = memo(() => {
+  const {
+    formState: { isValid },
+  } = useFormContext();
+  return (
+    <FloatingBottomBar>
+      <Button className="w-full" type="submit" disabled={!isValid}>
+        예약하기
+      </Button>
+    </FloatingBottomBar>
+  );
+});
+SubmitButton.displayName = "SubmitButton";
 
 export default function Page() {
   const { storeId } = useParams();
@@ -96,164 +296,8 @@ export default function Page() {
     fetchStore();
   }, [storeId]);
 
-  function ReservationForm() {
-    const { register, setValue } = useFormContext();
-    if (!store) {
-      return;
-    }
-
-    return (
-      setValue("storeId", store.id),
-      (
-        <div className="flex flex-col gap-10 p-5">
-          <FormSection title="날짜">
-            <div className="grid grid-cols-2 gap-2">
-              {availableDates.map(dateKey => {
-                const firstSlot = timeSlotsMap.get(dateKey)?.[0];
-                if (!firstSlot) return null;
-
-                return (
-                  <Button
-                    type="button"
-                    key={dateKey}
-                    variant={selectedDate === dateKey ? "selected" : "outline"}
-                    className="h-[37px]"
-                    disabled={timeSlotsMap
-                      .get(dateKey)
-                      ?.every(slot => slot.availableSeats === 0)}
-                    onClick={() => {
-                      setSelectedDate(dateKey);
-                      setSelectedTimeSlotId(null);
-                    }}
-                  >
-                    <span className="text-sm font-normal">
-                      {formatDateWithDay(firstSlot.startTime)}
-                    </span>
-                  </Button>
-                );
-              })}
-            </div>
-          </FormSection>
-
-          <FormSection title="시간대">
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                type="button"
-                aria-placeholder="시간대를 선택해주세요"
-                className="flex h-[52px] items-center justify-between rounded-md border pl-5 pr-[14px] text-sm font-normal"
-              >
-                {selectedTimeSlot ? (
-                  <div className="flex gap-2">
-                    <span>타임 {selectedTimeSlotIndex}</span>
-                    <span className="text-primary-normal">
-                      {formatTimeToKST(selectedTimeSlot.startTime)} ~{" "}
-                      {formatTimeToKST(selectedTimeSlot.endTime)}
-                    </span>
-                  </div>
-                ) : (
-                  <span className="text-color-neutral-90">
-                    시간대를 선택해주세요
-                  </span>
-                )}
-
-                <IoIosArrowDown className="h-4 w-4" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)]">
-                {selectedDate ? (
-                  selectedDateSlots.map((slot, index) => (
-                    <DropdownMenuLabel
-                      key={slot.id}
-                      className="flex cursor-pointer flex-col py-3 hover:bg-gray-100"
-                      onClick={() => {
-                        setSelectedTimeSlotId(slot.id);
-                        setValue("timeSlotId", slot.id, {
-                          shouldValidate: true,
-                        });
-                      }}
-                    >
-                      <span className="text-xs text-gray-500">
-                        타임 {index + 1}
-                      </span>
-                      <span className="text-sm">
-                        {formatTimeToKST(slot.startTime)} ~{" "}
-                        {formatTimeToKST(slot.endTime)}
-                      </span>
-                      <span className="text-xs text-blue-600">
-                        {slot.availableSeats}석 남음
-                      </span>
-                    </DropdownMenuLabel>
-                  ))
-                ) : (
-                  <DropdownMenuLabel>
-                    먼저 날짜를 선택해주세요
-                  </DropdownMenuLabel>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </FormSection>
-
-          <FormSection title="총 인원" isRow>
-            <div className="flex items-center gap-5">
-              <Button
-                variant="counter"
-                type="button"
-                className="h-[38px] w-[38px] p-[7px]"
-                onClick={() => {
-                  const next = Math.max(count - 1, 0);
-                  setCount(next);
-                  setValue("headcount", next, {
-                    shouldValidate: true,
-                  });
-                }}
-              >
-                <Image src={minusIcon} alt="Remove" />
-              </Button>
-              <span className="text-base font-medium">{count}</span>
-              <Button
-                variant="counter"
-                type="button"
-                className="h-[38px] w-[38px] p-[7px]"
-                onClick={() => {
-                  const next = count + 1;
-                  setCount(next);
-                  setValue("headcount", next, { shouldValidate: true });
-                }}
-              >
-                <Image src={plusIcon} alt="Add" />
-              </Button>
-            </div>
-          </FormSection>
-
-          <FormSection
-            title="본인 전화번호"
-            description="주점에서 연락이 갈 수 있어요! 연락 가능한 번호를 작성해주세요"
-          >
-            <div className="flex gap-1">
-              <Input type="number" placeholder="010" disabled />
-              <Input type="tel" maxLength={4} {...register("phoneMiddle")} />
-              <Input type="tel" maxLength={4} {...register("phoneLast")} />
-            </div>
-          </FormSection>
-        </div>
-      )
-    );
-  }
-
-  function SubmitButton() {
-    const {
-      formState: { isValid },
-    } = useFormContext();
-    return (
-      <div className="">
-        <Button className="w-full" type="submit" disabled={!isValid}>
-          예약하기
-        </Button>
-      </div>
-    );
-  }
-
   if (!store) {
-    return;
+    return null;
   }
 
   return (
@@ -262,10 +306,22 @@ export default function Page() {
       <CreateReservationForm store={store}>
         <StoreInfo store={store} />
         <Separator />
-        <ReservationForm />
-        <FloatingBottomBar>
-          <SubmitButton />
-        </FloatingBottomBar>
+        <ReservationForm
+          store={store}
+          availableDates={availableDates}
+          timeSlotsMap={timeSlotsMap}
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          setSelectedTimeSlotId={setSelectedTimeSlotId}
+          selectedTimeSlot={selectedTimeSlot ?? null}
+          selectedTimeSlotIndex={selectedTimeSlotIndex}
+          selectedDateSlots={selectedDateSlots}
+        />
+        <div className="flex flex-col gap-10 p-5 pt-0">
+          <Counter count={count} setCount={setCount} />
+          <PhoneInput />
+        </div>
+        <SubmitButton />
       </CreateReservationForm>
       <div className="h-15" />
     </div>

@@ -118,11 +118,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-
-/* 바운스/앵커 튐 완화 */
-html, body { height: 100%; }
-html, body { overscroll-behavior-y: contain; }
-
-/* 레이아웃은 vh 대신 svh/dvh */
-body { min-height: 100svh; } 
