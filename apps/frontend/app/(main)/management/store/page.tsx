@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import storeIcon from "@/public/icons/icon_orange_store.svg";
 import Image from "next/image";
@@ -16,7 +17,11 @@ export default function Page() {
               주당이 손쉬운 주점 관리를 도와드릴게요!
             </span>
           </div>
-          <Button className="w-20" size={"sm"}>
+          <Button
+            className="w-20"
+            size={"sm"}
+            onClick={() => (window.location.href = "/create-store")}
+          >
             등록하기
           </Button>
         </div>

@@ -13,30 +13,54 @@ import { Button } from "@/ui/button";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-export function AuthSheet() {
+
+interface AuthSheetProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  closeToHistory?: boolean; // true: 이전 화면으로 이동, false: Sheet만 닫기
+}
+
+export function AuthSheet({
+  open,
+  onOpenChange,
+  closeToHistory = true,
+}: AuthSheetProps) {
   const router = useRouter();
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
+
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isControlled = open !== undefined && onOpenChange !== undefined;
+  const actualOpen = isControlled ? open : internalOpen;
+  const handleOpenChange = isControlled ? onOpenChange : setInternalOpen;
+
   useEffect(() => {
+    // open prop이 명시적으로 전달된 경우 인증 체크를 하지 않음
+    if (open !== undefined) {
+      return;
+    }
+
     const checkAuth = async () => {
       try {
         await safeFetcher.get("user/me/role").json();
       } catch {
-        setIsSheetOpen(true);
+        handleOpenChange(true);
       }
     };
-
     checkAuth();
-  }, []);
+  }, [open, handleOpenChange]);
+
   return (
     <Sheet
-      open={isSheetOpen}
+      open={actualOpen}
       onOpenChange={open => {
         if (!open) {
-          if (window.history.length > 1) router.back();
-          else router.push("/");
-          return;
+          if (closeToHistory) {
+            if (window.history.length > 1) router.back();
+            else router.push("/");
+            return;
+          }
+          // closeToHistory가 false인 경우 Sheet만 닫기
         }
-        setIsSheetOpen(open);
+        handleOpenChange(open);
       }}
     >
       <SheetContent side="bottom" className="h-5/6 rounded-t-2xl">
