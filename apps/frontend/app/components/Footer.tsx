@@ -60,14 +60,6 @@ export function Footer() {
     checkAuth();
   }, []);
 
-  const onClickReservationCheck = async () => {
-    try {
-      await requestPermissionAndSubscribe();
-    } catch (e) {
-      console.error("푸시 구독 실패:", e);
-    }
-  };
-
   return (
     <footer>
       <div
@@ -154,8 +146,6 @@ export function Footer() {
               } else {
                 router.push("/reservation-check-page");
               }
-
-              onClickReservationCheck();
             }}
             className="flex h-[54px] w-[60px] flex-col items-center"
           >
