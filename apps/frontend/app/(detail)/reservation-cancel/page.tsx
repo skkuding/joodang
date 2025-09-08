@@ -5,6 +5,8 @@ import Link from "next/link";
 export default function CancelSucessPage() {
   return (
     <div className="bg-color-common-100 flex min-h-screen flex-col items-center">
+      <div className="z-3 fixed left-0 right-0 top-0 flex h-[78px] w-full justify-between bg-white px-5 pt-[50px]" />
+
       <section className="flex flex-1 flex-col items-center justify-center">
         <Image src={CheckIcon} alt="caution" width={48} height={48} />
         <p className="text-color-common-0 text-2xl font-medium leading-loose text-black">
