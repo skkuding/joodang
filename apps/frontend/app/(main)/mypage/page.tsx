@@ -8,6 +8,7 @@ import arrowIcon from "@/public/icons/icon_arrow.svg";
 import defaultProfileIcon from "@/public/icons/icon_default_profile.svg";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { Separator } from "../components/Separator";
 
 export default function Page() {
   const [user, setUser] = useState<User | null>(null);
@@ -70,14 +71,9 @@ export default function Page() {
     }
   };
 
-  return (
-    <div className="flex flex-col bg-amber-100">
-      <AuthSheet
-        open={openAuthSheet}
-        onOpenChange={setOpenAuthSheet}
-        closeToHistory={false}
-      />
-      <div className="flex gap-3 bg-amber-200 p-5">
+  function Profile() {
+    return (
+      <div className="flex gap-3 p-5">
         <Image src={defaultProfileIcon} alt="Default Profile" />
         <div className="flex w-full flex-col">
           <div className="flex justify-between">
@@ -98,6 +94,47 @@ export default function Page() {
           </span>
         </div>
       </div>
+    );
+  }
+
+  function Settings() {
+    return (
+      <div className="flex flex-col p-[30px] text-sm font-medium">
+        <p className="text-color-neutral-70 text-sm font-medium">문의하기</p>
+        <Button
+          variant={"ghost"}
+          onClick={() => (window.location.href = "/faq")}
+        >
+          <div className="flex w-full justify-between">
+            <span className="text-base font-medium">FAQ</span>
+            <Image src={arrowIcon} alt="Arrow Icon" width={15} />
+          </div>
+        </Button>
+        <Button variant={"ghost"}>
+          <a href="mailto:ask@joodang.com" className="w-full">
+            <div className="flex justify-between">
+              <span className="text-base font-medium">운영자 1:1 문의</span>
+              <Image src={arrowIcon} alt="Arrow Icon" width={15} />
+            </div>
+          </a>
+        </Button>
+        <Button disabled={!user} className="mt-[30px]">
+          관리자 계정으로 변경
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col">
+      <AuthSheet
+        open={openAuthSheet}
+        onOpenChange={setOpenAuthSheet}
+        closeToHistory={false}
+      />
+      <Profile />
+      <Separator />
+      <Settings />
 
       {/* {userRole === "USER" && (
         <div className="mx-auto max-w-md space-y-4">
