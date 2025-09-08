@@ -95,6 +95,15 @@ export class StoreController {
     )
   }
 
+  @Get(':id/staff')
+  @UseGuards(JwtAuthGuard)
+  async getStaffs(
+    @Req() req: Request,
+    @Param('id', ParseIntPipe) storeId: number,
+  ) {
+    return this.storeService.getStaffs(req.user.id, storeId)
+  }
+
   @Delete(':id/staff/:userId')
   @UseGuards(JwtAuthGuard)
   async removeStaff(

@@ -1,5 +1,4 @@
 "use client";
-import { AuthSheet } from "@/app/components/AuthSheet";
 import { FormSection } from "@/app/components/FormSection";
 import { ReservationResponse } from "@/app/type";
 import { Button } from "@/components/ui/button";

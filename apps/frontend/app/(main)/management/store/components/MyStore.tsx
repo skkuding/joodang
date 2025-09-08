@@ -1,11 +1,11 @@
 "use client";
 
+import BarCard from "@/app/(main)/find/components/BarCard";
 import { Store, User } from "@/app/type";
 import { safeFetcher } from "@/lib/utils";
 import cautionIcon from "@/public/icons/icon_gray_caution.svg";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import BarCard from "../../find/components/BarCard";
 
 export function MyStore() {
   const [stores, setStores] = useState<Store[] | null>(null);
