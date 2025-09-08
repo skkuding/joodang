@@ -49,9 +49,8 @@ export default function ReservationCard({ data }: ReservationCardProps) {
             </p>
           </div>
           <div className="flex w-full flex-row items-center">
-            <Image
-              src={Clock}
-              alt="시간"
+            <object
+              data="icons/orangeClock.svg"
               width={12}
               height={12}
               className="ml-[2px] mr-1"
