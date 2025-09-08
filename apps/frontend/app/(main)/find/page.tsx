@@ -1,6 +1,6 @@
 "use client";
 
-import { filterVariables, Store } from "@/app/type";
+import { Store } from "@/app/type";
 import {
   formatDateDash2Point,
   formatWithComma,
@@ -8,6 +8,7 @@ import {
 } from "@/lib/utils";
 import locationIcon from "@/public/icons/icon_location.svg";
 import OrangeDot from "@/public/icons/orange_dot.svg";
+import { useFilter } from "@/src/context/FilterContext";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -17,21 +18,23 @@ import FilterSheet from "./components/FilterSheet";
 // alert! 시간 값을 보내줄 때는 UTC로 보내줘야합니다.
 
 export default function BarPage() {
-  const [isFilterSet, setIsFilterSet] = useState<boolean>(false);
   const [filterOpen, setFilterOpen] = useState(false);
-  const [filterValue, setFilterValue] = useState<filterVariables>({
-    days: "0000-00-00",
-    maxFee: 15000,
-    startTime: "00:00",
-    endTime: "00:00",
-  });
+  const { filterValue, setFilterValue, isFilterSet, setIsFilterSet } =
+    useFilter();
 
   const [selOrder, SetSelOrder] = useState("popular");
   const [stores, setStores] = useState<Store[]>([]);
+  const [fetchTrigger, setFetchTrigger] = useState<number>(0);
+  function getData() {
+    setFetchTrigger(prev => {
+      return prev + 1;
+    });
+  }
 
   useEffect(() => {
     async function fetchStores() {
       const url = `store?sort=${selOrder}&maxFee=${filterValue.maxFee}`;
+      console.log("url: ", url);
 
       // if (filterValue.days !== "0000-00-00") {
       //   url += `&`;
@@ -41,7 +44,7 @@ export default function BarPage() {
       setStores(stores);
     }
     fetchStores();
-  }, []);
+  }, [fetchTrigger, filterValue]);
 
   return (
     <div>
@@ -169,6 +172,7 @@ export default function BarPage() {
                 className="text-color-common-100 bg-color-common-0 flex items-center justify-center gap-[10px] rounded-full px-[14px] py-[8px]"
                 onClick={() => {
                   SetSelOrder("popular");
+                  getData();
                   return;
                 }}
               >
@@ -179,6 +183,7 @@ export default function BarPage() {
                 className="text-color-neutral-70 bg-color-common-100 flex items-center justify-center gap-[10px] rounded-full border border-[var(--Line-Normal,#D8D8D8)] bg-[var(--Common-100,#FFF)] px-[14px] py-[8px]"
                 onClick={() => {
                   SetSelOrder("popular");
+                  getData();
                   return;
                 }}
               >
@@ -190,6 +195,7 @@ export default function BarPage() {
                 className="text-color-common-100 bg-color-common-0 flex items-center justify-center gap-[10px] rounded-full px-[14px] py-[8px]"
                 onClick={() => {
                   SetSelOrder("fee");
+                  getData();
                   return;
                 }}
               >
@@ -200,6 +206,7 @@ export default function BarPage() {
                 className="text-color-neutral-70 bg-color-common-100 flex items-center justify-center gap-[10px] rounded-full border border-[var(--Line-Normal,#D8D8D8)] bg-[var(--Common-100,#FFF)] px-[14px] py-[8px]"
                 onClick={() => {
                   SetSelOrder("fee");
+                  getData();
                   return;
                 }}
               >
@@ -211,6 +218,7 @@ export default function BarPage() {
                 className="text-color-common-100 bg-color-common-0 flex items-center justify-center gap-[10px] rounded-full px-[14px] py-[8px]"
                 onClick={() => {
                   SetSelOrder("seats");
+                  getData();
                   return;
                 }}
               >
@@ -221,6 +229,7 @@ export default function BarPage() {
                 className="text-color-neutral-70 bg-color-common-100 flex items-center justify-center gap-[10px] rounded-full border border-[var(--Line-Normal,#D8D8D8)] bg-[var(--Common-100,#FFF)] px-[14px] py-[8px]"
                 onClick={() => {
                   SetSelOrder("seats");
+                  getData();
                   return;
                 }}
               >
