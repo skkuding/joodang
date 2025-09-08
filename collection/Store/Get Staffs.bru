@@ -1,0 +1,27 @@
+meta {
+  name: Get Staffs
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/store/:storeId/staff
+  body: none
+  auth: inherit
+}
+
+params:path {
+  storeId: 1
+}
+
+headers {
+  Cookie: {{user1}}
+}
+
+docs {
+  ## Get Staffs
+
+  해당 주점에 해당하는 Staff 리스트를 불러옵니다.
+
+  Owner 제외!
+}

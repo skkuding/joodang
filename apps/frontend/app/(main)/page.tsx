@@ -33,7 +33,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="flex flex-col pt-8">
+    <div className="flex flex-col">
       <Banner />
       <Separator />
       <StoreList />

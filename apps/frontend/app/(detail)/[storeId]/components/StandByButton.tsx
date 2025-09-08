@@ -1,5 +1,4 @@
 "use client";
-import { AuthSheet } from "@/app/components/AuthSheet";
 import { FormSection } from "@/app/components/FormSection";
 import { ReservationResponse } from "@/app/type";
 import { Button } from "@/components/ui/button";
@@ -157,36 +156,34 @@ export function StandByButton() {
   }
 
   return (
-    <div>
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button className="w-full" variant={"outline"}>
-            현장 대기
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="py-6">
-          {!reservationNum ? (
-            <>
-              <DialogTitle>현장 대기 신청</DialogTitle>
-              <StandByButtonForm onSuccess={setReservationNum}>
-                <div className="flex flex-col gap-4">
-                  <StandByInput />
-                  <SubmitButton />
-                </div>
-              </StandByButtonForm>
-            </>
-          ) : (
-            <>
-              <DialogTitle className="hidden" />
-              <div className="flex flex-col items-center justify-center">
-                <ReservationInfo reservationNum={reservationNum} isStandBy />
-                <div className="h-10" />
-                <ReservationConfirmButton />
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button className="w-full" variant={"outline"}>
+          현장 대기
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="py-6">
+        {!reservationNum ? (
+          <>
+            <DialogTitle>현장 대기 신청</DialogTitle>
+            <StandByButtonForm onSuccess={setReservationNum}>
+              <div className="flex flex-col gap-4">
+                <StandByInput />
+                <SubmitButton />
               </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
-    </div>
+            </StandByButtonForm>
+          </>
+        ) : (
+          <>
+            <DialogTitle className="hidden" />
+            <div className="flex flex-col items-center justify-center">
+              <ReservationInfo reservationNum={reservationNum} isStandBy />
+              <div className="h-10" />
+              <ReservationConfirmButton />
+            </div>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }

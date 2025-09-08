@@ -75,13 +75,14 @@ export class StoreService {
           _count: {
             id: true,
           },
-          having: {
-            id: {
-              _count: {
-                gte: 5, // 최소 예약 수 (추후 초기 기획인 40으로 수정)
-              },
-            },
-          },
+          // ToDo: having 조건 다시 활성화
+          // having: {
+          //   id: {
+          //     _count: {
+          //       gte: 5, // 최소 예약 수 (추후 초기 기획인 40으로 수정)
+          //     },
+          //   },
+          // },
         })
 
         popularStoresData.sort((a, b) => {
@@ -432,6 +433,36 @@ export class StoreService {
       })
 
       return newStoreStaff
+    })
+  }
+
+  async getStaffs(userId: number, storeId: number) {
+    const storeOwner = await this.prisma.storeStaff.findUnique({
+      where: { 
+        userId_storeId: { 
+          userId, storeId 
+        }, 
+        role: Role.OWNER 
+      },
+    })
+    if (!storeOwner) {
+      throw new ForbiddenException('가게 스태프 목록을 볼 권한이 없습니다.')
+    }
+
+    return await this.prisma.storeStaff.findMany({
+      where: { 
+        storeId,
+        role: Role.STAFF,
+      },
+      select: {
+        user: {
+          select: {
+            id: true,
+            kakaoId: true,
+            name: true,
+          },
+        },
+      },
     })
   }
 

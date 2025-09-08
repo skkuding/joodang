@@ -1,4 +1,5 @@
 "use client";
+import { safeFetcher } from "@/lib/utils";
 import GrayBeer from "@/public/icons/icon_gray_beer.svg";
 import GrayHouse from "@/public/icons/icon_gray_house.svg";
 import GrayMypage from "@/public/icons/icon_gray_mypage.svg";
@@ -11,22 +12,53 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { requestPermissionAndSubscribe } from "../../lib/push-subscription";
+import { RoleEnum } from "../type";
 
 export function Footer() {
   const router = useRouter();
   const pathname = usePathname();
   const [curPos, setCurPos] = useState<string>("/");
+  const [role, setRole] = useState<RoleEnum | null>(null);
 
   useEffect(() => {
     if (!pathname) return;
 
-    const secondSlashIdx = pathname.indexOf("/", 1);
-    if (secondSlashIdx === -1) {
+    if (
+      pathname === "/management/store" ||
+      pathname === "/management/reservation"
+    ) {
       setCurPos(pathname);
     } else {
-      setCurPos(pathname.slice(0, secondSlashIdx));
+      const secondSlashIdx = pathname.indexOf("/", 1);
+      if (secondSlashIdx === -1) {
+        setCurPos(pathname);
+      } else {
+        setCurPos(pathname.slice(0, secondSlashIdx));
+      }
     }
   }, [pathname]);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response: { role: string } = await safeFetcher
+          .get("user/me/role")
+          .json();
+        console.log(response);
+        if (response.role === RoleEnum.USER) {
+          setRole(RoleEnum.USER);
+        } else if (response.role === RoleEnum.STAFF) {
+          setRole(RoleEnum.STAFF);
+        } else if (response.role === RoleEnum.OWNER) {
+          setRole(RoleEnum.OWNER);
+        } else if (response.role === RoleEnum.ADMIN) {
+          setRole(RoleEnum.ADMIN);
+        }
+      } catch {}
+    };
+
+    checkAuth();
+  }, []);
 
   const onClickReservationCheck = async () => {
     try {
@@ -68,11 +100,20 @@ export function Footer() {
           </div>
           <div
             onClick={() => {
-              router.push("/find");
+              if (
+                role === RoleEnum.STAFF ||
+                role === RoleEnum.OWNER ||
+                role === RoleEnum.ADMIN
+              ) {
+                router.push("/management/store");
+                return;
+              } else {
+                router.push("/find");
+              }
             }}
             className="flex h-[54px] w-[60px] flex-col items-center"
           >
-            {curPos === "/find" ? (
+            {curPos === "/find" || curPos === "/management/store" ? (
               <>
                 <Image
                   src={OrangeBeer}
@@ -80,23 +121,46 @@ export function Footer() {
                   width={34}
                   height={34}
                 />
-                <p className="text-xs text-[#FF5940]">주점 찾기</p>
+                <p className="text-xs text-[#FF5940]">
+                  {role === RoleEnum.STAFF ||
+                  role === RoleEnum.OWNER ||
+                  role === RoleEnum.ADMIN
+                    ? "주점 관리"
+                    : "주점 찾기"}
+                </p>
               </>
             ) : (
               <>
                 <Image src={GrayBeer} alt="회색 맥주" width={34} height={34} />
-                <p className="text-xs text-[#9B9B9B]">주점 찾기</p>
+                <p className="text-xs text-[#9B9B9B]">
+                  {role === RoleEnum.STAFF ||
+                  role === RoleEnum.OWNER ||
+                  role === RoleEnum.ADMIN
+                    ? "주점 관리"
+                    : "주점 찾기"}
+                </p>
               </>
             )}
           </div>
           <div
             onClick={() => {
-              router.push("/reservation-check-page");
+              if (
+                role === RoleEnum.STAFF ||
+                role === RoleEnum.OWNER ||
+                role === RoleEnum.ADMIN
+              ) {
+                router.push("/management/reservation");
+                return;
+              } else {
+                router.push("/reservation-check-page");
+              }
+
               onClickReservationCheck();
             }}
             className="flex h-[54px] w-[60px] flex-col items-center"
           >
-            {curPos === "/reservation-check-page" ? (
+            {curPos === "/reservation-check-page" ||
+            curPos === "/management/reservation" ? (
               <>
                 <Image
                   src={OrangeReservation}
@@ -104,7 +168,13 @@ export function Footer() {
                   width={32}
                   height={32}
                 />
-                <p className="text-xs text-[#FF5940]">예약 내역</p>
+                <p className="text-xs text-[#FF5940]">
+                  {role === RoleEnum.STAFF ||
+                  role === RoleEnum.OWNER ||
+                  role === RoleEnum.ADMIN
+                    ? "예약 관리"
+                    : "예약 내역"}
+                </p>
               </>
             ) : (
               <>
@@ -114,7 +184,13 @@ export function Footer() {
                   width={32}
                   height={32}
                 />
-                <p className="text-xs text-[#9B9B9B]">예약 내역</p>
+                <p className="text-xs text-[#9B9B9B]">
+                  {role === RoleEnum.STAFF ||
+                  role === RoleEnum.OWNER ||
+                  role === RoleEnum.ADMIN
+                    ? "예약 관리"
+                    : "예약 내역"}
+                </p>
               </>
             )}
           </div>

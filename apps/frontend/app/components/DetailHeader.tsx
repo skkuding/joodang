@@ -1,7 +1,8 @@
 "use client";
-import { useRouter } from "next/navigation";
-import { IoIosArrowBack } from "react-icons/io";
 import { useCreateStoreStore } from "@/app/stores/createStore";
+import arrowIcon from "@/public/icons/icon_arrow.svg";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export function DetailHeader() {
   const router = useRouter();
@@ -19,7 +20,12 @@ export function DetailHeader() {
 
   return (
     <div className="z-1 fixed left-0 right-0 top-0 flex h-[78px] w-full justify-between bg-white px-5 pt-[50px]">
-      <IoIosArrowBack className="h-6 w-6" onClick={handleBack} />
+      <Image
+        src={arrowIcon}
+        alt="Back"
+        className="h-6 w-6 rotate-180"
+        onClick={handleBack}
+      />
     </div>
   );
 }
