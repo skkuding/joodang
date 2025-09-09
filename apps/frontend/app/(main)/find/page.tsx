@@ -144,7 +144,7 @@ export default function BarPage() {
         </div>
       </div>
       <div>
-        <div className="bg-color-common-100 rounded-[12px] px-5 py-[30px]">
+        <div className="bg-color-common-100 w-full rounded-[12px] px-5 py-[30px]">
           <div className="mb-4 flex flex-row gap-1">
             {selOrder === "popular" ? (
               <div
@@ -216,7 +216,7 @@ export default function BarPage() {
               </div>
             )}
           </div>
-          <div className="flex flex-col items-center gap-2">
+          <div className="flex w-full flex-col items-center gap-2">
             {stores.map((store, idx) => {
               return <BarCard store={store} key={idx} />;
             })}
