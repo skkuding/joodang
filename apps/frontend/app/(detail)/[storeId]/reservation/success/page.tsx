@@ -1,15 +1,15 @@
 "use client";
 import CopyAccountModal from "@/app/components/CopyAccountModal";
-import { ReservationResponse, StoreDetail } from "@/app/type";
+import { FloatingBottomBar } from "@/app/components/FloatingBottomBar";
+import { ReservationResponse } from "@/app/type";
 import { Button } from "@/components/ui/button";
+import { BankCodes } from "@/constant";
 import arrowIcon from "@/public/icons/icon_arrow.svg";
-import kakaoPayIcon from "@/public/icons/icon_kakao_pay.svg";
-import tossIcon from "@/public/icons/icon_toss.svg";
+import cautionIcon from "@/public/icons/icon_caution.svg";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { ReservationConfirmButton } from "../components/ReservationConfirmButton";
 import { ReservationInfo } from "../components/ReservationInfo";
-import { BankCodes } from "@/constant";
 
 export default function Page() {
   const [reservationData, setReservationData] =
@@ -100,7 +100,7 @@ export default function Page() {
       }
     };
     return (
-      <div className="mb-10 w-full px-5">
+      <div className="w-full px-5">
         <div className="flex w-full flex-col rounded-md px-4 py-3 shadow-[0px_0px_20px_0px_rgba(0,0,0,0.08)]">
           <div className="bg-color-neutral-99 rounded-md px-3 py-2 text-base font-normal">
             <div className="flex w-full justify-between">
@@ -142,12 +142,18 @@ export default function Page() {
             <Image src={arrowIcon} alt="arrow" />
           </Button>
         </div>
+        <div className="mt-[6px] flex w-full justify-center gap-[2px]">
+          <Image src={cautionIcon} alt="caution" width={14} />
+          <span className="text-primary-normal text-xs font-normal">
+            입금 시 예약 번호를 함께 작성해주세요
+          </span>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center pt-[10vh]">
       <div className="pb-15 flex flex-col items-center justify-center">
         {reservationData && (
           <ReservationInfo
@@ -156,12 +162,9 @@ export default function Page() {
         )}
       </div>
       <SendMoneyButton />
-      <div className="h-[130px]" />
-      <div className="fixed bottom-0 w-full">
-        <div className="pb-15 w-full p-5">
-          <ReservationConfirmButton />
-        </div>
-      </div>
+      <FloatingBottomBar>
+        <ReservationConfirmButton />
+      </FloatingBottomBar>
     </div>
   );
 }

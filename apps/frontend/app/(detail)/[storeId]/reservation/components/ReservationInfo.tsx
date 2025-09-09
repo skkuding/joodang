@@ -9,7 +9,7 @@ export function ReservationInfo({
 }: ReservationInfoProps) {
   return (
     <>
-      <span className="bg-primary-normal/10 text-primary-normal mb-4 px-[21px] py-1 font-normal">
+      <span className="bg-primary-normal/10 text-primary-normal mb-4 rounded-md px-[21px] py-1 font-normal">
         {isStandBy ? "현장 대기 번호" : "예약 번호"}
       </span>
       <span className="text-primary-normal mb-3 flex h-[80px] items-center text-[80px] font-medium">

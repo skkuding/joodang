@@ -1,10 +1,11 @@
+import { MenuList } from "@/app/(main)/components/MenuList";
 import { Separator } from "@/app/(main)/components/Separator";
+import { FloatingBottomBar } from "@/app/components/FloatingBottomBar";
 import Image from "next/image";
 import { safeFetcher } from "../../../lib/utils";
 import { StoreDetail } from "../../type";
 import { StoreInfo } from "../components/StoreInfo";
 import { StoreActionButtons } from "./components/StoreActionButtons";
-import { FloatingBottomBar } from "@/app/components/FloatingBottomBar";
 
 export default async function Page({
   params,
@@ -13,14 +14,6 @@ export default async function Page({
 }) {
   const storeId = params.storeId;
   const store: StoreDetail = await safeFetcher.get(`store/${storeId}`).json();
-
-  function StoreDescription() {
-    return (
-      <div className="text-color-neutral-30 mb-25 p-5 text-sm font-normal">
-        {store.description}
-      </div>
-    );
-  }
 
   function StoreImage() {
     return (
@@ -34,12 +27,22 @@ export default async function Page({
     );
   }
 
+  function StoreDescription() {
+    return (
+      <div className="text-color-neutral-30 bg-amber-100 p-5 text-sm font-normal">
+        {store.description}
+      </div>
+    );
+  }
+
   return (
     <div>
       <StoreImage />
       <StoreInfo store={store} />
       <Separator />
       <StoreDescription />
+      <MenuList storeId={store.id} />
+      <div className="h-26" />
       <FloatingBottomBar>
         <StoreActionButtons store={store} />
       </FloatingBottomBar>
