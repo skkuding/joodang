@@ -24,7 +24,7 @@ export function MultiStoreDrawer({ stores, mylocationfunc }: StoreDrawerProps) {
   //   const formattedEndTime = formatTimeToKST(store.endTime);
 
   const expanded = 0.9;
-  const collapsed = 0.5;
+  const collapsed = 0.6;
 
   const handleNavigatetoStoreDetail = (storeId: number) => {
     router.push(`/map/${storeId}`);
@@ -32,8 +32,8 @@ export function MultiStoreDrawer({ stores, mylocationfunc }: StoreDrawerProps) {
 
   return (
     <motion.div
-      className="fixed bottom-[-390px] left-0 right-0 z-50 mx-auto max-w-md rounded-t-2xl border bg-white shadow-lg"
-      style={{ height: `${height * 100}vh` }}
+      className="fixed bottom-[-390px] left-0 right-0 z-50 mx-auto w-full rounded-t-2xl border bg-white shadow-lg"
+      style={{ height: `${height * 100}vh`, touchAction: "none" }}
       drag="y"
       dragConstraints={{ top: 0, bottom: 0 }}
       onDragEnd={(_, info) => {
@@ -51,16 +51,19 @@ export function MultiStoreDrawer({ stores, mylocationfunc }: StoreDrawerProps) {
       }}
       animate={{ height: `${height * 100}vh` }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      onTouchMove={e => e.stopPropagation()}
+      onWheel={e => e.stopPropagation()}
     >
       <button
         onClick={mylocationfunc}
-        className="absolute right-5 top-[-60px] flex h-[42px] w-[42px] justify-center rounded-full bg-[#4A4A4A] shadow-md"
+        className="absolute right-5 top-[-60px] flex h-[42px] w-[42px] content-center justify-center rounded-full bg-[#4A4A4A] shadow-md"
       >
         <Image
           src="/icons/icon_my_location.svg"
           alt="My Location"
           width={26}
           height={26}
+          className="m-2"
         />
       </button>
       {/* 핸들 */}
@@ -68,7 +71,11 @@ export function MultiStoreDrawer({ stores, mylocationfunc }: StoreDrawerProps) {
 
       {/* 콘텐츠 */}
 
-      <div className="overflow-auto p-4">
+      <div
+        className="overflow-auto p-4"
+        onTouchStart={e => e.stopPropagation()}
+        onTouchMove={e => e.stopPropagation()}
+      >
         <ScrollArea className="overflow-auto" style={{ maxHeight: "35vh" }}>
           {stores.map(store => (
             <div

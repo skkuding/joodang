@@ -249,7 +249,7 @@ export default function ReservationDetail() {
             <Image src={OrangeDot} alt="주황닷" width={6} height={6} />
             <div className="ml-2 flex w-full justify-between">
               <p>주점 위치</p>
-              <Link href={"/map/1"} className="mt-2">
+              <Link href={`/map/${reservation?.storeId}`} className="mt-2">
                 <div className="relative flex flex-row gap-[2px] pl-[10px]">
                   <p
                     className={cn(
