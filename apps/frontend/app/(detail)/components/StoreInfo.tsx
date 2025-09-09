@@ -54,7 +54,7 @@ export function StoreInfo({ store }: senderStoreSummaryProps) {
           <span>인당 {formatWithComma(store.reservationFee)} 원</span>
         </div>
       </div>
-      <div className="bg-color-neutral-99 flex flex-col rounded-md px-4 py-3 text-base font-normal">
+      <div className="bg-color-neutral-99 flex flex-col gap-[6px] rounded-md px-4 py-3 text-base font-normal">
         <div className="flex w-full justify-between">
           <div className="flex items-center gap-2">
             <div className="bg-primary-normal h-1.5 w-1.5 rounded-full" />
@@ -63,8 +63,7 @@ export function StoreInfo({ store }: senderStoreSummaryProps) {
           <Button
             onClick={handleCopyPhone}
             variant="ghost"
-            className="w-fit"
-            size="sm"
+            className="h-6 w-fit"
           >
             <span className="text-sm font-normal">{store.contactInfo}</span>
           </Button>
