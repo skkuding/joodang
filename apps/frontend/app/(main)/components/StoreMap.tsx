@@ -51,7 +51,9 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
         gl: true,
       });
     } else {
-      try { mapInstanceRef.current.panTo(center); } catch {}
+      try {
+        mapInstanceRef.current.panTo(center);
+      } catch {}
     }
 
     if (selectedStore && mapInstanceRef.current) {

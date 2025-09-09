@@ -127,7 +127,6 @@ export default function LocationForm() {
         customStyleId: "56e070b5-b8ce-4f3f-90a7-fc9e602ba64c",
         mapTypeControl: false,
         scaleControl: false,
-        logoControl: false,
         mapDataControl: false,
         zoomControl: false,
         minZoom: 10,

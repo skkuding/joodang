@@ -22,7 +22,6 @@ export interface NaverMapOptions {
   customStyleId?: string;
   mapTypeControl?: boolean;
   scaleControl?: boolean;
-  logoControl?: boolean;
   mapDataControl?: boolean;
   zoomControl?: boolean;
   minZoom?: number;
