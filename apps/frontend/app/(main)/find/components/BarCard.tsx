@@ -4,7 +4,6 @@ import { Store } from "@/app/type";
 import { formatToHHMM, formatWithComma } from "@/lib/utils";
 import Arrow from "@/public/icons/icon_arrow.svg";
 import Location from "@/public/icons/icon_location.svg";
-import Clock from "@/public/icons/orangeClock.svg";
 import Money from "@/public/icons/orangeMoney.svg";
 import Image from "next/image";
 import Link from "next/link";
@@ -55,12 +54,7 @@ export default function BarCard({ store }: BarCardProps) {
               </p>
             </div>
             <div className="flex w-full flex-row items-center">
-              <object
-                data="/icons/icon_clock.svg"
-                width={12}
-                height={12}
-                className="ml-[2px] mr-1"
-              />
+              <object data="/icons/icon_clock.png" className="mr-1 h-4 w-4" />
               <p className="text-color-neutral-40 font-sans text-sm font-normal leading-[150%] tracking-[-0.56px]">
                 운영 시간
               </p>

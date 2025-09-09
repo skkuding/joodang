@@ -12,7 +12,6 @@ import {
 } from "@/lib/utils";
 import Arrow from "@/public/icons/icon_arrow.svg";
 import Location from "@/public/icons/icon_location.svg";
-import Clock from "@/public/icons/orangeClock.svg";
 import Money from "@/public/icons/orangeMoney.svg";
 import OrangeDot from "@/public/icons/orange_dot.svg";
 import Image from "next/image";
@@ -158,12 +157,7 @@ export default function ReservationDetail() {
             </div>
           </div>
           <div className="flex">
-            <object
-              data="/icons/icon_clock.svg"
-              width={12}
-              height={12}
-              className="ml-[2px] mr-1"
-            />
+            <object data="/icons/icon_clock.png" className="mr-1 h-4 w-4" />
             <div className="flex w-full justify-between">
               <p>운영 시간</p>
               <p className="text-color-neutral-20">

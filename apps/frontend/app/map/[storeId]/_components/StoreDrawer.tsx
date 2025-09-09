@@ -77,21 +77,15 @@ export function StoreDrawer({ store, mylocationfunc }: StoreDrawerProps) {
             <Image
               src="/icons/icon_location.svg"
               alt="Location"
-              width={18}
-              height={18}
+              width={16}
+              height={16}
             />
             <span className="text-[#5C5C5C]">위치</span>
           </div>
           <div className="text-right">{store.location}</div>
 
           <div className="flex items-center gap-2">
-            <Image
-              src="/icons/icon_orange_clock.svg"
-              alt="Operating Hours"
-              width={14}
-              height={14}
-              className="ml-[2px]"
-            />
+            <object data="/icons/icon_clock.png" className="h-4 w-4" />
             <span className="text-[#5C5C5C]">운영 시간</span>
           </div>
           <div className="text-right">
@@ -102,8 +96,8 @@ export function StoreDrawer({ store, mylocationfunc }: StoreDrawerProps) {
             <Image
               src="/icons/orangeMoney.svg"
               alt="Entrance Fee"
-              width={18}
-              height={18}
+              width={16}
+              height={16}
             />
             <span className="text-[#5C5C5C]">입장료</span>
           </div>
