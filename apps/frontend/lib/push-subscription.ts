@@ -46,7 +46,6 @@ export async function requestPermissionAndSubscribe() {
   const existing = await registration.pushManager.getSubscription();
   if (existing) {
     console.log("이미 구독 정보가 존재합니다. 서버에 다시 등록하지 않습니다.");
-    window.dispatchEvent(new CustomEvent("push:already"));
     return; // 기존 구독이 있으면 함수 종료
   }
 
