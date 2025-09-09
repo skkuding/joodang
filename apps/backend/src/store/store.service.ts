@@ -73,11 +73,8 @@ export class StoreService {
         if (!userId) {
           return []
         }
-        
-        where.OR = [
-          { ownerId: userId },
-          { staffs: { some: { userId } } },
-        ]
+
+        where.OR = [{ ownerId: userId }, { staffs: { some: { userId } } }]
 
         return await this.prisma.store.findMany({
           where,
@@ -90,10 +87,7 @@ export class StoreService {
           include: {
             _count: { select: { Reservation: true } },
           },
-          orderBy: [
-            { Reservation: { _count: 'desc' } },
-            { id: 'asc' },
-          ],
+          orderBy: [{ Reservation: { _count: 'desc' } }, { id: 'asc' }],
         })
         return stores.map((store) => {
           const { _count, ...storeData } = store
@@ -451,10 +445,10 @@ export class StoreService {
         },
       })
 
-      await tx.user.update({
+      await tx.user.updateMany({
         where: {
           id: userId,
-          role: { not: Role.ADMIN },
+          role: { notIn: [Role.ADMIN, Role.OWNER] },
         },
         data: {
           role: Role.STAFF,
@@ -467,11 +461,12 @@ export class StoreService {
 
   async getStaffs(userId: number, storeId: number) {
     const storeOwner = await this.prisma.storeStaff.findUnique({
-      where: { 
-        userId_storeId: { 
-          userId, storeId 
-        }, 
-        role: Role.OWNER 
+      where: {
+        userId_storeId: {
+          userId,
+          storeId,
+        },
+        role: Role.OWNER,
       },
     })
     if (!storeOwner) {
@@ -479,7 +474,7 @@ export class StoreService {
     }
 
     return await this.prisma.storeStaff.findMany({
-      where: { 
+      where: {
         storeId,
         role: Role.STAFF,
       },
