@@ -119,7 +119,7 @@ export default function Page() {
             onClick={handleTossPayment}
           >
             <div className="flex gap-2">
-              <object data="/icons/icon_toss.svg" />
+              <object data="/icons/icon_toss.png" width={61} height={24} />
               <span>토스로 송금하기</span>
             </div>
             <Image src={arrowIcon} alt="arrow" />
@@ -131,7 +131,11 @@ export default function Page() {
           >
             <div className="flex gap-2">
               <div className="w-[61px]">
-                <object data="/icons/icon_kakao_pay.svg" />
+                <object
+                  data="/icons/icon_kakao_pay.png"
+                  width={61}
+                  height={24}
+                />
               </div>
               <span>카카오페이로 송금하기</span>
             </div>

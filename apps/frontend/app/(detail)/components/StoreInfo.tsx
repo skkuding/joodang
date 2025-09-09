@@ -38,7 +38,7 @@ export function StoreInfo({ store }: senderStoreSummaryProps) {
         </div>
         <div className="flex justify-between">
           <div className="flex items-center gap-1">
-            <object data="/icons/icon_clock.svg" className="h-3 w-4" />
+            <object data="/icons/icon_clock.png" className="h-4 w-4" />
             <span>운영 시간</span>
           </div>
           <span>

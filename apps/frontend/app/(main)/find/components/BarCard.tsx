@@ -54,12 +54,7 @@ export default function BarCard({ store }: BarCardProps) {
               </p>
             </div>
             <div className="flex w-full flex-row items-center">
-              <object
-                data="/icons/icon_clock.svg"
-                width={12}
-                height={12}
-                className="ml-[2px] mr-1"
-              />
+              <object data="/icons/icon_clock.png" className="mr-1 h-4 w-4" />
               <p className="text-color-neutral-40 font-sans text-sm font-normal leading-[150%] tracking-[-0.56px]">
                 운영 시간
               </p>
