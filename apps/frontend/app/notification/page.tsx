@@ -11,17 +11,28 @@ export default async function NotificationPage() {
   const token = cookieStore.get("token")?.value;
   // const token =
   //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImtha2FvSWQiOiJrYWthb18yMDIwMTIzNDU2IiwiaWF0IjoxNzU2NzE4NzkxLCJleHAiOjE3ODgyNTQ3OTF9.Ulf0QSeLAmh0kFtHwsi9ilM9S2PFFW4cnEkq5PONc1I";
-  if (!token) return <p>로그인 에러.</p>;
+  //if (!token) return <p>로그인 에러.</p>;
 
-  const res = await safeFetcher("notification", {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    cache: "no-store",
-  });
+  let data: Notification[] = [];
 
-  const data: Notification[] = await res.json();
+  // 토큰이 있을 때만 API 호출
+  if (token) {
+    try {
+      const res = await safeFetcher("notification", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        cache: "no-store",
+      });
+      data = await res.json();
+    } catch (error) {
+      // 401이나 다른 에러가 발생해도 빈 배열로 처리
+      console.log("알림 조회 실패:", error);
+      data = [];
+    }
+  }
+
   console.log("notification data", data);
   return (
     <div className="flex min-h-screen flex-col bg-white">
