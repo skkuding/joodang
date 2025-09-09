@@ -304,7 +304,10 @@ export default function Page() {
   if (!store) {
     return null;
   }
-
+  console.log("availableDates:", availableDates);
+  console.log("selecred date:", selectedDate);
+  console.log("selected time slot:", selectedTimeSlot);
+  console.log("selected time slot index:", selectedTimeSlotIndex);
   return (
     <div>
       <AuthSheet />

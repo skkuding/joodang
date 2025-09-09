@@ -1,5 +1,5 @@
 import Image from "next/image";
-import type { Notification, StoreDetail } from "../type";
+import type { Notification, StoreDetail } from "../../type";
 import Link from "next/link";
 import { safeFetcher } from "@/lib/utils";
 
@@ -39,7 +39,7 @@ export default async function NotiCard({ noti }: NotiCardProps) {
         </Link>
       </div>
 
-      {noti.type === "OwnerReservation" || "ReservationReminder" ? (
+      {noti.type === "ReservationReminder" ? (
         <div className="mt-2 flex flex-col gap-2 whitespace-pre-line rounded-md bg-[#f5f5f5] p-2 text-sm text-gray-700">
           <div className="flex justify-between">
             <div className="flex gap-1">

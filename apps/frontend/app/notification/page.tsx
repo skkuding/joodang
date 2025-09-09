@@ -4,7 +4,7 @@ import Image from "next/image";
 import { safeFetcher } from "@/lib/utils";
 import type { Notification } from "../type";
 import { AuthSheet } from "../components/AuthSheet";
-import NotiCard from "./NotiCard";
+import NotiCard from "./_components/NotiCard";
 
 export default async function NotificationPage() {
   const cookieStore = await cookies();
