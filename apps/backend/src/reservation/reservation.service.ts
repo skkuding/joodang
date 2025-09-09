@@ -177,6 +177,25 @@ export class ReservationService {
         )
       }
     } else {
+      const alreadyBooked = await this.prisma.reservation.findFirst({
+        where: {
+          storeId: createWalkInReservationDto.storeId,
+          timeSlot: {
+            totalCapacity: -1,
+            availableSeats: 0,
+          },
+          token: {
+            in: createWalkInReservationDto.tokens ?? [],
+          },
+        },
+        select: { isConfirmed: true },
+      })
+
+      if (alreadyBooked && alreadyBooked.isConfirmed !== false) {
+        throw new ConflictException(
+          'You have already made a walk-in reservation for this store',
+        )
+      }
       token = await this.generateUniqueReservationToken()
     }
 

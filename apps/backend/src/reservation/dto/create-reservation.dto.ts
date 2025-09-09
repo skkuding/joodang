@@ -1,4 +1,13 @@
-import { IsArray, IsInt, IsOptional, IsString, Min } from 'class-validator'
+import {
+  IsArray,
+  IsInt,
+  IsOptional,
+  IsString,
+  Min,
+  ValidateNested,
+} from 'class-validator'
+import { TokensDto } from './token.dto'
+import { Type } from 'class-transformer'
 
 export class CreateReservationDto {
   @IsInt()
@@ -40,4 +49,9 @@ export class CreateWalkInReservationDto {
   @IsInt({ each: true })
   @Min(1, { each: true })
   menuIds?: number[]
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  tokens?: string[]
 }
