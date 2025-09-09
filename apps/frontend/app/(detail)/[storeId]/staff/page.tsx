@@ -116,13 +116,13 @@ export default function Page() {
     const handleAddStaff = async () => {
       try {
         const response: InvitationResponse = await safeFetcher
-          .get(`store/${storeId}/staff/invitation`)
+          .post(`store/${storeId}/staff/invitation`)
           .json();
 
         const shareData = {
           title: "Joodang",
           text: "주당에서 스탭으로 초대합니다",
-          url: `http://localhost:5525/invite-staff?inviteCode=${response.inviteCode}`,
+          url: `http://localhost:5525/invite-staff?storeId=${storeId}&inviteCode=${response.inviteCode}`,
         };
 
         await navigator.share(shareData);
