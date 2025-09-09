@@ -14,60 +14,15 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/ui/button";
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import Image from "next/image";
-import Script from "next/script";
 import { useEffect, useRef, useState } from "react";
+import type {
+  NaverMapInstance,
+  NaverMarkerInstance,
+  NaverMapsNamespace,
+} from "@/types/naver";
+import { loadNaverMaps } from "@/lib/naverMapsLoader";
 import { useForm } from "react-hook-form";
 import * as v from "valibot";
-
-// 네이버 지도 API 타입 정의
-interface NaverMap {
-  getCenter(): { lat(): number; lng(): number };
-  setCenter(position: NaverLatLng): void;
-}
-
-interface NaverLatLng {
-  lat(): number;
-  lng(): number;
-}
-
-interface NaverMarker {
-  setMap(map: NaverMap | null): void;
-}
-
-interface NaverMaps {
-  Map: new (element: HTMLElement, options: NaverMapOptions) => NaverMap;
-  LatLng: new (lat: number, lng: number) => NaverLatLng;
-  Point: new (x: number, y: number) => { x: number; y: number };
-  Marker: new (options: NaverMarkerOptions) => NaverMarker;
-  Event: {
-    addListener: (
-      target: NaverMap,
-      event: string,
-      listener: () => void
-    ) => void;
-  };
-}
-
-interface NaverMarkerOptions {
-  position: NaverLatLng;
-  map: NaverMap;
-  icon?: {
-    content: string;
-    anchor?: { x: number; y: number };
-  };
-}
-
-interface NaverMapOptions {
-  center: NaverLatLng;
-  zoom: number;
-  mapTypeControl: boolean;
-  scaleControl: boolean;
-  logoControl: boolean;
-  mapDataControl: boolean;
-  zoomControl: boolean;
-  minZoom: number;
-  maxZoom: number;
-}
 
 const locationFormSchema = v.object({
   college: v.pipe(v.string(), v.minLength(1, "학교를 선택해주세요")),
@@ -116,8 +71,8 @@ export default function LocationForm() {
     lng: number;
   } | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<NaverMap | null>(null);
-  const markerRef = useRef<NaverMarker | null>(null);
+  const mapInstanceRef = useRef<NaverMapInstance | null>(null);
+  const markerRef = useRef<NaverMarkerInstance | null>(null);
 
   const form = useForm<LocationFormData>({
     resolver: valibotResolver(locationFormSchema),
@@ -146,89 +101,82 @@ export default function LocationForm() {
     });
   }, [formData, reset]);
 
-  // 네이버 지도 초기화 (한 번만 실행)
+  const [sdkLoaded, setSdkLoaded] = useState(false);
   useEffect(() => {
-    if (
-      !mapRef.current ||
-      !(window as unknown as { naver: { maps: NaverMaps } }).naver?.maps
-    )
-      return;
+    let mounted = true;
+    loadNaverMaps()
+      .then(() => mounted && setSdkLoaded(true))
+      .catch(err => console.warn("Naver Maps load error", err));
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
-    const naverMaps = (window as unknown as { naver: { maps: NaverMaps } })
-      .naver.maps;
-    const centerLat = currentPosition.lat;
-    const centerLng = currentPosition.lng;
-
-    const naverMap = new naverMaps.Map(mapRef.current, {
-      center: new naverMaps.LatLng(centerLat, centerLng),
-      zoom: 15,
-      mapTypeControl: false,
-      scaleControl: false,
-      logoControl: false,
-      mapDataControl: false,
-      zoomControl: true,
-      minZoom: 10,
-      maxZoom: 21,
-    });
-
-    mapInstanceRef.current = naverMap;
-
-    // 기존 위치가 있으면 마커 표시
-    if (formData.latitude && formData.longitude) {
-      const existingMarker = new naverMaps.Marker({
-        position: new naverMaps.LatLng(formData.latitude, formData.longitude),
-        map: naverMap,
-        icon: {
-          content: `
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
-              <div style="background-color: #ff4444; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">
-                ${formData.location || "선택된 위치"}
-              </div>
-              <img src="/icons/icon_location.svg" alt="pin" width="22" height="35" />
-            </div>
-          `,
-          anchor: new naverMaps.Point(36.5, 53), // 마커의 앵커 포인트 설정 (이미지 하단 중앙)
-        },
-      });
-      markerRef.current = existingMarker;
-      setIsPositionFixed(true);
-      setFixedPosition({
-        lat: formData.latitude,
-        lng: formData.longitude,
+  useEffect(() => {
+    if (!sdkLoaded) return;
+    const { naver } = window as typeof window & {
+      naver?: { maps?: NaverMapsNamespace };
+    };
+    if (!mapRef.current || !naver?.maps) return;
+    if (!mapInstanceRef.current) {
+      const centerLat = currentPosition.lat;
+      const centerLng = currentPosition.lng;
+      mapInstanceRef.current = new naver.maps.Map(mapRef.current, {
+        center: new naver.maps.LatLng(centerLat, centerLng),
+        zoom: 16,
+        customStyleId: "56e070b5-b8ce-4f3f-90a7-fc9e602ba64c",
+        mapTypeControl: false,
+        scaleControl: false,
+        logoControl: false,
+        mapDataControl: false,
+        zoomControl: false,
+        minZoom: 10,
+        maxZoom: 21,
+        gl: true,
       });
     }
 
-    // 지도 이동 이벤트 리스너 추가
-    const handleMapMove = () => {
-      const center = naverMap.getCenter();
-      const newPosition = {
-        lat: center.lat(),
-        lng: center.lng(),
-      };
-      setCurrentPosition(newPosition);
+    const map = mapInstanceRef.current!;
 
-      // 마커가 없는 경우에만 폼 값 업데이트 (위치가 고정되지 않은 상태)
+    if (!markerRef.current && formData.latitude && formData.longitude) {
+      markerRef.current = new naver.maps.Marker({
+        position: new naver.maps.LatLng(formData.latitude, formData.longitude),
+        map,
+        icon: {
+          content: `<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">\n  <div style=\"background:#ff4444;color:#fff;padding:4px 8px;border-radius:4px;font-size:12px;font-weight:600;\">${formData.location || "선택된 위치"}</div>\n  <img src=\"/icons/icon_location.svg\" alt=\"pin\" width=\"22\" height=\"35\" />\n</div>`,
+          anchor: new naver.maps.Point(36.5, 53),
+        },
+      });
+      setIsPositionFixed(true);
+      setFixedPosition({ lat: formData.latitude, lng: formData.longitude });
+    }
+
+    const handleMapMove = () => {
+      const c = map.getCenter ? map.getCenter() : null;
+      if (!c) return;
+      const newPos = { lat: c.lat(), lng: c.lng() };
+      setCurrentPosition(newPos);
       if (!markerRef.current) {
-        setValue("latitude", newPosition.lat);
-        setValue("longitude", newPosition.lng);
+        setValue("latitude", newPos.lat);
+        setValue("longitude", newPos.lng);
       }
     };
-
-    // 지도 확대/축소 이벤트 리스너
     const handleMapZoom = () => {
-      const center = naverMap.getCenter();
-      const newPosition = {
-        lat: center.lat(),
-        lng: center.lng(),
-      };
-      setCurrentPosition(newPosition);
-      // 확대/축소 시에는 폼 값을 업데이트하지 않음 (마커 위치 유지)
+      const c = map.getCenter ? map.getCenter() : null;
+      if (!c) return;
+      setCurrentPosition({ lat: c.lat(), lng: c.lng() });
     };
-
-    // 지도 이동이 끝났을 때 이벤트
-    naverMaps.Event.addListener(naverMap, "dragend", handleMapMove);
-    naverMaps.Event.addListener(naverMap, "zoom_changed", handleMapZoom);
-  }, []); // 의존성 배열을 빈 배열로 변경하여 한 번만 실행
+    naver.maps.Event.addListener(map, "dragend", handleMapMove);
+    naver.maps.Event.addListener(map, "zoom_changed", handleMapZoom);
+  }, [
+    sdkLoaded,
+    currentPosition.lat,
+    currentPosition.lng,
+    formData.latitude,
+    formData.longitude,
+    formData.location,
+    setValue,
+  ]);
 
   // 위치 고정 상태가 변경될 때 폼 유효성 업데이트
   useEffect(() => {
@@ -329,8 +277,9 @@ export default function LocationForm() {
   const handlePositionToggle = () => {
     if (!mapInstanceRef.current) return;
 
-    const naverMaps = (window as unknown as { naver: { maps: NaverMaps } })
-      .naver.maps;
+    const naverMaps = (
+      window as typeof window & { naver: { maps: NaverMapsNamespace } }
+    ).naver.maps;
 
     if (isPositionFixed) {
       // 위치 고정 해제
@@ -342,26 +291,19 @@ export default function LocationForm() {
       setFixedPosition(null);
     } else {
       // 위치 고정
-      const center = mapInstanceRef.current.getCenter();
-      const newPosition = {
-        lat: center.lat(),
-        lng: center.lng(),
-      };
+      const c = mapInstanceRef.current.getCenter
+        ? mapInstanceRef.current.getCenter()
+        : null;
+      if (!c) return;
+      const newPosition = { lat: c.lat(), lng: c.lng() };
 
       // 마커 생성
       const newMarker = new naverMaps.Marker({
         position: new naverMaps.LatLng(newPosition.lat, newPosition.lng),
-        map: mapInstanceRef.current,
+        map: mapInstanceRef.current!,
         icon: {
-          content: `
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
-              <div style="background-color: #FF5940; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">
-                위치 고정됨
-              </div>
-              <img src="/icons/icon_location.svg" alt="pin" width="22" height="35" />
-            </div>
-          `,
-          anchor: new naverMaps.Point(36.5, 53), // 마커의 앵커 포인트 설정 (이미지 하단 중앙)
+          content: `<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">\n  <div style=\"background:#FF5940;color:#fff;padding:4px 8px;border-radius:4px;font-size:12px;font-weight:600;\">위치 고정됨</div>\n  <img src=\"/icons/icon_location.svg\" alt=\"pin\" width=\"22\" height=\"35\" />\n</div>`,
+          anchor: new naverMaps.Point(36.5, 53),
         },
       });
 
@@ -380,10 +322,6 @@ export default function LocationForm() {
 
   return (
     <>
-      <Script
-        type="text/javascript"
-        src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${process.env.NEXT_PUBLIC_NAVER_ID}&submodules=gl`}
-      />
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="text-primary-normal mb-[2px] text-xs">3단계</div>
         <div className="mb-10 text-xl font-medium">

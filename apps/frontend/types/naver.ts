@@ -20,6 +20,13 @@ export interface NaverMapOptions {
   center: NaverLatLng;
   zoom: number;
   customStyleId?: string;
+  mapTypeControl?: boolean;
+  scaleControl?: boolean;
+  logoControl?: boolean;
+  mapDataControl?: boolean;
+  zoomControl?: boolean;
+  minZoom?: number;
+  maxZoom?: number;
 }
 
 export interface NaverMapInstance {
@@ -31,8 +38,8 @@ export interface NaverMapInstance {
   ): void;
   getProjection(): NaverProjection | null;
   getSize(): { width: number; height: number };
-  getCenter?(): NaverLatLng;
-  getZoom?(): number;
+  getCenter(): NaverLatLng;
+  getZoom(): number;
 }
 
 export interface NaverMarkerIcon {

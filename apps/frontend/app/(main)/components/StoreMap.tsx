@@ -3,12 +3,7 @@
 import { Store } from "@/app/type";
 import { useEffect, useRef, useState } from "react";
 import type { NaverMapInstance, NaverMarkerInstance } from "@/types/naver";
-
-declare global {
-  interface Window {
-    __onNaverReady?: () => void;
-  }
-}
+import { loadNaverMaps } from "@/lib/naverMapsLoader";
 
 interface StoreMapProps {
   stores: Store[];
@@ -23,33 +18,12 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
   const STYLE_ID = "56e070b5-b8ce-4f3f-90a7-fc9e602ba64c";
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (window.naver?.maps) {
-      setSdkLoaded(true);
-      return;
-    }
-
-    window.__onNaverReady = () => {
-      setSdkLoaded(true);
-    };
-
-    const existing = document.getElementById(
-      "naver-maps-sdk"
-    ) as HTMLScriptElement | null;
-    if (existing) {
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.id = "naver-maps-sdk";
-    script.type = "text/javascript";
-    script.async = true;
-    script.defer = true;
-    script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${process.env.NEXT_PUBLIC_NAVER_ID}&submodules=gl&callback=__onNaverReady`;
-    document.head.appendChild(script);
-
+    let mounted = true;
+    loadNaverMaps()
+      .then(() => mounted && setSdkLoaded(true))
+      .catch(err => console.warn("Naver Maps load error", err));
     return () => {
-      if (window.__onNaverReady) delete window.__onNaverReady;
+      mounted = false;
     };
   }, []);
 

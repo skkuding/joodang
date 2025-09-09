@@ -10,13 +10,8 @@ import type {
   NaverMarkerInstance,
   NaverLatLng,
 } from "@/types/naver";
+import { loadNaverMaps } from "@/lib/naverMapsLoader";
 import { useSelectedStore } from "@/app/stores/useSelectedStore";
-
-declare global {
-  interface Window {
-    __onNaverReady?: () => void;
-  }
-}
 
 interface MultiStoreMapProps {
   stores: Store[];
@@ -58,22 +53,12 @@ export default function MultiStoreMap({ stores }: MultiStoreMapProps) {
   const router = useRouter();
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (window.naver?.maps) {
-      setSdkLoaded(true);
-      return;
-    }
-
-    window.__onNaverReady = () => setSdkLoaded(true);
-    if (document.getElementById("naver-maps-sdk")) return;
-    const script = document.createElement("script");
-    script.id = "naver-maps-sdk";
-    script.async = true;
-    script.defer = true;
-    script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${process.env.NEXT_PUBLIC_NAVER_ID}&submodules=gl&callback=__onNaverReady`;
-    document.head.appendChild(script);
+    let active = true;
+    loadNaverMaps()
+      .then(() => active && setSdkLoaded(true))
+      .catch(e => console.warn("Failed to load Naver Maps", e));
     return () => {
-      if (window.__onNaverReady) delete window.__onNaverReady;
+      active = false;
     };
   }, []);
 
