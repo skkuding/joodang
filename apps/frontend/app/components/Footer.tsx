@@ -11,7 +11,6 @@ import OrangeReservation from "@/public/icons/icon_orange_reservation.svg";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { requestPermissionAndSubscribe } from "../../lib/push-subscription";
 import { RoleEnum } from "../type";
 
 export function Footer() {
@@ -70,16 +69,7 @@ export function Footer() {
         <div className="-mt-2 flex w-full flex-row justify-between px-[40px]">
           <div
             onClick={() => {
-              if (
-                role === RoleEnum.STAFF ||
-                role === RoleEnum.OWNER ||
-                role === RoleEnum.ADMIN
-              ) {
-                router.push("/management/home");
-                return;
-              } else {
-                router.push("/");
-              }
+              router.push("/");
             }}
             className="flex h-[54px] w-[60px] flex-col items-center"
           >
@@ -102,6 +92,7 @@ export function Footer() {
           </div>
           <div
             onClick={() => {
+              console.log("role: ", role);
               if (
                 role === RoleEnum.STAFF ||
                 role === RoleEnum.OWNER ||
