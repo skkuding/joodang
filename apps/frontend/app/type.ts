@@ -1,3 +1,5 @@
+import { MenuCategory } from "@/lib/utils/store-utils";
+
 export interface Store {
   id: number;
   name: string;
@@ -64,12 +66,8 @@ export interface Menu {
   name: string;
   imageUrl: string | null;
   price: number;
-  category: string;
+  category: MenuCategory;
   storeId: number;
-}
-
-export interface MenuData {
-  Bap: Menu[];
 }
 
 export interface ReservationResponse {

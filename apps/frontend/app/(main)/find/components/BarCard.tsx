@@ -4,7 +4,6 @@ import { Store } from "@/app/type";
 import { formatToHHMM, formatWithComma } from "@/lib/utils";
 import Arrow from "@/public/icons/icon_arrow.svg";
 import Location from "@/public/icons/icon_location.svg";
-import Clock from "@/public/icons/orangeClock.svg";
 import Money from "@/public/icons/orangeMoney.svg";
 import Image from "next/image";
 import Link from "next/link";

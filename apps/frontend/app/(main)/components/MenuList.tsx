@@ -18,13 +18,13 @@ export function MenuList({ storeId }: { storeId: number }) {
   }, []);
 
   return (
-    <div className="bg-amber-200 p-5">
-      <p className="text-lg font-medium">메뉴 미리보기</p>
+    <div className="py-5">
+      <p className="px-5 text-lg font-medium">메뉴 미리보기</p>
       <Carousel opts={{ align: "start" }}>
         <CarouselContent className="my-[14px] ml-1">
           {menus.map(menu => (
             <CarouselItem className="basis-auto" key={menu.id}>
-              <MenuCard />
+              <MenuCard menu={menu} />
             </CarouselItem>
           ))}
         </CarouselContent>

@@ -1,5 +1,5 @@
-import { CreateStoreDto, CreateMenuDto } from "@/app/type";
 import { FormData } from "@/app/stores/createStore";
+import { CreateMenuDto, CreateStoreDto } from "@/app/type";
 
 // 메뉴 카테고리 enum (백엔드 Prisma enum과 일치)
 export enum MenuCategory {
@@ -22,6 +22,18 @@ export const mapCategoryToEnum = (category: string): MenuCategory => {
     음료: MenuCategory.Beverage,
   };
   return mapping[category];
+};
+
+export const mapEnumToCategory = (enumValue: MenuCategory): string => {
+  const mapping: Record<MenuCategory, string> = {
+    [MenuCategory.Tang]: "탕/전골",
+    [MenuCategory.Tuiguim]: "튀김류",
+    [MenuCategory.Bap]: "밥/식사",
+    [MenuCategory.Fruit]: "과일",
+    [MenuCategory.Maroon5]: "마른안주",
+    [MenuCategory.Beverage]: "음료",
+  };
+  return mapping[enumValue];
 };
 
 const mapCategoryToImage = (category: MenuCategory): string => {

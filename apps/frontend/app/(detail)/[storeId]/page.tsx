@@ -29,7 +29,7 @@ export default async function Page({
 
   function StoreDescription() {
     return (
-      <div className="text-color-neutral-30 bg-amber-100 p-5 text-sm font-normal">
+      <div className="text-color-neutral-30 p-5 text-sm font-normal">
         {store.description}
       </div>
     );
@@ -42,7 +42,7 @@ export default async function Page({
       <Separator />
       <StoreDescription />
       <MenuList storeId={store.id} />
-      <div className="h-26" />
+      <div className="h-[186px]" />
       <FloatingBottomBar>
         <StoreActionButtons store={store} />
       </FloatingBottomBar>
