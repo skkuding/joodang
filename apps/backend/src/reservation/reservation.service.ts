@@ -420,7 +420,7 @@ export class ReservationService {
 
     if (
       !userId &&
-      (!reservation.token || tokens?.includes(reservation.token))
+      (!reservation.token || !tokens?.includes(reservation.token))
     ) {
       throw new ForbiddenException(
         'You are not allowed to remove this reservation',
