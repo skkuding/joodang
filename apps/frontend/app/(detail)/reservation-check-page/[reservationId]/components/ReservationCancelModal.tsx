@@ -2,9 +2,11 @@
 import { safeFetcher } from "@/lib/utils";
 import CautionIcon from "@/public/icons/icon_caution.svg";
 import CloseIcon from "@/public/icons/icon_close.svg";
+import { HTTPError } from "ky";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 interface ReservationCancelModalProps {
   open: boolean;
@@ -31,16 +33,52 @@ export default function ReservationCancelModal({
   }, [open]);
 
   function handleClick() {
-    async function cancelReservation() {
+    function readTokensFromLocalStorage(): string[] {
+      if (typeof window === "undefined") return [];
       try {
-        await safeFetcher.delete(`reservation/${reservationId}`);
+        const raw = localStorage.getItem("reservationToken");
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          return parsed.filter(t => typeof t === "string" && t.length > 0);
+        }
+        return [];
+      } catch {
+        return [];
+      }
+    }
 
+    async function checkLogin(): Promise<boolean> {
+      try {
+        await safeFetcher("user/me/role").json();
+        return true;
+      } catch (e) {
+        if (e instanceof HTTPError && e.response.status === 401) return false;
+        return false;
+      }
+    }
+
+    async function cancelReservation() {
+      if (reservationId == null) return;
+      const tokens = readTokensFromLocalStorage();
+      const isLogin = await checkLogin();
+      try {
+        if (isLogin) {
+          await safeFetcher.delete(`reservation/${reservationId}`);
+        } else {
+          await safeFetcher.delete(`reservation/${reservationId}`, {
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ tokens }),
+          });
+        }
         router.push("/reservation-cancel");
         onClose();
       } catch (e) {
         console.error("Error: ", e);
+        toast.error("예약 취소에 실패했습니다. 다시 시도해주세요.");
       }
     }
+
     cancelReservation();
   }
 
@@ -51,7 +89,7 @@ export default function ReservationCancelModal({
         onClick={onClose}
       />
       <div
-        className={`bg-color-common-100 fixed absolute left-1/2 top-1/2 z-[30] flex h-[289px] w-[335px] -translate-x-1/2 -translate-y-1/2 flex-col rounded-[6px] px-5 pb-6 pt-5 ${open ? "opacity-100" : "opacity-0"} `}
+        className={`bg-color-common-100 fixed left-1/2 top-1/2 z-[30] flex h-[289px] w-[335px] -translate-x-1/2 -translate-y-1/2 flex-col rounded-[6px] px-5 pb-6 pt-5 ${open ? "opacity-100" : "opacity-0"} `}
       >
         <section className="mb-5">
           <div
