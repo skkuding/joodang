@@ -386,9 +386,8 @@ export default function LocationForm() {
       />
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="text-primary-normal mb-[2px] text-xs">3단계</div>
-        <div className="mb-10 text-xl font-medium">주점 위치</div>
-        <div className="text-color-neutral-50 mb-4 text-xs">
-          상세 위치는 최대 20자까지 등록 가능합니다
+        <div className="mb-10 text-xl font-medium">
+          위치 정보를 입력해주세요
         </div>
 
         <div className="mb-15 space-y-4">
@@ -419,8 +418,11 @@ export default function LocationForm() {
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <div className="bg-primary-normal h-1.5 w-1.5 rounded-full" />
-              <label className="font-medium">위치 선택</label>
+              <label className="font-medium">주점 위치</label>
             </div>
+            <p className="text-color-neutral-50 mb-4 text-xs">
+              상세 위치는 최대 20자까지 등록 가능합니다
+            </p>
             <div className="relative">
               <div
                 ref={mapRef}
@@ -462,10 +464,6 @@ export default function LocationForm() {
 
           {/* 상세 위치 입력 */}
           <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <div className="bg-primary-normal h-1.5 w-1.5 rounded-full" />
-              <label className="font-medium">상세 위치</label>
-            </div>
             <Input
               {...register("location")}
               placeholder="상세 위치를 입력해주세요"

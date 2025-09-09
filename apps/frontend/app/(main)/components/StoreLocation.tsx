@@ -8,9 +8,9 @@ import {
 } from "@/ui/carousel";
 import { useCallback, useEffect, useState } from "react";
 import { Store } from "../../type";
+import { Section } from "./Section";
 import { StoreCard } from "./StoreCard";
 import StoreMap from "./StoreMap";
-import { Section } from "./Section";
 
 export function StoreLocation() {
   const [api, setApi] = useState<CarouselApi>();
@@ -51,9 +51,9 @@ export function StoreLocation() {
             containScroll: "trimSnaps",
           }}
         >
-          <CarouselContent className="my-[14px] ml-1">
+          <CarouselContent className="my-[14px] ml-3">
             {stores.map(store => (
-              <CarouselItem className="basis-auto" key={store.id}>
+              <CarouselItem className="basis-auto pl-2" key={store.id}>
                 <StoreCard
                   id={store.id}
                   clubName={store.organizer}

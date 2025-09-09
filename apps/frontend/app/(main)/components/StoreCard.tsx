@@ -42,11 +42,11 @@ export function StoreCard({
             />
           </div>
           <div>
-            <p className="text-primary-normal text-[13px] font-semibold">
+            <p className="text-primary-normal text-[13px] font-medium">
               {clubName}
             </p>
-            <p className="truncate text-lg font-semibold">{storeName}</p>
-            <span className="text-sm font-medium">
+            <p className="truncate text-base font-medium">{storeName}</p>
+            <span className="text-color-neutral-50 text-sm font-normal">
               {dateFormatter(startTime, "YYYY.MM.DD")} -{" "}
               {dateFormatter(endTime, "DD")}
             </span>

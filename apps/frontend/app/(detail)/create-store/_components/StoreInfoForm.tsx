@@ -294,7 +294,7 @@ export default function StoreInfoForm() {
                     role="combobox"
                     aria-expanded={open}
                     className={cn(
-                      "border-color-neutral-95 flex-1 justify-between border text-sm font-normal",
+                      "border-color-neutral-95 flex-1 justify-between border px-4 text-sm font-normal",
                       !watch("bankCode") && "text-color-neutral-90"
                     )}
                   >

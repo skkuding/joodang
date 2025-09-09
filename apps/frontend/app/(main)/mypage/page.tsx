@@ -45,8 +45,12 @@ export default function Page() {
             <span className="text-xl font-semibold">
               {user ? user.name : "로그인하세요"}
             </span>
-            <div className="flex items-center gap-[2px]">
-              <Button variant={"ghost"} className="h-3" onClick={handleAuth}>
+            <div className="flex items-center">
+              <Button
+                variant={"ghost"}
+                className="flex h-3 gap-[2px]"
+                onClick={handleAuth}
+              >
                 <span className="text-color-neutral-40 text-xs font-normal">
                   {user ? "로그아웃" : "로그인"}
                 </span>

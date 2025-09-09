@@ -6,8 +6,8 @@ export function PawIcon({ strokeColor }: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
+      width="35"
+      height="35"
       viewBox="0 0 24 24"
       fill="none"
     >
@@ -24,8 +24,8 @@ export function HeartIcon({ strokeColor }: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
+      width="35"
+      height="35"
       viewBox="0 0 24 24"
       fill="none"
     >
@@ -43,8 +43,8 @@ export function NoodleIcon({ strokeColor }: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="21"
+      width="35"
+      height="35"
       viewBox="0 0 20 21"
       fill="none"
     >
@@ -72,8 +72,8 @@ export function LeafIcon({ strokeColor }: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
+      width="35"
+      height="35"
       viewBox="0 0 20 20"
       fill="none"
     >
@@ -92,8 +92,8 @@ export function DumbbellIcon({ strokeColor }: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="22"
-      height="14"
+      width="35"
+      height="35"
       viewBox="0 0 22 14"
       fill="none"
     >
@@ -117,8 +117,8 @@ export function BagIcon({ strokeColor }: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="21"
+      width="35"
+      height="35"
       viewBox="0 0 20 21"
       fill="none"
     >
@@ -154,8 +154,8 @@ export function MonitorIcon({ strokeColor }: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
+      width="35"
+      height="35"
       viewBox="0 0 24 24"
       fill="none"
     >
@@ -173,8 +173,8 @@ export function HospitalIcon({ strokeColor }: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="19"
-      height="19"
+      width="35"
+      height="35"
       viewBox="0 0 19 19"
       fill="none"
     >
@@ -198,8 +198,8 @@ export function HouseIcon({ strokeColor }: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
+      width="35"
+      height="35"
       viewBox="0 0 24 24"
       fill="none"
     >
@@ -217,8 +217,8 @@ export function KeyIcon({ strokeColor }: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
+      width="35"
+      height="35"
       viewBox="0 0 20 20"
       fill="none"
     >
