@@ -12,8 +12,9 @@ export function urlBase64ToUint8Array(base64String: string) {
 
 export async function requestPermissionAndSubscribe() {
   if (typeof window === "undefined") return;
+
   if (!("Notification" in window) || !("serviceWorker" in navigator)) {
-    alert("이 브라우저는 알림을 지원하지 않아요. PWA 설치를 해주세요.");
+    window.dispatchEvent(new CustomEvent("push:unsupported"));
     return;
   }
 
@@ -25,12 +26,15 @@ export async function requestPermissionAndSubscribe() {
   // 권한 상태 확인
   const perm = Notification.permission;
   if (perm === "denied") {
-    alert("알림 권한이 차단되어 있어요. 브라우저 설정에서 허용해 주세요.");
+    window.dispatchEvent(new CustomEvent("push:denied"));
     return;
   }
   if (perm === "default") {
     const res = await Notification.requestPermission();
-    if (res !== "granted") return;
+    if (res !== "granted") {
+      window.dispatchEvent(new CustomEvent("push:denied"));
+      return;
+    }
   }
 
   // 서버에서 VAPID 퍼블릭키 받기
@@ -42,20 +46,26 @@ export async function requestPermissionAndSubscribe() {
   const existing = await registration.pushManager.getSubscription();
   if (existing) {
     console.log("이미 구독 정보가 존재합니다. 서버에 다시 등록하지 않습니다.");
+    window.dispatchEvent(new CustomEvent("push:already"));
     return; // 기존 구독이 있으면 함수 종료
   }
-  const sub =
-    existing ||
-    (await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(publicKey),
-    }));
+
+  const sub = await registration.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: urlBase64ToUint8Array(publicKey),
+  });
 
   // 서버에 구독 저장 (로그인 필요 시 서버에서 userId 바인딩)
-  await fetch(`${baseUrl}/notification/push-subscription`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(sub.toJSON()),
-    credentials: "include",
-  });
+  try {
+    await fetch(`${baseUrl}/notification/push-subscription`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(sub.toJSON()),
+      credentials: "include",
+    });
+    window.dispatchEvent(new CustomEvent("push:subscribed"));
+  } catch (e) {
+    console.warn("서버 구독 저장 실패:", e);
+    window.dispatchEvent(new CustomEvent("push:error"));
+  }
 }

@@ -6,6 +6,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import KeyboardInsetWatcher from "./components/KeyboardInsetWatcher";
 import "./globals.css";
+import { PushPermissionModal } from "./components/PushPermissionModal";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -263,6 +264,7 @@ export default function RootLayout({
           <main className="pt-21 h-full">
             <KeyboardInsetWatcher />
             {children}
+            <PushPermissionModal />
           </main>
         </FilterProvider>
       </body>
