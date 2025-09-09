@@ -12,15 +12,16 @@ import { safeFetcher } from "@/lib/utils";
 async function getUser() {
   const cookieHeader = cookies().toString();
 
-  const res = await safeFetcher("user/me", {
-    headers: {
-      cookie: cookieHeader,
-    },
-  });
-
-  if (!res) return null;
-
-  return (await res.json()) as Partial<User>;
+  try {
+    const res = await safeFetcher("user/me", {
+      headers: {
+        cookie: cookieHeader,
+      },
+    }).json();
+    return res as Partial<User>;
+  } catch {
+    return null;
+  }
 }
 
 export default async function Page() {
