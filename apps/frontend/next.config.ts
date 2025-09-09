@@ -1,48 +1,6 @@
-// next.config.ts
 import type { NextConfig } from "next";
 import withPWAOrig from "next-pwa";
 
-const NAVER_FONT_PBF_RANGES = [
-  "0-255",
-  "44032-44287",
-  "44288-44543",
-  "44544-44799",
-  "45312-45567",
-  "45568-45823",
-  "45824-46079",
-  "47104-47359",
-  "47360-47615",
-  "47616-47871",
-  "47872-48127",
-  "48128-48383",
-  "48384-48639",
-  "49152-49407",
-  "49408-49663",
-  "49664-49919",
-  "50432-50687",
-  "50688-50943",
-  "50944-51199",
-  "51200-51455",
-  "51456-51711",
-  "52224-52479",
-  "52480-52735",
-  "53504-53759",
-  "53760-54015",
-  "54272-54527",
-  "54528-54783",
-  "54784-55039",
-  "65024-65279",
-  "65280-65535",
-];
-
-// 지도 style.json (커스텀 스타일 ID가 고정이라면 precache 가능; 변경 주기 적음)
-// 여러 스타일 사용 시 배열 확장
-const NAVER_MAP_STYLE_JSONS: string[] = [
-  // 필요 시 실제 style ID 전체 URL 넣기. 예: "https://mape.pstatic.net/styler/api/v1/style/<STYLE_ID>/style.json"
-];
-
-// public/ 내 정적 자산 탐색 결과(빌드 타임에 Known): 설치 시점 precache
-// 변경 시 파일명(revision) 변경 없으면 캐시 무효화 되지 않으므로, 이름 변경 또는 hash 전략 권장
 const PUBLIC_ASSETS = [
   "android-maskable-1280x1280.png",
   "android-maskable-128x128.png",
@@ -150,14 +108,10 @@ const PUBLIC_ASSETS = [
   ].map(f => `splash_screens/${f}`),
 ];
 
-const additionalManifestEntries = [
-  ...NAVER_FONT_PBF_RANGES.map(range => ({
-    url: `https://mape.pstatic.net/styler/api/v1/font/sdf/NotoSansCJKkr-Medium/${range}.pbf`,
-    revision: range,
-  })),
-  ...NAVER_MAP_STYLE_JSONS.map(url => ({ url, revision: url })),
-  ...PUBLIC_ASSETS.map(path => ({ url: `/${path}`, revision: path })),
-];
+const additionalManifestEntries = PUBLIC_ASSETS.map(path => ({
+  url: `/${path}`,
+  revision: path,
+}));
 
 const withPWA = withPWAOrig({
   dest: "public",
