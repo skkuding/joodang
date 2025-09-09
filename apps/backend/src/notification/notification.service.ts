@@ -423,15 +423,10 @@ export class NotificationService {
       title,
       message,
       type: 'OwnerApplication',
-      url: '/admin/owner-applications',
+      url: '/',
     })
 
-    await this.sendPushNotification(
-      receivers,
-      title,
-      message,
-      '/admin/owner-applications',
-    )
+    await this.sendPushNotification(receivers, title, message, '/')
   }
 
   async notifyOwnerConfirmed(userId: number) {

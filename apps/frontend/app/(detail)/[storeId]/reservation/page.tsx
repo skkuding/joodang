@@ -240,8 +240,13 @@ export default function Page() {
     store.timeSlots.forEach(slot => {
       // UTC 시간을 한국 시간으로 변환하여 날짜 키 생성
       const utcDate = new Date(slot.startTime);
-      const kstDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000);
-      const dateKey = kstDate.toDateString();
+      const dateKey = utcDate.toLocaleDateString("ko-KR", {
+        timeZone: "Asia/Seoul",
+        weekday: "short",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
 
       if (!slotsMap.has(dateKey)) {
         slotsMap.set(dateKey, []);
@@ -299,7 +304,10 @@ export default function Page() {
   if (!store) {
     return null;
   }
-
+  console.log("availableDates:", availableDates);
+  console.log("selecred date:", selectedDate);
+  console.log("selected time slot:", selectedTimeSlot);
+  console.log("selected time slot index:", selectedTimeSlotIndex);
   return (
     <div>
       <AuthSheet />

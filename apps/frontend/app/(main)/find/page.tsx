@@ -40,7 +40,6 @@ export default function BarPage() {
         url += `&startTime=${kstDateTimeToUtcIso(filterValue.days)}&endTime=${kstDateTimeToUtcIso(filterValue.days, "23:59")}`;
       }
       const stores: Store[] = await safeFetcher(url).json();
-      console.log("stores: ", stores);
       setStores(stores);
     }
     fetchStores();
