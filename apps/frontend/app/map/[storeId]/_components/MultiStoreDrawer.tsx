@@ -34,6 +34,7 @@ export function MultiStoreDrawer({ stores, mylocationfunc }: StoreDrawerProps) {
     <motion.div
       className="fixed bottom-[-390px] left-0 right-0 z-50 mx-auto w-full rounded-t-2xl border bg-white shadow-lg"
       style={{ height: `${height * 100}vh`, touchAction: "none" }}
+      data-map-overlay-height={height}
       drag="y"
       dragConstraints={{ top: 0, bottom: 0 }}
       onDragEnd={(_, info) => {
