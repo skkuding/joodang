@@ -152,9 +152,9 @@ export class ReservationService {
       )
     }
 
-    const dayStart = now
+    const dayStart = new Date()
     dayStart.setHours(0, 0, 0, 0)
-    const dayEnd = now
+    const dayEnd = new Date()
     dayEnd.setHours(23, 59, 59, 999)
     let token: string | undefined = undefined
 
@@ -239,7 +239,7 @@ export class ReservationService {
         })
       }
 
-      const { menuIds, ...rest } = createWalkInReservationDto
+      const { menuIds, tokens, ...rest } = createWalkInReservationDto
 
       const reservation = await tx.reservation.create({
         data: {
