@@ -91,12 +91,12 @@ export function Footer() {
                   width={32}
                   height={32}
                 />
-                <p className="text-xs text-[#FF5940]">홈</p>
+                <p className="select-none text-xs text-[#FF5940]">홈</p>
               </>
             ) : (
               <>
                 <Image src={GrayHouse} alt="회색 집" width={32} height={32} />
-                <p className="text-xs text-[#9B9B9B]">홈</p>
+                <p className="select-none text-xs text-[#9B9B9B]">홈</p>
               </>
             )}
           </div>
@@ -123,7 +123,7 @@ export function Footer() {
                   width={34}
                   height={34}
                 />
-                <p className="text-xs text-[#FF5940]">
+                <p className="select-none text-xs text-[#FF5940]">
                   {role === RoleEnum.STAFF ||
                   role === RoleEnum.OWNER ||
                   role === RoleEnum.ADMIN
@@ -134,7 +134,7 @@ export function Footer() {
             ) : (
               <>
                 <Image src={GrayBeer} alt="회색 맥주" width={34} height={34} />
-                <p className="text-xs text-[#9B9B9B]">
+                <p className="select-none text-xs text-[#9B9B9B]">
                   {role === RoleEnum.STAFF ||
                   role === RoleEnum.OWNER ||
                   role === RoleEnum.ADMIN
@@ -168,7 +168,7 @@ export function Footer() {
                   width={32}
                   height={32}
                 />
-                <p className="text-xs text-[#FF5940]">
+                <p className="select-none text-xs text-[#FF5940]">
                   {role === RoleEnum.STAFF ||
                   role === RoleEnum.OWNER ||
                   role === RoleEnum.ADMIN
@@ -184,7 +184,7 @@ export function Footer() {
                   width={32}
                   height={32}
                 />
-                <p className="text-xs text-[#9B9B9B]">
+                <p className="select-none text-xs text-[#9B9B9B]">
                   {role === RoleEnum.STAFF ||
                   role === RoleEnum.OWNER ||
                   role === RoleEnum.ADMIN
@@ -209,7 +209,9 @@ export function Footer() {
                   width={20}
                   height={20}
                 />
-                <p className="mt-1 text-xs text-[#FF5940]">마이페이지</p>
+                <p className="mt-1 select-none text-xs text-[#FF5940]">
+                  마이페이지
+                </p>
               </>
             ) : (
               <>
@@ -219,7 +221,9 @@ export function Footer() {
                   width={20}
                   height={20}
                 />
-                <p className="mt-1 text-xs text-[#9B9B9B]">마이페이지</p>
+                <p className="mt-1 select-none text-xs text-[#9B9B9B]">
+                  마이페이지
+                </p>
               </>
             )}
           </div>
