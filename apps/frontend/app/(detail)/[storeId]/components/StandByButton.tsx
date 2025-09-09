@@ -54,15 +54,32 @@ function StandByButtonForm({
 
   const onSubmit: SubmitHandler<CreateStandByInput> = async data => {
     try {
+      function readTokensFromLocalStorage(): string[] {
+        if (typeof window === "undefined") return [];
+        try {
+          const raw = localStorage.getItem("reservationToken");
+          if (!raw) return [];
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            return parsed.filter(t => typeof t === "string" && t.length > 0);
+          }
+          return [];
+        } catch {
+          return [];
+        }
+      }
+
       const standByData = {
         headcount: data.headcount,
         storeId: data.storeId,
         phone: `010${data.phoneMiddle}${data.phoneLast}`,
       };
 
+      const tokens = readTokensFromLocalStorage();
+
       const response = await safeFetcher.post("reservation/walkin", {
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(standByData),
+        body: JSON.stringify({ ...standByData, tokens }),
       });
       const reservationResponse: ReservationResponse = await response.json();
 

@@ -158,9 +158,8 @@ export default function ReservationDetail() {
             </div>
           </div>
           <div className="flex">
-            <Image
-              src={Clock}
-              alt="시간"
+            <object
+              data="icons/orangeClock.svg"
               width={12}
               height={12}
               className="ml-[2px] mr-1"

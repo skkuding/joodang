@@ -49,15 +49,7 @@ export class MenuService {
       },
     })
 
-    const groupedMenus = menus.reduce((acc, menu) => {
-      if (!acc[menu.category]) {
-        acc[menu.category] = []
-      }
-      acc[menu.category].push(menu)
-      return acc
-    }, {})
-
-    return groupedMenus
+    return menus
   }
 
   async getMenu(id: number) {
