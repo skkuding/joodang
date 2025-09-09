@@ -195,7 +195,10 @@ export function StandByButton() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="w-full" variant={"outline"}>
+        <Button
+          className="border-primary-normal text-primary-normal w-full"
+          variant={"outline"}
+        >
           현장 대기
         </Button>
       </DialogTrigger>

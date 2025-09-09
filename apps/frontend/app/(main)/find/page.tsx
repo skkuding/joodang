@@ -70,7 +70,7 @@ export default function BarPage() {
                   width={12}
                   height={12}
                 />
-                <p className="font-sans text-xs font-normal leading-[140%] tracking-[-0.36px] text-[#FF5940]">
+                <p className="text-primary-normal font-sans text-xs font-normal leading-[140%] tracking-[-0.36px]">
                   지도에서 찾기
                 </p>
               </button>

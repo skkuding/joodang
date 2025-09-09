@@ -17,12 +17,12 @@ export default function CancelSucessPage() {
 
       <section className="mt-auto flex w-full flex-col space-y-[10px] px-5">
         <Link href="/find">
-          <button className="text-color-common-100 inline-flex w-full items-center justify-center rounded-md bg-[#FF5940] px-4 py-3.5 text-base font-medium leading-snug">
+          <button className="text-color-common-100 bg-primary-normal inline-flex w-full items-center justify-center rounded-md px-4 py-3.5 text-base font-medium leading-snug">
             다른 주점 둘러보기
           </button>
         </Link>
         <Link href="/">
-          <button className="bg-color-common-100 inline-flex w-full items-center justify-center rounded-md border border-[#FF5940] px-4 py-3.5 text-base font-medium leading-snug text-[#FF5940]">
+          <button className="bg-color-common-100 border-primary-normal inline-flex w-full items-center justify-center rounded-md border px-4 py-3.5 text-base font-medium leading-snug text-[#FF5940]">
             홈으로 돌아가기
           </button>
         </Link>
