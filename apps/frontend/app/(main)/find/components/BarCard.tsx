@@ -14,18 +14,19 @@ interface BarCardProps {
 
 export default function BarCard({ store }: BarCardProps) {
   return (
-    <Link href={`/${String(store.id)}`}>
+    <Link href={`/${String(store.id)}`} className="w-full">
       <div
-        className="h-[284px] w-[335px] overflow-hidden rounded-[6px]"
+        className="h-[284px] w-full overflow-hidden rounded-[6px]"
         style={{ boxShadow: "0 0 20px 0 rgba(0, 0, 0, 0.12)" }}
       >
-        <Image
-          src={store.imageUrl}
-          alt="Store Image"
-          className="h-[110px] object-cover object-center"
-          height={100}
-          width={335}
-        />
+        <div className="relative h-[110px] w-full">
+          <Image
+            src={store.imageUrl}
+            alt="Store Image"
+            className="object-cover object-center"
+            fill
+          />
+        </div>
 
         <div className="px-5 pb-5 pt-[14px]">
           <div className="text-xs font-normal leading-[140%] tracking-[-0.36px] text-[#FF5940]">
@@ -37,7 +38,7 @@ export default function BarCard({ store }: BarCardProps) {
             </div>
             <Image src={Arrow} alt="화살표" width={18} height={18} />
           </div>
-          <div className="bg-color-neutral-99 flex h-[87px] w-[295px] flex-col items-start justify-center gap-1 self-stretch rounded-[6px] p-2">
+          <div className="bg-color-neutral-99 flex h-[87px] w-full flex-col items-start justify-center gap-1 self-stretch rounded-[6px] p-2">
             <div className="flex w-full flex-row items-center">
               <Image
                 src={Location}

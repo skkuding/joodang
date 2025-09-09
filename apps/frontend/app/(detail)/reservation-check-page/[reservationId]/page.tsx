@@ -14,12 +14,12 @@ import Arrow from "@/public/icons/icon_arrow.svg";
 import Location from "@/public/icons/icon_location.svg";
 import Money from "@/public/icons/orangeMoney.svg";
 import OrangeDot from "@/public/icons/orange_dot.svg";
+import { HTTPError } from "ky";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import ReservationCancelModal from "./components/ReservationCancelModal";
-import { HTTPError } from "ky";
 
 export default function ReservationDetail() {
   const [store, setStore] = useState<Store>({
@@ -120,7 +120,7 @@ export default function ReservationDetail() {
   }, []);
 
   return (
-    <div className="bg-color-neutral-99 flex min-h-screen flex-col">
+    <div className="bg-color-neutral-99 flex min-h-screen flex-col tracking-[-0.03em]">
       <ReservationCancelModal
         open={isModalVisible}
         onClose={() => {
@@ -133,14 +133,14 @@ export default function ReservationDetail() {
       {/* 윗 부분 */}
       <div className="bg-color-common-100 mb-[10px] p-5">
         <div>
-          <p className="justify-start font-['Pretendard'] text-xs font-normal leading-none text-red-500">
+          <p className="justify-start text-xs font-normal leading-none text-red-500">
             {reservation?.store.college} | {reservation?.store.organizer}
           </p>
-          <p className="mb-3 h-7 w-64 justify-start font-['Pretendard'] text-xl font-medium leading-7 text-black">
+          <p className="mb-3 h-7 w-64 justify-start text-xl font-medium leading-7 text-black">
             {reservation?.store.name}
           </p>
         </div>
-        <div className="text-color-neutral-40 justify-start space-y-1 font-['Pretendard'] text-sm font-normal leading-tight">
+        <div className="text-color-neutral-40 flex flex-col justify-start gap-1 text-sm font-normal leading-tight">
           <div className="flex">
             <Image
               src={Location}
@@ -187,7 +187,7 @@ export default function ReservationDetail() {
           </div>
         </div>
 
-        <div className="bg-color-neutral-99 mt-2 justify-start space-y-[6px] rounded-md px-4 py-3 font-['Pretendard'] text-sm font-normal leading-tight text-zinc-700">
+        <div className="bg-color-neutral-99 mt-2 justify-start space-y-[6px] rounded-md px-4 py-3 text-sm font-normal leading-tight text-zinc-700">
           <div className="flex">
             <Image src={OrangeDot} alt="주황닷" width={6} height={6} />
             <div className="ml-2 flex w-full justify-between">
@@ -208,7 +208,7 @@ export default function ReservationDetail() {
       </div>
 
       {/* 아랫 부분 */}
-      <div className="bg-color-common-100 flex flex-1 flex-col justify-start gap-6 px-5 pt-5 font-['Pretendard'] text-base font-normal leading-normal text-zinc-700">
+      <div className="bg-color-common-100 flex flex-1 flex-col justify-start gap-6 px-5 pt-5 text-base font-normal leading-normal text-zinc-700">
         <div className="flex">
           <Image src={OrangeDot} alt="주황닷" width={6} height={6} />
           <div className="ml-2 flex w-full justify-between">
@@ -237,7 +237,16 @@ export default function ReservationDetail() {
             <p className="text-color-common-0">{reservation?.headcount}명</p>
           </div>
         </div>
-        <div className="flex flex-col space-y-2">
+        <div className="flex">
+          <Image src={OrangeDot} alt="주황닷" width={6} height={6} />
+          <div className="ml-2 flex w-full justify-between">
+            <p>예약 번호</p>
+            <p className="text-color-common-0">
+              {reservation?.reservationNum}번
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-col">
           <div className="flex">
             <Image src={OrangeDot} alt="주황닷" width={6} height={6} />
             <div className="ml-2 flex w-full justify-between">
@@ -261,11 +270,11 @@ export default function ReservationDetail() {
             <StoreMap stores={[store]} current={0} />
           </div>
         </div>
-        <div className="h-10" />
+        <div className="h-[125px]" />
 
         <FloatingBottomBar>
           <button
-            className="h-11 w-full rounded-xl bg-[#FF5940] text-sm font-medium text-white"
+            className="h-11 w-full rounded-md bg-[#FF5940] text-sm font-medium text-white"
             onClick={() => {
               setIsModalVisible(true);
             }}
