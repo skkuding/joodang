@@ -10,6 +10,7 @@ export default function MainLayout({
     <div>
       <Header />
       <div>{children}</div>
+      <div className="h-20" />
       <Footer />
     </div>
   );
