@@ -31,11 +31,11 @@ export default function ReservationCard({ data }: ReservationCardProps) {
       />
 
       <div className="px-5 pb-5 pt-[14px]">
-        <div className="mb-[2px] text-xs font-normal leading-[140%] tracking-[-0.36px] text-[#FF5940]">
+        <div className="mb-[2px] select-none text-xs font-normal leading-[140%] tracking-[-0.36px] text-[#FF5940]">
           {data.store.organizer}
         </div>
         <div className="mb-3 flex h-[22px] flex-row justify-between">
-          <div className="text-color-common-0 text-base font-medium leading-[140%] tracking-[-0.48px]">
+          <div className="text-color-common-0 no-select text-base font-medium leading-[140%] tracking-[-0.48px]">
             {data.store.name}
           </div>
           <Image src={Arrow} alt="화살표" width={18} height={18} />
@@ -43,10 +43,10 @@ export default function ReservationCard({ data }: ReservationCardProps) {
         <div className="bg-color-neutral-99 flex h-[87px] w-[295px] flex-col items-start justify-center gap-1 self-stretch rounded-[6px] p-2">
           <div className="flex w-full flex-row items-center">
             <Image src={Location} alt="위치" className="mr-1 h-4 w-4" />
-            <p className="text-color-neutral-40 text-sm font-normal leading-[150%] tracking-[-0.56px]">
+            <p className="text-color-neutral-40 select-none text-sm font-normal leading-[150%] tracking-[-0.56px]">
               위치
             </p>
-            <p className="text-color-neutral-20 ml-auto text-sm font-normal leading-[150%] tracking-[-0.56px]">
+            <p className="text-color-neutral-20 ml-auto select-none text-sm font-normal leading-[150%] tracking-[-0.56px]">
               {data.store.location}
             </p>
           </div>
@@ -55,7 +55,7 @@ export default function ReservationCard({ data }: ReservationCardProps) {
               data="/icons/icon_gray_clock.png"
               className="mr-1 h-[16.5px] w-4"
             />
-            <p className="text-color-neutral-40 text-sm font-normal leading-[150%] tracking-[-0.56px]">
+            <p className="text-color-neutral-40 select-none text-sm font-normal leading-[150%] tracking-[-0.56px]">
               운영 시간
             </p>
             <p className="text-color-neutral-20 ml-auto text-sm font-normal leading-[150%] tracking-[-0.56px]">
@@ -71,7 +71,7 @@ export default function ReservationCard({ data }: ReservationCardProps) {
               height={16}
               className="mr-1"
             />
-            <p className="text-color-neutral-40 text-sm font-normal leading-[150%] tracking-[-0.56px]">
+            <p className="text-color-neutral-40 select-none text-sm font-normal leading-[150%] tracking-[-0.56px]">
               입장료
             </p>
             <p className="text-color-neutral-20 ml-auto text-sm font-normal leading-[150%] tracking-[-0.56px]">
