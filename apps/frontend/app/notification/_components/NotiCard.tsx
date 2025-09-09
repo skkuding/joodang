@@ -68,6 +68,10 @@ export default async function NotiCard({ noti }: NotiCardProps) {
             <p>{storeData?.location}</p>
           </div>
         </div>
+      ) : noti.message === "오래 기다리셨습니다. 지금 방문해주세요!" ? (
+        <p className="mt-2 text-sm text-gray-700">
+          5분 이내로 {storeData?.name}에 방문해주세요.
+        </p>
       ) : (
         ""
       )}
