@@ -77,11 +77,7 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
         gl: true,
       });
     } else {
-      try {
-        const anyMap: any = mapInstanceRef.current;
-        if (anyMap && typeof anyMap.panTo === "function") anyMap.panTo(center);
-        else mapInstanceRef.current.setCenter(center);
-      } catch {}
+      try { mapInstanceRef.current.panTo(center); } catch {}
     }
 
     if (selectedStore && mapInstanceRef.current) {
