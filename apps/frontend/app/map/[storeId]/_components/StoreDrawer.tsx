@@ -35,7 +35,7 @@ export function StoreDrawer({ store, mylocationfunc }: StoreDrawerProps) {
       dragConstraints={{ top: 0, bottom: 0 }}
       onDragEnd={(_, info) => {
         const currentHeight = height;
-        const threshold = (expanded + collapsed) / 2;
+        const threshold = 0.3;
 
         // 드래그로 변경된 최종 위치 비율 계산
         const newHeight = currentHeight - info.offset.y / window.innerHeight;
