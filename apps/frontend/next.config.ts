@@ -14,7 +14,7 @@ const withPWA = withPWAOrig({
       handler: "CacheFirst",
       options: {
         cacheName: "next-image",
-        expiration: { maxEntries: 300, maxAgeSeconds: 60 * 60 * 24 * 30 },
+        expiration: { maxEntries: 500, maxAgeSeconds: 60 * 60 * 24 * 30 },
         cacheableResponse: { statuses: [0, 200] },
       },
     },
@@ -35,6 +35,16 @@ const withPWA = withPWAOrig({
       options: {
         cacheName: "naver-map-pbf",
         expiration: { maxEntries: 400, maxAgeSeconds: 60 * 60 * 24 * 365 },
+        cacheableResponse: { statuses: [0, 200] },
+      },
+    },
+    {
+      urlPattern:
+        /https:\/\/mape\.pstatic\.net\/styler\/api\/v1\/style\/.*\/style\.json(?:\?|$)/,
+      handler: "CacheFirst",
+      options: {
+        cacheName: "naver-map-style-json",
+        expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 * 365 },
         cacheableResponse: { statuses: [0, 200] },
       },
     },
