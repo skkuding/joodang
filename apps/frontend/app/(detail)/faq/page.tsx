@@ -27,14 +27,16 @@ export default function Page() {
 
   function FAQList() {
     return (
-      <div className="flex flex-col items-center bg-amber-100 px-5 py-[30px]">
+      <div className="flex flex-col items-center px-5 py-[30px]">
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="item-1">
             <AccordionTrigger>
               <FormSection title={"이러이러한 경우는 어떻게 하나요?"} />
             </AccordionTrigger>
             <AccordionContent>
-              Yes. It adheres to the WAI-ARIA design pattern.
+              <div className="bg-color-neutral-99 rounded p-4 text-sm font-normal">
+                김우주바보
+              </div>
             </AccordionContent>
           </AccordionItem>
         </Accordion>

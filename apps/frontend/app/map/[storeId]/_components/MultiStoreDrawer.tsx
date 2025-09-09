@@ -37,20 +37,20 @@ export function MultiStoreDrawer({ stores, mylocationfunc }: StoreDrawerProps) {
       drag="y"
       dragConstraints={{ top: 0, bottom: 0 }}
       onDragEnd={(_, info) => {
-        const currentHeight = height;
-        const threshold = 0.3;
-
-        // 드래그로 변경된 최종 위치 비율 계산
-        const newHeight = currentHeight - info.offset.y / window.innerHeight;
-
-        if (newHeight >= threshold) {
+        // 드래그 방향만 체크 - 위로 드래그했으면 확장, 아래로 드래그했으면 축소
+        if (info.offset.y < 0) {
+          // 위로 드래그
           setHeight(expanded);
         } else {
+          // 아래로 드래그
           setHeight(collapsed);
         }
       }}
       animate={{ height: `${height * 100}vh` }}
-      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      transition={{
+        duration: 0.3, // 애니메이션 시간 (0.4초)
+        ease: "easeOut", // 부드러운 감속 효과
+      }}
       onTouchMove={e => e.stopPropagation()}
       onWheel={e => e.stopPropagation()}
     >
