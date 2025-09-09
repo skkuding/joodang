@@ -122,7 +122,7 @@ export default function Page() {
         const shareData = {
           title: "Joodang",
           text: "주당에서 스탭으로 초대합니다",
-          url: `http://localhost:5525/invite-staff?storeId=${storeId}&inviteCode=${response.inviteCode}`,
+          url: `https://joodang.com/invite-staff?storeId=${storeId}&inviteCode=${response.inviteCode}`,
         };
 
         await navigator.share(shareData);
