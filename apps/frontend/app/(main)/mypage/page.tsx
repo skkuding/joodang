@@ -39,7 +39,16 @@ export default async function Page() {
   return (
     <div className="flex flex-col">
       <div className="flex gap-3 p-5">
-        <Image src={defaultProfileIcon} alt="Default Profile" />
+        <div className="bg-color-neutral-20 relative h-[54px] w-[54px] flex-shrink-0 overflow-hidden rounded-full">
+          <Image
+            src={user?.profileImageUrl ?? defaultProfileIcon}
+            alt="Profile"
+            fill
+            sizes="54px"
+            className="object-cover"
+            priority
+          />
+        </div>
         <div className="flex w-full flex-col">
           <div className="flex justify-between">
             <span className="text-xl font-semibold">

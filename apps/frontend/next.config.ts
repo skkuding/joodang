@@ -66,6 +66,9 @@ const nextConfig: NextConfig = withPWA({
       { protocol: "https", hostname: "joodang.com", pathname: "/**" },
       { protocol: "https", hostname: "storage.joodang.com", pathname: "/**" },
       { protocol: "http", hostname: "localhost", pathname: "/**" }, // dev
+      { protocol: "https", hostname: "k.kakaocdn.net", pathname: "/**" }, // kakao profile images
+      { protocol: "https", hostname: "img1.kakaocdn.net", pathname: "/**" },
+      { protocol: "http", hostname: "t1.kakaocdn.net", pathname: "/**" },
     ],
     formats: ["image/avif", "image/webp"],
   },
