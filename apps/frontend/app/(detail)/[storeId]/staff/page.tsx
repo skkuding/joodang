@@ -5,7 +5,7 @@ import { RoleEnum, StoreDetail } from "@/app/type";
 import { safeFetcher } from "@/lib/utils";
 import { Button } from "@/ui/button";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { StoreInfoHeader } from "../../components/StoreInfo";
 import { DeleteStaffButton } from "./components/DeleteStaffButton";
 
@@ -22,6 +22,19 @@ export default function Page() {
   const [role, setRole] = useState<RoleEnum | null>(null);
   const [store, setStore] = useState<StoreDetail | null>(null);
   const [staffs, setStaffs] = useState<Staff[]>([]);
+
+  const fetchStaffs = useCallback(async () => {
+    if (!storeId) return;
+    try {
+      const staffs: Staff[] = await safeFetcher
+        .get(`store/${storeId}/staff`)
+        .json();
+      setStaffs(staffs);
+      console.log(staffs);
+    } catch (error) {
+      console.error("Failed to fetch staffs:", error);
+    }
+  }, [storeId]);
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -39,14 +52,6 @@ export default function Page() {
           setRole(RoleEnum.ADMIN);
         }
       } catch {}
-    };
-
-    const fetchStaffs = async () => {
-      const staffs: Staff[] = await safeFetcher
-        .get(`store/${storeId}/staff`)
-        .json();
-      setStaffs(staffs);
-      console.log(staffs);
     };
 
     checkAuth();
@@ -89,13 +94,14 @@ export default function Page() {
           ) : (
             staffs.map(staff => (
               <div
-                className="flex w-full justify-between px-4 py-[10px] text-sm font-normal"
+                className="flex w-full items-center justify-between px-4 py-[10px] text-sm font-normal"
                 key={staff.user.id}
               >
                 {staff.user.name}
                 <DeleteStaffButton
                   storeId={storeId.toString()}
                   staffId={staff.user.id}
+                  onDelete={fetchStaffs}
                 />
               </div>
             ))
@@ -116,13 +122,13 @@ export default function Page() {
     const handleAddStaff = async () => {
       try {
         const response: InvitationResponse = await safeFetcher
-          .get(`store/${storeId}/staff/invitation`)
+          .post(`store/${storeId}/staff/invitation`)
           .json();
 
         const shareData = {
           title: "Joodang",
           text: "주당에서 스탭으로 초대합니다",
-          url: `http://localhost:5525/invite-staff?inviteCode=${response.inviteCode}`,
+          url: `https://joodang.com/invite-staff?storeId=${storeId}&inviteCode=${response.inviteCode}`,
         };
 
         await navigator.share(shareData);

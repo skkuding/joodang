@@ -6,18 +6,12 @@ import logoText from "@/public/logo_text.svg";
 import { Button } from "@/ui/button";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
 import { FloatingBottomBar } from "../components/FloatingBottomBar";
 
 export default function InviteStaffContent() {
   const searchParams = useSearchParams();
-  const inviteCode = searchParams.get("code"); // "coinviteCodede" 오타 수정
-
-  useEffect(() => {
-    if (inviteCode) {
-      localStorage.setItem("inviteCode", inviteCode);
-    }
-  }, [inviteCode]);
+  const inviteCode = searchParams.get("inviteCode");
+  const storeId = searchParams.get("storeId");
 
   return (
     <div className="fixed bottom-0 left-0 right-0 flex h-full flex-col items-center justify-center px-5">
@@ -37,9 +31,12 @@ export default function InviteStaffContent() {
       </div>
       <FloatingBottomBar>
         <Button
-          className="h-[55px] w-full rounded bg-[#fee500] text-black"
+          className="h-[55px] w-full rounded bg-[#fee500] text-black hover:bg-[#fee500]"
           onClick={() => {
-            window.location.href = `https://api.joodang.com/auth/kakao`;
+            const returnTo = encodeURIComponent(
+              `/${storeId}?inviteCode=${inviteCode}`
+            );
+            window.location.href = `https://api.joodang.com/auth/kakao?returnTo=${returnTo}`;
           }}
         >
           <Image src={kakaoIcon} alt="Kakao Icon" />

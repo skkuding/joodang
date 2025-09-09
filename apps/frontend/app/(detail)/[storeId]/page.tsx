@@ -5,14 +5,17 @@ import Image from "next/image";
 import { safeFetcher } from "../../../lib/utils";
 import { StoreDetail } from "../../type";
 import { StoreInfo } from "../components/StoreInfo";
+import { InviteCodeHandler } from "./components/InviteCodeHandler";
 import { StoreActionButtons } from "./components/StoreActionButtons";
 
-export default async function Page({
-  params,
-}: {
+interface PageProps {
   params: { storeId: string };
-}) {
-  const storeId = params.storeId;
+  searchParams: { inviteCode?: string };
+}
+
+export default async function Page({ params, searchParams }: PageProps) {
+  const { storeId } = await params;
+  const { inviteCode } = await searchParams;
   const store: StoreDetail = await safeFetcher.get(`store/${storeId}`).json();
 
   function StoreImage() {
@@ -37,6 +40,7 @@ export default async function Page({
 
   return (
     <div>
+      {inviteCode && <InviteCodeHandler inviteCode={inviteCode} />}
       <StoreImage />
       <StoreInfo store={store} />
       <Separator />

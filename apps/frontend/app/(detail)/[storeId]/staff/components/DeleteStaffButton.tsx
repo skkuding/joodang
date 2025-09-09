@@ -10,19 +10,22 @@ import { toast } from "sonner";
 interface DeleteStaffButtonProps {
   storeId: string;
   staffId: number;
+  onDelete: () => void; // 삭제 후 호출할 콜백 함수 추가
 }
 
 export function DeleteStaffButton({
   storeId,
   staffId,
+  onDelete,
 }: DeleteStaffButtonProps) {
   const [open, setOpen] = useState(false);
 
   const handleDelete = async () => {
     try {
-      await safeFetcher.post(`store/${storeId}/staff/${staffId}`);
+      await safeFetcher.delete(`store/${storeId}/staff/${staffId}`);
       setOpen(false); // 성공 시 dialog 닫기
       toast.success("스탭이 삭제되었습니다.");
+      onDelete(); // 부모 컴포넌트의 fetchStaffs 호출
     } catch {
       toast.error("스탭이 존재하지 않습니다.");
     }
