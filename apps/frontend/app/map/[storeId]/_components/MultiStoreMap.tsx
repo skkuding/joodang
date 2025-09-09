@@ -5,7 +5,11 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { IoIosArrowBack } from "react-icons/io";
 import { MultiStoreDrawer } from "./MultiStoreDrawer";
-import type { NaverMapInstance, NaverMarkerInstance } from "@/types/naver";
+import type {
+  NaverMapInstance,
+  NaverMarkerInstance,
+  NaverLatLng,
+} from "@/types/naver";
 import { useSelectedStore } from "@/app/stores/useSelectedStore";
 
 declare global {
@@ -20,7 +24,10 @@ interface MultiStoreMapProps {
 
 export default function MultiStoreMap({ stores }: MultiStoreMapProps) {
   const STYLE_ID = "56e070b5-b8ce-4f3f-90a7-fc9e602ba64c";
-  const computeCenterFor = (pos: any, map: NaverMapInstance) => {
+  const computeCenterFor = (
+    pos: NaverLatLng,
+    map: NaverMapInstance
+  ): NaverLatLng => {
     const { naver } = window;
     const proj = map.getProjection();
     if (!proj) return pos; // fallback
@@ -58,7 +65,7 @@ export default function MultiStoreMap({ stores }: MultiStoreMapProps) {
     }
 
     window.__onNaverReady = () => setSdkLoaded(true);
-    if (document.getElementById("naver-maps-sdk")) return; // 이미 삽입됨
+    if (document.getElementById("naver-maps-sdk")) return;
     const script = document.createElement("script");
     script.id = "naver-maps-sdk";
     script.async = true;
