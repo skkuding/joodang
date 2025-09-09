@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
@@ -538,6 +539,9 @@ export class ReservationService {
   }
 
   async addMyReservationWithToken(tokensDto: TokensDto, userId: number) {
+    if (!tokensDto) {
+      throw new BadRequestException('Please provide tokens')
+    }
     return this.prisma.reservation.updateMany({
       where: {
         token: {
