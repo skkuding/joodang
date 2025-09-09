@@ -15,14 +15,13 @@ interface StoreDrawerProps {
 }
 
 export function StoreDrawer({ store, mylocationfunc }: StoreDrawerProps) {
-  console.log("store in drawer", store);
   const router = useRouter();
   const [height, setHeight] = useState(0.9);
   const formattedStartTime = formatTimeToKST(store.startTime);
   const formattedEndTime = formatTimeToKST(store.endTime);
 
   const expanded = 0.9;
-  const collapsed = 0.5;
+  const collapsed = 0.6;
 
   const handleNavigatetoStoreDetail = (storeId: number) => {
     router.push(`/${storeId}`);
@@ -30,7 +29,7 @@ export function StoreDrawer({ store, mylocationfunc }: StoreDrawerProps) {
 
   return (
     <motion.div
-      className="fixed bottom-[-390px] left-0 right-0 z-10 mx-auto max-w-md rounded-t-2xl border bg-white shadow-lg"
+      className="fixed bottom-[-390px] left-0 right-0 z-10 mx-auto w-full rounded-t-2xl border bg-white shadow-lg"
       style={{ height: `${height * 100}vh` }}
       drag="y"
       dragConstraints={{ top: 0, bottom: 0 }}
@@ -49,10 +48,12 @@ export function StoreDrawer({ store, mylocationfunc }: StoreDrawerProps) {
       }}
       animate={{ height: `${height * 100}vh` }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      onTouchMove={e => e.stopPropagation()}
+      onWheel={e => e.stopPropagation()}
     >
       <button
         onClick={mylocationfunc}
-        className="absolute right-5 top-[-60px] flex h-[42px] w-[42px] justify-center rounded-full bg-[#4A4A4A] shadow-md"
+        className="absolute right-5 top-[-60px] flex h-[42px] w-[42px] content-center justify-center rounded-full bg-[#4A4A4A] shadow-md"
       >
         <Image
           src="/icons/icon_my_location.svg"
