@@ -42,13 +42,7 @@ export default function ReservationCard({ data }: ReservationCardProps) {
         </div>
         <div className="bg-color-neutral-99 flex h-[87px] w-[295px] flex-col items-start justify-center gap-1 self-stretch rounded-[6px] p-2">
           <div className="flex w-full flex-row items-center">
-            <Image
-              src={Location}
-              alt="위치"
-              width={14}
-              height={14}
-              className="mr-1"
-            />
+            <Image src={Location} alt="위치" className="mr-1 h-4 w-4" />
             <p className="text-color-neutral-40 text-sm font-normal leading-[150%] tracking-[-0.56px]">
               위치
             </p>
@@ -58,10 +52,8 @@ export default function ReservationCard({ data }: ReservationCardProps) {
           </div>
           <div className="flex w-full flex-row items-center">
             <object
-              data="/icons/icon_gray_clock.svg"
-              width={12}
-              height={12}
-              className="ml-[2px] mr-1"
+              data="/icons/icon_gray_clock.png"
+              className="mr-1 h-[16.5px] w-4"
             />
             <p className="text-color-neutral-40 text-sm font-normal leading-[150%] tracking-[-0.56px]">
               운영 시간
