@@ -10,6 +10,7 @@ import {
 import locationIcon from "@/public/icons/icon_location.svg";
 import OrangeDot from "@/public/icons/orange_dot.svg";
 import { useFilter } from "@/src/context/FilterContext";
+import { Button } from "@/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -85,7 +86,7 @@ export default function BarPage() {
           className="bg-color-common-100 h-[149px] w-full rounded-[6px] p-5"
           style={{ boxShadow: "0 0 20px 0 rgba(0, 0, 0, 0.12)" }}
         >
-          <div className="mb-[13px]">
+          <div className="mb-[13px] flex flex-col gap-2">
             <div className="flex flex-row">
               <Image
                 src={OrangeDot}
@@ -129,7 +130,7 @@ export default function BarPage() {
               )}
             </div>
           </div>
-          <button className="text-color-common-100 flex h-10 w-full items-center justify-center rounded-md bg-[#FF5940]">
+          <Button className="flex h-10">
             <p
               className="text-[14px] font-medium leading-[140%] tracking-[-0.42px]"
               onClick={() => {
@@ -139,7 +140,7 @@ export default function BarPage() {
             >
               필터 설정하기
             </p>
-          </button>
+          </Button>
         </div>
       </div>
       <div>

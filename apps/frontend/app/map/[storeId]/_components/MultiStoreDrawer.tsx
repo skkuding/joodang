@@ -1,12 +1,12 @@
 "use client";
 
+import { useSelectedStore } from "@/app/stores/useSelectedStore";
 import type { Store } from "@/app/type";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useSelectedStore } from "@/app/stores/useSelectedStore";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface StoreDrawerProps {
   stores: Store[];
@@ -83,9 +83,11 @@ export function MultiStoreDrawer({ stores, mylocationfunc }: StoreDrawerProps) {
               className="mb-2 cursor-pointer rounded-xl p-3 shadow-md hover:bg-gray-100"
               onClick={() => setSelectedStoreId(store.id)}
             >
-              <h3 className="text-[13px] text-[#FF5940]">{store.organizer}</h3>
+              <h3 className="text-primary-normal text-[13px] font-medium">
+                {store.organizer}
+              </h3>
               <div className="flex items-center justify-between">
-                <p className="text-md">{store.name}</p>
+                <p className="text-base font-medium">{store.name}</p>
                 <button
                   onClick={() => handleNavigatetoStoreDetail(store.id)}
                   className="flex text-xs text-gray-500 hover:underline"
@@ -99,7 +101,7 @@ export function MultiStoreDrawer({ stores, mylocationfunc }: StoreDrawerProps) {
                   />
                 </button>
               </div>
-              <div className="text-[#5C5C5C mt-2 flex gap-2 rounded-sm bg-[#F5F5F5] p-1 text-sm">
+              <div className="text-color-neutral-40 mt-2 flex gap-2 rounded-sm bg-[#F5F5F5] p-1 text-sm font-normal">
                 <Image
                   src="/icons/icon_gray_location.svg"
                   alt="Location"

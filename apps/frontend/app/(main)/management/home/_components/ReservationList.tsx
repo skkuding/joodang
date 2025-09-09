@@ -7,8 +7,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import ArrowDown from "@/public/icons/icon_arrow_down.svg";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 
 export function ReservationList() {
@@ -37,14 +35,6 @@ export function ReservationList() {
                 <p className="justify-start text-xs font-normal leading-none text-[#FF5940]">
                   2025. 01. 01 ~ 2025. 01. 02
                 </p>
-              </div>
-              <div className="flex items-center justify-center">
-                <Image
-                  src={ArrowDown}
-                  alt="arrow down"
-                  width={24}
-                  height={24}
-                />
               </div>
             </div>
           </AccordionTrigger>

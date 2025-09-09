@@ -1,6 +1,7 @@
 "use client";
 import { Separator } from "@/app/(main)/components/Separator";
 import { AuthSheet } from "@/app/components/AuthSheet";
+import { FloatingBottomBar } from "@/app/components/FloatingBottomBar";
 import { FormSection } from "@/app/components/FormSection";
 import { StoreDetail, TimeSlot } from "@/app/type";
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,6 @@ import { useFormContext } from "react-hook-form";
 import { IoIosArrowDown } from "react-icons/io";
 import { StoreInfo } from "../../components/StoreInfo";
 import { CreateReservationForm } from "./components/CreateReservationForm";
-import { FloatingBottomBar } from "@/app/components/FloatingBottomBar";
 
 const ReservationForm = memo(
   ({
@@ -65,7 +65,7 @@ const ReservationForm = memo(
                   type="button"
                   key={dateKey}
                   variant={selectedDate === dateKey ? "selected" : "outline"}
-                  className="h-[37px]"
+                  className="h-[37px] rounded"
                   disabled={timeSlotsMap
                     .get(dateKey)
                     ?.every(slot => slot.availableSeats === 0)}
@@ -115,7 +115,7 @@ const ReservationForm = memo(
                 selectedDateSlots.map((slot, index) => (
                   <DropdownMenuItem
                     key={slot.id}
-                    className="flex cursor-pointer flex-col items-start py-3 hover:bg-gray-100"
+                    className="flex cursor-pointer items-start justify-between py-3 hover:bg-gray-100"
                     onSelect={() => {
                       setSelectedTimeSlotId(slot.id);
                       setValue("timeSlotId", slot.id, {
@@ -123,15 +123,17 @@ const ReservationForm = memo(
                       });
                     }}
                   >
-                    <span className="text-xs text-gray-500">
-                      타임 {index + 1}
-                    </span>
-                    <span className="text-sm">
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium">
+                        타임 {index + 1}
+                      </span>
+                      <span className="text-color-neutral-60 text-xs font-normal">
+                        {slot.availableSeats}석 남음
+                      </span>
+                    </div>
+                    <span className="text-primary-normal text-sm font-normal">
                       {formatTimeToKST(slot.startTime)} ~{" "}
                       {formatTimeToKST(slot.endTime)}
-                    </span>
-                    <span className="text-xs text-blue-600">
-                      {slot.availableSeats}석 남음
                     </span>
                   </DropdownMenuItem>
                 ))

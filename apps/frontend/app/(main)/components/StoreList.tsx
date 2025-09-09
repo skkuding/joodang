@@ -1,9 +1,10 @@
 "use client";
 import { Store } from "@/app/type";
 import { formatDateWithDay, safeFetcher } from "@/lib/utils";
+import refreshIcon from "@/public/icons/icon_refresh.svg";
 import { Carousel, CarouselContent, CarouselItem } from "@/ui/carousel";
+import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
-import { IoIosRefresh } from "react-icons/io";
 import { Section } from "./Section";
 import { StoreCard } from "./StoreCard";
 
@@ -21,12 +22,17 @@ export function StoreList() {
       <div className="flex flex-col">
         <div className="text-color-neutral-60 flex items-center gap-1 px-5 text-sm font-normal">
           {formatDateWithDay(new Date())}
-          <IoIosRefresh className="h-3.5 w-3.5" onClick={fetchStores} />
+          <Image
+            src={refreshIcon}
+            alt="새로고침 아이콘"
+            width={12}
+            onClick={fetchStores}
+          />
         </div>
         <Carousel opts={{ align: "start" }}>
-          <CarouselContent className="my-[14px] ml-1">
+          <CarouselContent className="my-[14px] ml-3">
             {stores.map(store => (
-              <CarouselItem className="basis-auto" key={store.id}>
+              <CarouselItem className="basis-auto pl-2" key={store.id}>
                 <StoreCard
                   id={store.id}
                   clubName={store.organizer}
