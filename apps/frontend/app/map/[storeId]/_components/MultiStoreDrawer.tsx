@@ -33,7 +33,7 @@ export function MultiStoreDrawer({ stores, mylocationfunc }: StoreDrawerProps) {
   return (
     <motion.div
       className="fixed bottom-[-390px] left-0 right-0 z-50 mx-auto w-full rounded-t-2xl border bg-white shadow-lg"
-      style={{ height: `${height * 100}vh` }}
+      style={{ height: `${height * 100}vh`, touchAction: "none" }}
       drag="y"
       dragConstraints={{ top: 0, bottom: 0 }}
       onDragEnd={(_, info) => {
@@ -63,6 +63,7 @@ export function MultiStoreDrawer({ stores, mylocationfunc }: StoreDrawerProps) {
           alt="My Location"
           width={26}
           height={26}
+          className="m-2"
         />
       </button>
       {/* 핸들 */}
@@ -70,7 +71,11 @@ export function MultiStoreDrawer({ stores, mylocationfunc }: StoreDrawerProps) {
 
       {/* 콘텐츠 */}
 
-      <div className="overflow-auto p-4">
+      <div
+        className="overflow-auto p-4"
+        onTouchStart={e => e.stopPropagation()}
+        onTouchMove={e => e.stopPropagation()}
+      >
         <ScrollArea className="overflow-auto" style={{ maxHeight: "35vh" }}>
           {stores.map(store => (
             <div

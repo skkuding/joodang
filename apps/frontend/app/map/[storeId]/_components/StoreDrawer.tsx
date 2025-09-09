@@ -60,6 +60,7 @@ export function StoreDrawer({ store, mylocationfunc }: StoreDrawerProps) {
           alt="My Location"
           width={26}
           height={26}
+          className="m-2"
         />
       </button>
       {/* 핸들 */}
