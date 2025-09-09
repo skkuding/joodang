@@ -29,6 +29,24 @@ const withPWA = withPWAOrig({
         cacheableResponse: { statuses: [0, 200] },
       },
     },
+    {
+      urlPattern: /https:\/\/map\.pstatic\.net\/resource\/.*\.(pbf)(?:\?|$)/,
+      handler: "CacheFirst",
+      options: {
+        cacheName: "naver-map-pbf",
+        expiration: { maxEntries: 400, maxAgeSeconds: 60 * 60 * 24 * 365 },
+        cacheableResponse: { statuses: [0, 200] },
+      },
+    },
+    {
+      urlPattern: /https:\/\/map\.pstatic\.net\/.*\.(png|jpg|jpeg)(?:\?|$)/,
+      handler: "StaleWhileRevalidate",
+      options: {
+        cacheName: "naver-map-tiles",
+        expiration: { maxEntries: 800, maxAgeSeconds: 60 * 60 * 24 * 14 },
+        cacheableResponse: { statuses: [0, 200] },
+      },
+    },
   ],
 });
 
