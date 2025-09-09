@@ -1,3 +1,4 @@
+"use client";
 import { FormSection } from "@/app/components/FormSection";
 import { RoleEnum, User } from "@/app/type";
 import { Button } from "@/components/ui/button";
@@ -125,7 +126,7 @@ function ConfirmButton({ onClose }: { onClose: () => void }) {
 }
 
 interface RequestRoleButtonProps {
-  user: User;
+  user: Partial<User>;
 }
 
 export function RequestRoleButton({ user }: RequestRoleButtonProps) {
