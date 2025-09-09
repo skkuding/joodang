@@ -266,7 +266,7 @@ export default function ReservationDetail() {
               </Link>
             </div>
           </div>
-          <div className="h-[215px] w-[335px] overflow-hidden rounded-md">
+          <div className="h-[215px] w-full overflow-hidden rounded-md">
             <StoreMap stores={[store]} current={0} />
           </div>
         </div>
