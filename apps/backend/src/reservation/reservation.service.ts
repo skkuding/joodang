@@ -341,7 +341,11 @@ export class ReservationService {
       include: {
         menus: true,
         user: true,
-        store: true,
+        store: {
+          include: {
+            staffs: true,
+          },
+        },
         timeSlot: true,
       },
     })
@@ -349,7 +353,9 @@ export class ReservationService {
       throw new NotFoundException('Reservation not found')
     }
 
-    if (userId && reservation.userId !== userId) {
+    const staffIds = reservation.store.staffs.map((staff) => staff.userId)
+
+    if (userId && reservation.userId !== userId && !staffIds.includes(userId)) {
       throw new ForbiddenException(
         'You are not allowed to access this reservation',
       )
