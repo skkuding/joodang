@@ -55,16 +55,16 @@ export default async function Page() {
 
       <Separator />
 
-      <div className="flex flex-col p-[30px] text-sm font-medium">
+      <div className="flex flex-col px-5 py-[30px] font-medium">
         <p className="text-color-neutral-70 text-sm font-medium">문의하기</p>
         <Link href="/faq" className="w-full">
-          <div className="flex w-full justify-between py-2">
+          <div className="flex w-full justify-between py-3">
             <span className="text-base font-medium">FAQ</span>
             <Image src={arrowIcon} alt="Arrow Icon" width={15} />
           </div>
         </Link>
         <a href="mailto:ask@joodang.com" className="w-full">
-          <div className="flex justify-between py-2">
+          <div className="flex justify-between py-3">
             <span className="text-base font-medium">운영자 1:1 문의</span>
             <Image src={arrowIcon} alt="Arrow Icon" width={15} />
           </div>
