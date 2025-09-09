@@ -401,17 +401,27 @@ export class ReservationService {
     return reservations
   }
 
-  async removeReservation(id: number, userId: number) {
+  async removeReservation(id: number, userId?: number, tokensDto?: TokensDto) {
+    const tokens = tokensDto?.tokens
     const reservation = await this.prisma.reservation.findUnique({
       where: { id },
-      select: { userId: true },
+      select: { userId: true, token: true },
     })
 
     if (!reservation) {
       throw new NotFoundException('Reservation not found')
     }
 
-    if (reservation.userId !== userId) {
+    if (userId && reservation.userId !== userId) {
+      throw new ForbiddenException(
+        'You are not allowed to remove this reservation',
+      )
+    }
+
+    if (
+      !userId &&
+      (!reservation.token || tokens?.includes(reservation.token))
+    ) {
       throw new ForbiddenException(
         'You are not allowed to remove this reservation',
       )
@@ -421,8 +431,13 @@ export class ReservationService {
       where: { id },
     })
 
-    await this.prisma.timeSlot.update({
-      where: { id: deletedReservation.timeSlotId },
+    await this.prisma.timeSlot.updateMany({
+      where: {
+        id: deletedReservation.timeSlotId,
+        totalCapacity: {
+          not: -1,
+        },
+      },
       data: {
         availableSeats: { increment: deletedReservation.headcount },
       },
@@ -430,6 +445,7 @@ export class ReservationService {
 
     this.eventEmitter.emit('reservation.canceled', {
       reservationId: deletedReservation.id,
+      storeId: deletedReservation.storeId,
     })
 
     return deletedReservation

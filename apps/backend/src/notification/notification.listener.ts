@@ -67,10 +67,11 @@ export class NotificationListener {
   }
 
   @OnEvent('reservation.canceled')
-  async handlerReservationCanceled(payload: { reservationId: number }) {
-    this.notificationService.notifyOwnerReservationCanceled(
-      payload.reservationId,
-    )
+  async handlerReservationCanceled(payload: {
+    reservationId: number
+    storeId: number
+  }) {
+    this.notificationService.notifyOwnerReservationCanceled(payload.storeId)
 
     this.jobService.deleteJobs(
       this.everyReservationDueReminderKey(payload.reservationId),

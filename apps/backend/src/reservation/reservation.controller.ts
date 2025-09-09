@@ -86,11 +86,17 @@ export class ReservationController {
   }
 
   @Delete(':id')
+  @UseGuards(OptionalJwtAuthGuard)
   removeReservation(
     @Param('id', ParseIntPipe) id: number,
     @Req() req: Request,
+    @Body() tokensDto?: TokensDto,
   ) {
-    return this.reservationService.removeReservation(id, req.user.id)
+    return this.reservationService.removeReservation(
+      id,
+      req.user?.id,
+      tokensDto,
+    )
   }
 
   @Patch(':id/confirm')

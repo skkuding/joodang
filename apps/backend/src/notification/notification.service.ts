@@ -306,44 +306,40 @@ export class NotificationService {
     )
   }
 
-  async notifyOwnerReservationCanceled(reservationId: number) {
-    const reservation = await this.prisma.reservation.findUnique({
-      where: { id: reservationId },
+  async notifyOwnerReservationCanceled(storeId: number) {
+    const store = await this.prisma.store.findUnique({
+      where: { id: storeId },
       select: {
-        store: {
+        id: true,
+        name: true,
+        staffs: {
           select: {
-            id: true,
-            name: true,
-            staffs: {
-              select: {
-                userId: true,
-              },
-            },
+            userId: true,
           },
         },
       },
     })
 
-    if (!reservation) return
+    if (!store) return
 
-    const receivers = reservation.store.staffs.map((staff) => staff.userId)
-    const title = reservation.store.name ?? '예약 취소'
+    const receivers = store.staffs.map((staff) => staff.userId)
+    const title = store.name ?? '예약 취소'
     const message = '예약이 취소됐어요. 확인해주세요.'
 
     await this.saveNotification({
       userIds: receivers,
       title,
       message,
-      storeId: reservation.store.id,
+      storeId: store.id,
       type: 'OwnerReservation',
-      url: `/management/reservation/${reservationId}`,
+      url: `/management/reservation/`,
     })
 
     await this.sendPushNotification(
       receivers,
       title,
       message,
-      `/management/reservation/${reservationId}`,
+      `/management/reservation/`,
     )
   }
 
