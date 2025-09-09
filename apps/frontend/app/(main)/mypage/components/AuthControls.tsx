@@ -14,8 +14,10 @@ export function AuthControls({ loggedIn }: { loggedIn: boolean }) {
 
   const handleClick = async () => {
     if (loggedIn) {
-      await safeFetcher.post("auth/logout");
-      router.refresh();
+      try {
+        await safeFetcher.post("auth/logout");
+        router.refresh();
+      } catch {}
     } else {
       setOpen(true);
     }

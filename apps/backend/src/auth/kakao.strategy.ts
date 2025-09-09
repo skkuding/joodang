@@ -23,8 +23,12 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
       const kakaoId = String(profile.id)
       const name = profile.username ?? 'KakaoUser'
       const profileImageUrl =
-        (profile._json as any)?.kakao_account?.profile?.profile_image_url ??
-        null
+        (
+          profile._json as any
+        )?.kakao_account?.profile?.profile_image_url?.replace(
+          /^http:\/\//,
+          'https://',
+        ) ?? null
 
       const user = { kakaoId, name, profileImageUrl }
       done(null, user)

@@ -1,72 +1,85 @@
-// Shared minimal Naver Maps typings
-export type NaverLatLng = object;
-export type NaverPoint = { x: number; y: number };
+// Refined minimal Naver Maps typings (subset tailored to current usage)
+
+export interface NaverLatLng {
+  lat(): number;
+  lng(): number;
+}
+
+export interface NaverPoint {
+  x: number;
+  y: number;
+}
+
+export interface NaverProjection {
+  fromCoordToOffset(latlng: NaverLatLng): NaverPoint;
+  fromOffsetToCoord(pt: NaverPoint): NaverLatLng;
+}
+
+export interface NaverMapOptions {
+  gl?: boolean;
+  center: NaverLatLng;
+  zoom: number;
+  customStyleId?: string;
+}
 
 export interface NaverMapInstance {
   setCenter(latlng: NaverLatLng): void;
-  panTo?(latlng: NaverLatLng): void;
+  panTo(latlng: NaverLatLng): void;
   setZoom(zoom: number): void;
-  setOptions(options: {
-    customStyleId?: string;
-    center?: NaverLatLng;
-    zoom?: number;
-  }): void;
-  getProjection(): {
-    fromCoordToOffset(latlng: NaverLatLng): NaverPoint;
-    fromOffsetToCoord(pt: NaverPoint): NaverLatLng;
-  } | null;
+  setOptions(
+    options: Partial<NaverMapOptions> & { center?: NaverLatLng }
+  ): void;
+  getProjection(): NaverProjection | null;
   getSize(): { width: number; height: number };
+  getCenter?(): NaverLatLng;
+  getZoom?(): number;
+}
+
+export interface NaverMarkerIcon {
+  content: string;
+  anchor?: NaverPoint;
 }
 
 export interface NaverMarkerInstance {
   setPosition(latlng: NaverLatLng): void;
-  setIcon(icon: { content: string; anchor: NaverPoint }): void;
+  setIcon(icon: NaverMarkerIcon): void;
   getMap(): NaverMapInstance | null;
   setMap(map: NaverMapInstance | null): void;
   getPosition(): NaverLatLng;
 }
 
+export interface NaverMapsEvent {
+  addListener(
+    target: unknown,
+    eventName: string,
+    handler: (...args: unknown[]) => void
+  ): void;
+  once(
+    target: unknown,
+    eventName: string,
+    handler: (...args: unknown[]) => void
+  ): void;
+}
+
 export interface NaverMapsNamespace {
   Map: new (
     el: string | HTMLElement,
-    options: {
-      gl?: boolean;
-      center: NaverLatLng;
-      zoom: number;
-      customStyleId?: string;
-    }
+    options: NaverMapOptions
   ) => NaverMapInstance;
   LatLng: new (lat: number, lng: number) => NaverLatLng;
   Point: new (x: number, y: number) => NaverPoint;
   Marker: new (opts: {
     position: NaverLatLng;
     map: NaverMapInstance;
-    icon: { content: string; anchor?: NaverPoint };
+    icon: NaverMarkerIcon;
   }) => NaverMarkerInstance;
-  Event: {
-    addListener: (
-      target: unknown,
-      eventName: string,
-      handler: (...args: unknown[]) => void
-    ) => void;
-    once: (
-      target: unknown,
-      eventName: string,
-      handler: (...args: unknown[]) => void
-    ) => void;
-  };
+  Event: NaverMapsEvent;
 }
 
 declare global {
   interface Window {
     naver: {
-      maps?: {
-        Map: NaverMapsNamespace["Map"];
-        LatLng: NaverMapsNamespace["LatLng"];
-        Point: NaverMapsNamespace["Point"];
-        Marker: NaverMapsNamespace["Marker"];
-        Event: NaverMapsNamespace["Event"];
-      };
+      maps?: NaverMapsNamespace;
     };
   }
 }
