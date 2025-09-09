@@ -455,7 +455,10 @@ export default function TimeSlotForm() {
 
           {/* 자동 입력 모달 */}
           <Dialog open={isAutoModalOpen} onOpenChange={setIsAutoModalOpen}>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent
+              className="sm:max-w-md"
+              onOpenAutoFocus={e => e.preventDefault()}
+            >
               <DialogHeader>
                 <DialogTitle>자동 시간대 생성</DialogTitle>
               </DialogHeader>
