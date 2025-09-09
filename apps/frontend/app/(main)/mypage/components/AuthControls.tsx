@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { AuthSheet } from "@/app/components/AuthSheet";
 import Image from "next/image";
 import arrowIcon from "@/public/icons/icon_arrow.svg";
+import { safeFetcher } from "@/lib/utils";
 
 export function AuthControls({ loggedIn }: { loggedIn: boolean }) {
   const [open, setOpen] = useState(false);
@@ -13,7 +14,7 @@ export function AuthControls({ loggedIn }: { loggedIn: boolean }) {
 
   const handleClick = async () => {
     if (loggedIn) {
-      await fetch("/auth/logout", { method: "POST", credentials: "include" });
+      await safeFetcher.post("auth/logout");
       router.refresh();
     } else {
       setOpen(true);
