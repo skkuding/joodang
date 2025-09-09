@@ -1,18 +1,20 @@
 "use client";
 
 import { AuthSheet } from "@/app/components/AuthSheet";
+import { EmptyRecord } from "@/app/components/EmptyRecord";
 import { ReservationResponse } from "@/app/type";
 import { safeFetcher } from "@/lib/utils";
 import Checkbox from "@/public/icons/orangeCheckbox.svg";
+import { HTTPError } from "ky";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { HTTPError } from "ky";
 import ReservationCard from "./components/ReservationCard";
 
 export default function ReservationCheckPage() {
   const [reservations, setReservations] = useState<ReservationResponse[]>([]);
   const [showAuthSheet, setShowAuthSheet] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<string>("preReservation");
 
   useEffect(() => {
     let cancelled = false;
@@ -106,7 +108,7 @@ export default function ReservationCheckPage() {
     <div className="mt-[60px] px-5">
       {showAuthSheet && <AuthSheet />}
       {loading && <span>Loading...</span>}
-      <div className="mb-[30px]">
+      <section className="mb-[20px]">
         <Image
           src={Checkbox}
           alt="checkbox"
@@ -121,15 +123,43 @@ export default function ReservationCheckPage() {
           <p>나의 주점 예약 내역을 주당이</p>
           <p>한 눈에 정리해드려요!</p>
         </div>
-      </div>
-      <div className="flex justify-center">
+      </section>
+
+      <section className="flex flex-col items-center justify-center">
+        {/* Tabs */}
+        <div className="mb-4 flex w-full">
+          {[
+            { key: "preReservation", label: "사전 예약" },
+            { key: "waiting", label: "현장 대기" },
+          ].map(tab => (
+            <button
+              key={tab.key}
+              onClick={() =>
+                setActiveTab(tab.key as "preReservation" | "waiting")
+              }
+              className={`flex-1 py-3 text-sm font-medium ${
+                activeTab === tab.key
+                  ? "border-primary-normal text-primary-normal border-b-2"
+                  : "text-color-neutral-70"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
         <div className="item-center flex flex-col justify-center gap-3">
           {!loading &&
-            reservations.map((reservation, idx) => (
-              <ReservationCard key={idx} data={reservation} />
+            (reservations.length !== 0 ? (
+              reservations.map((reservation, idx) => (
+                <ReservationCard key={idx} data={reservation} />
+              ))
+            ) : (
+              <div className="py-[38px]">
+                <EmptyRecord description="현재 예약된 내역이 없어요" />
+              </div>
             ))}
         </div>
-      </div>
+      </section>
       <div className="h-7" />
     </div>
   );
