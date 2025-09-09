@@ -77,7 +77,7 @@ export function AuthSheet({
             다양한 서비스를 이용해보세요
           </p>
           <Button
-            className="h-[55px] w-full rounded bg-[#fee500] text-black"
+            className="h-[55px] w-full rounded bg-[#fee500] text-black hover:bg-[#fee500]"
             onClick={() => {
               const { pathname, search, hash } = window.location;
               const returnTo = encodeURIComponent(
