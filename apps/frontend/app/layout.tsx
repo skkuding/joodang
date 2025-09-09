@@ -4,8 +4,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
-import "./globals.css";
 import KeyboardInsetWatcher from "./components/KeyboardInsetWatcher";
+import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,7 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
+    <html lang="ko" className="h-full">
       <head>
         <link rel="apple-touch-icon" href="/apple-icon.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -251,22 +251,21 @@ export default function RootLayout({
           href="splash_screens/4__iPhone_SE__iPod_touch_5th_generation_and_later_portrait.png"
         />
       </head>
-      <FilterProvider>
-        <body
-          style={{
-            fontFamily: "Pretendard Variable, Pretendard",
-          }}
-        >
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+        style={{
+          fontFamily: "Pretendard Variable, Pretendard",
+        }}
+      >
+        <FilterProvider>
           <Analytics />
           <SpeedInsights />
-          <main
-            className={`${geistSans.variable} ${geistMono.variable} pb-20 pt-[48px] antialiased`}
-          >
+          <main className="pt-21 h-full">
             <KeyboardInsetWatcher />
             {children}
           </main>
-        </body>
-      </FilterProvider>
+        </FilterProvider>
+      </body>
     </html>
   );
 }

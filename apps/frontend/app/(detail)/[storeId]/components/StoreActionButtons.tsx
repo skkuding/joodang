@@ -15,16 +15,20 @@ export function StoreActionButtons({ store }: StoreActionButtonsProps) {
   const [staffIds, setStaffIds] = useState<number[]>([]);
   useEffect(() => {
     const fetchUser = async () => {
-      const user: User = await safeFetcher.get("user/me").json();
-      setUser(user);
+      try {
+        const user: User = await safeFetcher.get("user/me").json();
+        setUser(user);
+      } catch {}
     };
 
     const fetchStaffs = async () => {
-      const staffs: User[] = await safeFetcher
-        .get(`store/${store.id}/staff`)
-        .json();
-      setStaffIds(staffs.map(staff => staff.id));
-      console.log(staffIds);
+      try {
+        const staffs: User[] = await safeFetcher
+          .get(`store/${store.id}/staff`)
+          .json();
+        setStaffIds(staffs.map(staff => staff.id));
+        console.log(staffIds);
+      } catch {}
     };
 
     fetchUser();
