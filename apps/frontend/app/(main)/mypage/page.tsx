@@ -13,12 +13,20 @@ async function getUser() {
   const cookieHeader = cookies().toString();
 
   try {
-    const res = await safeFetcher("user/me", {
+    const res = (await safeFetcher("user/me", {
       headers: {
         cookie: cookieHeader,
       },
-    }).json();
-    return res as Partial<User>;
+    }).json()) as Partial<User>;
+
+    if (
+      !res?.profileImageUrl ||
+      res.profileImageUrl ===
+        "https://img1.kakaocdn.net/thumb/R640x640.q70/?fname=http://t1.kakaocdn.net/account_images/default_profile.jpeg"
+    ) {
+      res.profileImageUrl = "/icons/icon_default_profile.svg";
+    }
+    return res;
   } catch {
     return null;
   }
@@ -45,7 +53,7 @@ export default async function Page() {
             alt="Profile"
             fill
             sizes="54px"
-            className="object-cover"
+            className="rounded-full object-cover"
             priority
           />
         </div>
