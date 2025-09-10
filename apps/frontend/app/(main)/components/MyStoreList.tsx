@@ -35,7 +35,7 @@ export function MyStoreList() {
           />
         </div>
         <Carousel opts={{ align: "start" }}>
-          <CarouselContent className="my-[14px] ml-3 mr-3">
+          <CarouselContent className="my-[14px] ml-3 mr-5">
             {stores &&
               stores.map(store => (
                 <CarouselItem className="basis-auto pl-2" key={store.id}>

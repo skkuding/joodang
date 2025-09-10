@@ -21,7 +21,7 @@ export function MenuList({ storeId }: { storeId: number }) {
     <div className="py-5">
       <p className="px-5 text-lg font-medium">메뉴 미리보기</p>
       <Carousel opts={{ align: "start" }}>
-        <CarouselContent className="my-[14px] ml-1">
+        <CarouselContent className="my-[14px] ml-1 mr-5">
           {menus.map(menu => (
             <CarouselItem className="basis-auto" key={menu.id}>
               <MenuCard menu={menu} />

@@ -51,7 +51,7 @@ export function StoreLocation() {
             containScroll: "trimSnaps",
           }}
         >
-          <CarouselContent className="my-[14px] ml-3 mr-3">
+          <CarouselContent className="my-[14px] ml-3 mr-5">
             {stores.map(store => (
               <CarouselItem className="basis-auto pl-2" key={store.id}>
                 <StoreCard
