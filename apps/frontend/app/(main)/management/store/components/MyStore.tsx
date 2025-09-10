@@ -23,7 +23,7 @@ export function MyStore() {
   return (
     <div className="p-5">
       <p className="mb-3 text-lg font-medium">내 주점 기록</p>
-      <div className="flex justify-center py-[30px]">
+      <div className="flex flex-col justify-center gap-2 py-[30px]">
         {(stores?.length ?? 0) === 0 ? (
           <EmptyRecord description="등록된 주점 기록이 없어요" />
         ) : (
