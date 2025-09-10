@@ -11,6 +11,8 @@ import {
   ValidationPipe,
   UseGuards,
   Req,
+  Res,
+  BadRequestException,
 } from '@nestjs/common'
 import { StoreService } from './store.service'
 import { GetStoresDto } from './dto/get-stores.dto'
@@ -18,7 +20,7 @@ import { CreateStoreDto } from './dto/create-store.dto'
 import { UpdateStoreDto } from './dto/update-store.dto'
 import { AcceptInvitationDto } from './dto/accept-invitation.dto'
 import { JwtAuthGuard } from '@app/auth/guards/jwt.guard'
-import type { Request } from 'express'
+import type { Request, Response } from 'express'
 import { OwnerGuard } from '@app/auth/guards/owner.guard'
 import { StaffGuard } from '@app/auth/guards/staff.guard'
 import { UploadStoreImageDto } from './dto/upload-store-image.dto'
@@ -41,6 +43,18 @@ export class StoreController {
     query: GetStoresDto,
   ) {
     return this.storeService.getStores(query, req.user?.id)
+  }
+
+  @Get('qr')
+  async getStoreByQrCode(
+    @Query('code') code: string,
+    @Res() res: Response,
+  ) {
+    if (!code) {
+      throw new BadRequestException('redirectCode required.')
+    }
+    const { id } = await this.storeService.getStoreByQrCode(code)
+    return res.redirect(`/store/${id}`)
   }
 
   @Get(':id')

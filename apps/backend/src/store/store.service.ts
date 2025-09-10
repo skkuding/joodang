@@ -210,6 +210,14 @@ export class StoreService {
     }
   }
 
+  async getStoreByQrCode(code: string) {
+    const store = await this.prisma.store.findUniqueOrThrow({
+      where: { redirectCode: code },
+      select: { id: true },
+    })
+    return store
+  }
+
   async createStore(userId: number, createStoreDto: CreateStoreDto) {
     const { timeSlots, ...storeData } = createStoreDto
 
@@ -304,6 +312,7 @@ export class StoreService {
 
     const { timeSlots, ...storeData } = updateStoreDto
     let operatingHoursData = {}
+
     if (timeSlots) {
       for (const slot of timeSlots) {
         if (slot.startTime >= slot.endTime) {
@@ -340,24 +349,43 @@ export class StoreService {
       }
     }
 
-    return await this.prisma.store.update({
-      where: { id },
-      data: {
-        ...storeData,
-        ...operatingHoursData,
-        timeSlots: timeSlots
-          ? {
-              deleteMany: {},
-              create: timeSlots.map((timeslot) => ({
-                ...timeslot,
-                totalCapacity:
-                  storeData.totalCapacity ?? existingStore.totalCapacity,
-                availableSeats:
-                  storeData.totalCapacity ?? existingStore.totalCapacity,
-              })),
-            }
-          : undefined,
-      },
+    return this.prisma.$transaction(async (tx) => {
+      if (timeSlots) {
+        await tx.timeSlot.deleteMany({
+          where: {
+            storeId: id,
+            NOT: {
+              totalCapacity: -1,
+              availableSeats: 0,
+            },
+          },
+        })
+
+        if (timeSlots.length > 0) {
+          const newTimeSlotsData = timeSlots.map((slot) => ({
+            ...slot,
+            storeId: id,
+            totalCapacity:
+              storeData.totalCapacity ?? existingStore.totalCapacity,
+            availableSeats:
+              storeData.totalCapacity ?? existingStore.totalCapacity,
+          }))
+
+          await tx.timeSlot.createMany({
+            data: newTimeSlotsData,
+          })
+        }
+      }
+
+      const updatedStore = await tx.store.update({
+        where: { id },
+        data: {
+          ...storeData,
+          ...operatingHoursData,
+        },
+      })
+
+      return updatedStore
     })
   }
 
