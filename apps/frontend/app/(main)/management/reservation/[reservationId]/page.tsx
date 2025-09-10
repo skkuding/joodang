@@ -18,6 +18,7 @@ import {
   DrawerFooter,
 } from "@/components/ui/drawer";
 import Link from "next/link";
+import { toast } from "sonner";
 
 function StatusBadge({ reservation }: { reservation: ReservationResponse }) {
   const base = "rounded px-2 py-1 text-xs font-medium";
@@ -91,7 +92,10 @@ export default function ReservationDetailPage() {
 
   const handleCall = async () => {
     if (!reservation) return;
-    await callReservation(reservation.id);
+    try {
+      await callReservation(reservation.id);
+      toast.success("푸시 알림을 전송하는데 성공하였습니다!");
+    } catch {}
   };
 
   if (loading) {

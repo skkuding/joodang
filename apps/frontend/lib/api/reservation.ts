@@ -73,6 +73,7 @@ export const callReservation = async (reservationId: number) => {
   const response = await safeFetcher.post(`reservation/call/${reservationId}`);
 
   if (!response.ok) {
+    window.dispatchEvent(new CustomEvent("push:nosubscription"));
     throw new Error("호출하기 요청에 실패했습니다.");
   }
 
