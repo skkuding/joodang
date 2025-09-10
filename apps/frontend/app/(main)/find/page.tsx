@@ -100,7 +100,7 @@ export default function BarPage() {
               </p>
               {!isFilterSet ? (
                 <p className="text-color-neutral-70 ml-auto text-sm font-normal not-italic leading-[140%] tracking-[-0.48px]">
-                  0 원
+                  가격을 선택해주세요
                 </p>
               ) : (
                 <p className="text-color-common-0 ml-auto text-sm font-normal leading-normal">
@@ -119,9 +119,9 @@ export default function BarPage() {
               <p className="text-color-neutral-30 text-sm font-normal leading-[150%] tracking-[-0.48px]">
                 날짜
               </p>
-              {!isFilterSet ? (
+              {!isFilterSet || filterValue.days === "0000-00-00" ? (
                 <p className="text-color-neutral-70 ml-auto text-sm font-normal not-italic leading-[140%] tracking-[-0.48px]">
-                  0000. 00. 00
+                  날짜를 선택해주세요
                 </p>
               ) : (
                 <p className="text-color-common-0 ml-auto text-sm font-normal leading-normal">
