@@ -16,6 +16,7 @@ import { JwtAuthGuard } from '@app/auth/guards/jwt.guard'
 import { Public } from '@auth/public.decorator'
 import { NotificationService } from './notification.service'
 import type { Request } from 'express'
+import { OptionalJwtAuthGuard } from '@app/auth/guards/optional-jwt.guard'
 
 @UseGuards(JwtAuthGuard)
 @Controller('notification')
@@ -69,6 +70,7 @@ export class NotificationController {
    * Push subscription을 생성합니다
    */
   @Post('/push-subscription')
+  @UseGuards(OptionalJwtAuthGuard)
   async createPushSubscription(
     @Req() req: Request,
     @Body() dto: CreatePushSubscriptionDto,
