@@ -1,7 +1,7 @@
 meta {
   name: Delete Store
   type: http
-  seq: 6
+  seq: 8
 }
 
 delete {
@@ -10,10 +10,10 @@ delete {
   auth: inherit
 }
 
-headers {
-  Cookie: {{user1}}
-}
-
 params:path {
   storeId: 5
+}
+
+headers {
+  Cookie: {{user1}}
 }

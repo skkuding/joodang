@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   GoneException,
@@ -216,6 +217,23 @@ export class StoreService {
       throw new Error('At least one timeslot is required.')
     }
 
+    for (const slot of timeSlots) {
+      if (slot.startTime > slot.endTime) {
+        throw new BadRequestException(
+          `Invalid timeslot: endTime must be after startTime.`,
+        )
+      }
+    }
+
+    const sortedSlots = [...timeSlots].sort(
+      (a, b) => a.startTime.getTime() - b.startTime.getTime(),
+    )
+    for (let i = 1; i < sortedSlots.length; i++) {
+      if (sortedSlots[i - 1].endTime > sortedSlots[i].startTime) {
+        throw new BadRequestException('Timeslots must not overlap.');
+      }
+    }
+
     const storeOperatingHours = timeSlots.reduce(
       (acc, slot) => {
         const earliestStartTime =
@@ -274,32 +292,51 @@ export class StoreService {
       where: { userId_storeId: { userId, storeId: id } },
     })
     if (!staffInfo) {
-      throw new ForbiddenException('가게를 수정할 권한이 없습니다.')
+      throw new ForbiddenException('You have no permission to update store.')
     }
 
     const existingStore = await this.prisma.store.findUnique({
       where: { id },
     })
     if (!existingStore) {
-      throw new NotFoundException('해당 가게를 찾을 수 없습니다.')
+      throw new NotFoundException('Store not found.')
     }
 
     const { timeSlots, ...storeData } = updateStoreDto
     let operatingHoursData = {}
-    if (timeSlots && timeSlots.length > 0) {
-      const storeOperatingHours = timeSlots.reduce(
-        (acc, slot) => {
-          const earliestStartTime =
-            acc.startTime < slot.startTime ? acc.startTime : slot.startTime
-          const latestEndTime =
-            acc.endTime > slot.endTime ? acc.endTime : slot.endTime
-          return { startTime: earliestStartTime, endTime: latestEndTime }
-        },
-        { startTime: timeSlots[0].startTime, endTime: timeSlots[0].endTime },
+    if (timeSlots) {
+      for (const slot of timeSlots) {
+        if (slot.startTime >= slot.endTime) {
+          throw new BadRequestException(
+            'Invalid timeslot: endTime must be after startTime.',
+          )
+        }
+      }
+
+      const sortedSlots = [...timeSlots].sort(
+        (a, b) => a.startTime.getTime() - b.startTime.getTime(),
       )
-      operatingHoursData = {
-        startTime: storeOperatingHours.startTime,
-        endTime: storeOperatingHours.endTime,
+      for (let i = 1; i < sortedSlots.length; i++) {
+        if (sortedSlots[i - 1].endTime > sortedSlots[i].startTime) {
+          throw new BadRequestException('Timeslots must not overlap.');
+        }
+      }
+
+      if (timeSlots.length > 0) {
+        const storeOperatingHours = timeSlots.reduce(
+          (acc, slot) => {
+            const earliestStartTime =
+              acc.startTime < slot.startTime ? acc.startTime : slot.startTime
+            const latestEndTime =
+              acc.endTime > slot.endTime ? acc.endTime : slot.endTime
+            return { startTime: earliestStartTime, endTime: latestEndTime }
+          },
+          { startTime: timeSlots[0].startTime, endTime: timeSlots[0].endTime },
+        )
+        operatingHoursData = {
+          startTime: storeOperatingHours.startTime,
+          endTime: storeOperatingHours.endTime,
+        }
       }
     }
 
@@ -329,12 +366,12 @@ export class StoreService {
       where: { userId_storeId: { userId, storeId: id } },
     })
     if (!staffInfo || staffInfo.role !== Role.OWNER) {
-      throw new ForbiddenException('가게를 삭제할 권한이 없습니다.')
+      throw new ForbiddenException('You have no permission to delete store.')
     }
 
     const existing = await this.prisma.store.findUnique({ where: { id } })
     if (!existing) {
-      throw new NotFoundException('해당 가게를 찾을 수 없습니다.')
+      throw new NotFoundException('Store not found.')
     }
 
     const deletedStore = await this.prisma.store.delete({ where: { id } })
