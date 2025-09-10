@@ -63,13 +63,21 @@ export default function ReservationCancelModal({
       const tokens = readTokensFromLocalStorage();
       const isLogin = await checkLogin();
       try {
+        let res;
         if (isLogin) {
-          await safeFetcher.delete(`reservation/${reservationId}`);
+          res = await safeFetcher.delete(`reservation/${reservationId}`);
         } else {
-          await safeFetcher.delete(`reservation/${reservationId}`, {
+          res = await safeFetcher.delete(`reservation/${reservationId}`, {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ tokens }),
           });
+        }
+        if (!res.ok) {
+          if (res.status === 409) {
+            toast.error("이미 확정된 예약은 취소할 수 없습니다.");
+            return;
+          }
+          throw new Error(`예약 취소 실패 (status ${res.status})`);
         }
         router.push("/reservation-cancel");
         onClose();
