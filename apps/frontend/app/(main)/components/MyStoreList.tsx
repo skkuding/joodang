@@ -10,10 +10,8 @@ import { StoreCard } from "./StoreCard";
 
 export function MyStoreList() {
   const fetchStores = useCallback(async () => {
-    const user: User = await safeFetcher.get("user/me").json();
-
-    const stores: Store[] = await safeFetcher.get("store").json();
-    setStores(stores.filter(store => store.ownerId === user.id));
+    const myStores: Store[] = await safeFetcher.get("store?sort=my").json();
+    setStores(myStores);
   }, []);
 
   const [stores, setStores] = useState<Store[] | null>(null);
