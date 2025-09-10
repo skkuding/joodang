@@ -13,15 +13,22 @@ export function DetailHeader() {
       backModal();
       return;
     }
-
-    const ref = document.referrer;
-    const sameOrigin = ref.startsWith(window.location.origin);
-
-    if (sameOrigin) {
-      router.back();
-    } else {
-      router.push("/");
+    if (window.location.pathname.includes("/edit-store") && modalPage > 0) {
+      backModal();
+      return;
     }
+
+    const ref = document.referrer || "";
+    const sameOrigin = ref.startsWith(window.location.origin);
+    if (!sameOrigin) {
+      window.location.replace("/");
+      return;
+    }
+    if (ref.includes("/create-store") || ref.includes("/edit-store")) {
+      window.location.replace("/");
+      return;
+    }
+    router.back();
   };
 
   return (

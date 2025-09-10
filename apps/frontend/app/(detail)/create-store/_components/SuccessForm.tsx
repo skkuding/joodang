@@ -4,7 +4,10 @@ import Image from "next/image";
 import checkIcon from "@/public/icons/icon_check_round.svg";
 
 export default function SuccessForm() {
-  const { createdStoreId } = useCreateStoreStore(state => state);
+  const { createdStoreId, editingStoreId } = useCreateStoreStore(
+    state => state
+  );
+  const currentStoreId = createdStoreId ?? editingStoreId;
   return (
     <div>
       <div className="fixed left-0 right-0 top-0 z-20 flex h-20 w-full bg-white" />
@@ -19,7 +22,7 @@ export default function SuccessForm() {
       </div>
       <div className="fixed bottom-0 left-0 right-0 z-20 flex h-40 w-full flex-col gap-2.5 bg-white px-5 py-4 text-center">
         <Link
-          href={createdStoreId ? `/${createdStoreId}` : "/"}
+          href={currentStoreId ? `/${currentStoreId}` : "/"}
           className="bg-primary-normal rounded-lg py-[14px] font-medium text-white"
         >
           등록한 주점 확인하기
