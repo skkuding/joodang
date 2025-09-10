@@ -432,7 +432,7 @@ export class ReservationService {
     const tokens = tokensDto?.tokens
     const reservation = await this.prisma.reservation.findUnique({
       where: { id },
-      select: { userId: true, token: true },
+      select: { userId: true, token: true, isConfirmed: true },
     })
 
     if (!reservation) {
@@ -452,6 +452,10 @@ export class ReservationService {
       throw new ForbiddenException(
         'You are not allowed to remove this reservation',
       )
+    }
+
+    if (reservation.isConfirmed) {
+      throw new ConflictException("You can't delete confirmed reservation")
     }
 
     const deletedReservation = await this.prisma.reservation.delete({
