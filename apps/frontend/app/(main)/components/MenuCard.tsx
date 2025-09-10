@@ -48,7 +48,9 @@ export function MenuCard({ menu }: { menu: Menu }) {
           {mapEnumToCategory(menu.category)}
         </span>
         <div className="flex justify-between pt-2">
-          <p className="text-base font-normal">{menu.name}</p>
+          <p className="w-[138px] truncate text-base font-normal">
+            {menu.name}
+          </p>
           <p className="text-primary-normal text-base font-medium">
             {menu.price}원
           </p>

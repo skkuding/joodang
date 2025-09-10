@@ -87,12 +87,12 @@ interface StoreInfoHeaderProps {
 export function StoreInfoHeader({ store }: StoreInfoHeaderProps) {
   return (
     <>
-      <span className="text-primary-normal text-xs font-normal">
+      <span className="text-primary-normal truncate text-xs font-normal">
         {store.college}
         {" | "}
         {store.organizer}
       </span>
-      <p className="mb-3 truncate text-xl font-medium">{store.name}</p>
+      <p className="mb-3 line-clamp-2 text-xl font-medium">{store.name}</p>
     </>
   );
 }

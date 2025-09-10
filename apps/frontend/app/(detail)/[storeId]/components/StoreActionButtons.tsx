@@ -42,9 +42,9 @@ export function StoreActionButtons({ store }: StoreActionButtonsProps) {
 
   // TODO: staff계정으로 로그인시 버튼이 잘 나오는지 확인
   return (
-    <div className="w-full">
+    <div className="mt-[-18px] w-full px-5 pb-[22px]">
       {user && staffIds.includes(user.id) ? (
-        <div className="flex flex-col gap-[6px]">
+        <div className="flex gap-[6px]">
           {store.ownerId === user.id && (
             <Link href={"" + store.id + "/staff"}>
               <Button className="w-full">스탭 관리하기</Button>
@@ -60,11 +60,13 @@ export function StoreActionButtons({ store }: StoreActionButtonsProps) {
           </Link>
         </div>
       ) : (
-        <div className="flex flex-col gap-[6px]">
-          <Link href={`/${store.id}/reservation`}>
+        <div className="flex gap-[6px]">
+          <Link href={`/${store.id}/reservation`} className="flex-1">
             <Button className="w-full">예약하기</Button>
           </Link>
-          <StandByButton />
+          <div className="flex-1">
+            <StandByButton />
+          </div>
         </div>
       )}
     </div>

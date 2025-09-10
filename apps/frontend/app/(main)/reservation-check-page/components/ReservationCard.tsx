@@ -31,11 +31,11 @@ export default function ReservationCard({ data }: ReservationCardProps) {
       />
 
       <div className="px-5 pb-5 pt-[14px]">
-        <div className="mb-[2px] select-none text-xs font-normal leading-[140%] tracking-[-0.36px] text-[#FF5940]">
+        <div className="mb-[2px] select-none truncate text-xs font-normal leading-[140%] tracking-[-0.36px] text-[#FF5940]">
           {data.store.organizer}
         </div>
         <div className="mb-3 flex h-[22px] flex-row justify-between">
-          <div className="text-color-common-0 no-select text-base font-medium leading-[140%] tracking-[-0.48px]">
+          <div className="text-color-common-0 no-select line-clamp-2 text-base font-medium leading-[140%] tracking-[-0.48px]">
             {data.store.name}
           </div>
           <Image src={Arrow} alt="화살표" width={18} height={18} />

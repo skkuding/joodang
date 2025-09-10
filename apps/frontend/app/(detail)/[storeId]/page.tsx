@@ -43,13 +43,11 @@ export default async function Page({ params, searchParams }: PageProps) {
       {inviteCode && <InviteCodeHandler inviteCode={inviteCode} />}
       <StoreImage />
       <StoreInfo store={store} />
+      <StoreActionButtons store={store} />
       <Separator />
       <StoreDescription />
       <MenuList storeId={store.id} />
-      <div className="h-[186px]" />
-      <FloatingBottomBar>
-        <StoreActionButtons store={store} />
-      </FloatingBottomBar>
+      <div className="h-[100px]" />
     </div>
   );
 }
