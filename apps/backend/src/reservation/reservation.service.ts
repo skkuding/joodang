@@ -22,6 +22,20 @@ export class ReservationService {
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
+  // Return KST day range (as UTC Date objects) for the given base date
+  private getKstDayRange(base: Date) {
+    const KST_OFFSET_MS = 9 * 60 * 60 * 1000; // UTC+9
+    const baseKst = new Date(base.getTime() + KST_OFFSET_MS);
+    const startKst = new Date(baseKst);
+    startKst.setHours(0, 0, 0, 0);
+    const endKst = new Date(baseKst);
+    endKst.setHours(23, 59, 59, 999);
+    // convert back to UTC
+    const startUtc = new Date(startKst.getTime() - KST_OFFSET_MS);
+    const endUtc = new Date(endKst.getTime() - KST_OFFSET_MS);
+    return { startUtc, endUtc };
+  }
+
   private generateReservationToken(): string {
     return randomBytes(32).toString('hex')
   }
@@ -77,11 +91,10 @@ export class ReservationService {
           throw new UnprocessableEntityException('No available seats')
         }
 
-        // 해당 타임슬롯 날짜(당일) 기준으로 매장 내 예약 번호 산정
-        const dayStart = new Date(timeSlot.startTime)
-        dayStart.setHours(0, 0, 0, 0)
-        const dayEnd = new Date(timeSlot.startTime)
-        dayEnd.setHours(23, 59, 59, 999)
+        // 해당 타임슬롯 날짜(당일) 기준(KST)으로 매장 내 예약 번호 산정
+        const { startUtc: dayStart, endUtc: dayEnd } = this.getKstDayRange(
+          new Date(timeSlot.startTime),
+        )
 
         const todayMax = await tx.reservation.aggregate({
           where: {
@@ -97,7 +110,7 @@ export class ReservationService {
             reservationNum: true,
           },
         })
-        const reservationNum = todayMax._max.reservationNum ?? 0 + 1
+  const reservationNum = (todayMax._max.reservationNum ?? 0) + 1
 
         const processedReservation = await tx.reservation.create({
           data: {
@@ -156,10 +169,7 @@ export class ReservationService {
       )
     }
 
-    const dayStart = new Date()
-    dayStart.setHours(0, 0, 0, 0)
-    const dayEnd = new Date()
-    dayEnd.setHours(23, 59, 59, 999)
+  const { startUtc: dayStart, endUtc: dayEnd } = this.getKstDayRange(now)
     let token: string | undefined = undefined
 
     if (userId) {
@@ -219,9 +229,9 @@ export class ReservationService {
           reservationNum: true,
         },
       })
-      const reservationNum = todayMax._max.reservationNum ?? 0 + 1
+  const reservationNum = (todayMax._max.reservationNum ?? 0) + 1
 
-      const timeSlotExist = await tx.timeSlot.findFirst({
+  const timeSlotExist = await tx.timeSlot.findFirst({
         where: {
           storeId: createWalkInReservationDto.storeId,
           totalCapacity: -1,
@@ -234,7 +244,7 @@ export class ReservationService {
       })
 
       let timeSlotCreated
-      if (!timeSlotExist) {
+  if (!timeSlotExist) {
         timeSlotCreated = await tx.timeSlot.create({
           data: {
             storeId: createWalkInReservationDto.storeId,
@@ -384,10 +394,7 @@ export class ReservationService {
     }
 
     // walk-in 예약인 경우, 대기 인원 산정
-    const dayStart = new Date()
-    dayStart.setHours(0, 0, 0, 0)
-    const dayEnd = new Date()
-    dayEnd.setHours(23, 59, 59, 999)
+  const { startUtc: dayStart, endUtc: dayEnd } = this.getKstDayRange(new Date())
 
     const waitingOrder = await this.prisma.reservation.count({
       where: {
