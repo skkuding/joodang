@@ -5,6 +5,7 @@ import { safeFetcher } from "@/lib/utils";
 import { Carousel, CarouselContent, CarouselItem } from "@/ui/carousel";
 import { useEffect, useState } from "react";
 import { MenuCard } from "./MenuCard";
+import { MenuCategory } from "@/lib/utils/store-utils";
 
 export function MenuList({ storeId }: { storeId: number }) {
   const [menus, setMenus] = useState<Menu[]>([]);
@@ -12,7 +13,28 @@ export function MenuList({ storeId }: { storeId: number }) {
   useEffect(() => {
     const fetchMenus = async () => {
       const menus: Menu[] = await safeFetcher(`menu?storeId=${storeId}`).json();
-      setMenus(menus);
+
+      const categoryOrder = [
+        MenuCategory.Tang,
+        MenuCategory.Tuiguim,
+        MenuCategory.Bap,
+        MenuCategory.Fruit,
+        MenuCategory.Maroon5,
+        MenuCategory.Beverage,
+      ];
+
+      const sortedMenus = menus.sort((a, b) => {
+        const aIndex = categoryOrder.indexOf(a.category);
+        const bIndex = categoryOrder.indexOf(b.category);
+
+        if (aIndex === -1 && bIndex === -1) return 0;
+        if (aIndex === -1) return 1;
+        if (bIndex === -1) return -1;
+
+        return aIndex - bIndex;
+      });
+
+      setMenus(sortedMenus);
     };
     fetchMenus();
   }, []);

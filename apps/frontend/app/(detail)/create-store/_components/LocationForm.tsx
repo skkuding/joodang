@@ -327,7 +327,7 @@ export default function LocationForm() {
           위치 정보를 입력해주세요
         </div>
 
-        <div className="mb-15 space-y-4">
+        <div className="mb-15 space-y-10">
           <div>
             <div className="flex items-center gap-2">
               <div className="bg-primary-normal h-1.5 w-1.5 rounded-full" />
@@ -337,11 +337,16 @@ export default function LocationForm() {
               value={watch("college")}
               onValueChange={value => setValue("college", value)}
             >
-              <SelectTrigger className="mt-2">
+              <SelectTrigger className="mt-2 h-[52px] p-4 text-sm">
                 <SelectValue placeholder="학교를 선택해주세요" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="성균관대학교">성균관대학교</SelectItem>
+                <SelectItem
+                  value="성균관대학교"
+                  className="focus:bg-primary-normal/10 px-4 py-[14px] text-sm"
+                >
+                  성균관대학교
+                </SelectItem>
               </SelectContent>
             </Select>
             {errors.college && (
@@ -392,24 +397,27 @@ export default function LocationForm() {
               type="button"
               onClick={handlePositionToggle}
               className={cn(
-                "bg-primary-normal hover:bg-primary-normal/90 w-full rounded-md px-4 py-2 text-sm font-medium text-white transition-colors"
+                "bg-primary-normal hover:bg-primary-normal/90 w-full rounded-md px-4 py-[14px] text-sm font-medium text-white transition-colors"
               )}
             >
               {isPositionFixed ? "위치 고정 해제" : "위치 고정"}
             </button>
+            <div className="space-y-2 pt-1">
+              <Input
+                {...register("location")}
+                placeholder="상세 위치를 입력해주세요"
+                maxLength={20}
+                className="h-[49px] px-4 text-sm"
+              />
+              {errors.location && (
+                <p className="text-xs text-red-500">
+                  {errors.location.message}
+                </p>
+              )}
+            </div>
           </div>
 
           {/* 상세 위치 입력 */}
-          <div className="space-y-2">
-            <Input
-              {...register("location")}
-              placeholder="상세 위치를 입력해주세요"
-              maxLength={20}
-            />
-            {errors.location && (
-              <p className="text-xs text-red-500">{errors.location.message}</p>
-            )}
-          </div>
         </div>
 
         <FloatingBottomBar>

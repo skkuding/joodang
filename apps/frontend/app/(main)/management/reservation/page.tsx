@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import ReservationFilterDrawer from "./_components/ReservationFilterDrawer";
 import ReservationListItem from "./_components/ReservationListItem";
 import { getStoreReservations } from "@/lib/api/reservation";
@@ -18,8 +19,16 @@ interface FilterData {
 }
 
 export default function ReservationManagementPage() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const initialTabParam = searchParams.get("tab");
+  const initialTab =
+    initialTabParam === "confirmed" || initialTabParam === "waiting"
+      ? (initialTabParam as "confirmed" | "waiting")
+      : "all";
   const [activeTab, setActiveTab] = useState<"all" | "confirmed" | "waiting">(
-    "all"
+    initialTab
   );
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [filterData, setFilterData] = useState<FilterData>({
@@ -79,6 +88,15 @@ export default function ReservationManagementPage() {
       setLoading(false);
     }
   };
+
+  // 브라우저 내비게이션으로 쿼리가 바뀌면 탭 동기화
+  useEffect(() => {
+    const t = searchParams.get("tab");
+    const nextTab =
+      t === "confirmed" || t === "waiting" ? t : (t === "all" ? "all" : "all");
+    if (nextTab !== activeTab) setActiveTab(nextTab as typeof activeTab);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   // 탭 변경 시 예약 목록 다시 로드
   useEffect(() => {
@@ -172,9 +190,17 @@ export default function ReservationManagementPage() {
           ].map(tab => (
             <button
               key={tab.key}
-              onClick={() =>
-                setActiveTab(tab.key as "all" | "confirmed" | "waiting")
-              }
+              onClick={() => {
+                const next = tab.key as "all" | "confirmed" | "waiting";
+                setActiveTab(next);
+                const params = new URLSearchParams(searchParams.toString());
+                if (next === "all") params.delete("tab");
+                else params.set("tab", next);
+                const qs = params.toString();
+                router.replace(qs ? `${pathname}?${qs}` : pathname, {
+                  scroll: false,
+                });
+              }}
               className={`flex-1 py-3 text-sm font-medium ${
                 activeTab === tab.key
                   ? "border-primary-normal text-primary-normal border-b-2"

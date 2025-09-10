@@ -36,6 +36,11 @@ const messages: Record<
     title: "구독 완료",
     description: "푸시 알림이 활성화되었어요!",
   },
+  "push:nosubscription": {
+    title: "알림 호출 실패",
+    description:
+      "푸시알림을 설정하지 않은 예약자입니다.\n\n전화로 연락해주세요!",
+  },
 };
 
 export function PushPermissionModal() {

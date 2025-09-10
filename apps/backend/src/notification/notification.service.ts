@@ -486,7 +486,10 @@ export class NotificationService {
   /**
    * Push subscription을 생성합니다
    */
-  async createPushSubscription(userId: number, dto: CreatePushSubscriptionDto) {
+  async createPushSubscription(
+    dto: CreatePushSubscriptionDto,
+    userId?: number,
+  ) {
     if (!dto.tokens?.length) {
       try {
         return await this.prisma.pushSubscription.create({
@@ -508,7 +511,6 @@ export class NotificationService {
       }
     } else {
       const createData = dto.tokens.map((token) => ({
-        userId,
         endpoint: dto.endpoint,
         p256dh: dto.keys.p256dh,
         auth: dto.keys.auth,
@@ -518,6 +520,7 @@ export class NotificationService {
 
       return await this.prisma.pushSubscription.createMany({
         data: createData,
+        skipDuplicates: true,
       })
     }
   }

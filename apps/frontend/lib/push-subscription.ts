@@ -44,27 +44,47 @@ export async function requestPermissionAndSubscribe() {
 
   // 이미 구독이 있으면 재사용
   const existing = await registration.pushManager.getSubscription();
-  if (existing) {
-    console.log("이미 구독 정보가 존재합니다. 서버에 다시 등록하지 않습니다.");
-    return; // 기존 구독이 있으면 함수 종료
+
+  const sub =
+    existing ??
+    (await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(publicKey),
+    }));
+
+  function readTokensFromLocalStorage(): string[] {
+    if (typeof window === "undefined") return [];
+    try {
+      const raw = localStorage.getItem("reservationToken");
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        return parsed.filter(t => typeof t === "string" && t.length > 0);
+      }
+      return [];
+    } catch {
+      return [];
+    }
   }
 
-  const sub = await registration.pushManager.subscribe({
-    userVisibleOnly: true,
-    applicationServerKey: urlBase64ToUint8Array(publicKey),
-  });
+  const tokens = readTokensFromLocalStorage();
 
   // 서버에 구독 저장 (로그인 필요 시 서버에서 userId 바인딩)
   try {
     await fetch(`${baseUrl}/notification/push-subscription`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(sub.toJSON()),
+      body: JSON.stringify({
+        ...sub.toJSON(),
+        tokens,
+      }),
       credentials: "include",
     });
-    window.dispatchEvent(new CustomEvent("push:subscribed"));
+    if (!existing) {
+      window.dispatchEvent(new CustomEvent("push:subscribed"));
+    }
   } catch (e) {
     console.warn("서버 구독 저장 실패:", e);
-    window.dispatchEvent(new CustomEvent("push:error"));
+    // window.dispatchEvent(new CustomEvent("push:error"));
   }
 }
