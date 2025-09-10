@@ -109,7 +109,7 @@ function RequestedInfo() {
     <div className="flex flex-col items-center gap-4 px-7 py-6">
       <Image src={successIcon} alt="Success" />
       <p className="text-2xl font-semibold">계정 변경이 신청되었어요!</p>
-      <span className="text-color-neutral-30 text-sm font-normal">
+      <span className="text-color-neutral-30 text-center text-sm font-normal">
         주점 운영자 계정으로 전환되면 알림을 보내드릴게요. 유저 계정 변경을
         원하신다면 마이페이지에서 가능해요
       </span>
