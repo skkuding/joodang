@@ -70,14 +70,15 @@ export const getReservationById = async (
 
 // 예약 호출(콜) 트리거
 export const callReservation = async (reservationId: number) => {
-  const response = await safeFetcher.post(`reservation/call/${reservationId}`);
-
-  if (!response.ok) {
+  try {
+    const response = await safeFetcher.post(
+      `reservation/call/${reservationId}`
+    );
+    return response.json();
+  } catch {
     window.dispatchEvent(new CustomEvent("push:nosubscription"));
     throw new Error("호출하기 요청에 실패했습니다.");
   }
-
-  return response.json().catch(() => undefined);
 };
 
 // 사용자 예약 목록 조회
