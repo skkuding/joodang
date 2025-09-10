@@ -510,7 +510,7 @@ export class ReservationService {
 
     const pushSubscription = await this.prisma.pushSubscription.findFirst({
       where: {
-        OR: [{ userId: isStaff.userId }, { token: isStaff.token }],
+        OR: [{ userId: isStaff.userId ?? undefined }, { token: isStaff.token }],
       },
     })
 
