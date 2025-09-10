@@ -38,7 +38,7 @@ export default async function Page() {
   const roleText =
     user?.role === "ADMIN"
       ? "관리자"
-      : user?.role === "OWNER"
+      : user?.role === "OWNER" || user?.role == "STAFF"
         ? "주점 운영자"
         : user?.role === "USER"
           ? "일반 사용자"
