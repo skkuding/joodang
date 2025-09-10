@@ -1,10 +1,10 @@
 import { MenuList } from "@/app/(main)/components/MenuList";
 import { Separator } from "@/app/(main)/components/Separator";
-import { FloatingBottomBar } from "@/app/components/FloatingBottomBar";
 import Image from "next/image";
 import { safeFetcher } from "../../../lib/utils";
 import { StoreDetail } from "../../type";
 import { StoreInfo } from "../components/StoreInfo";
+import { HeaderRouter } from "./components/HeaderRouter";
 import { InviteCodeHandler } from "./components/InviteCodeHandler";
 import { StoreActionButtons } from "./components/StoreActionButtons";
 
@@ -40,6 +40,7 @@ export default async function Page({ params, searchParams }: PageProps) {
 
   return (
     <div>
+      <HeaderRouter />
       {inviteCode && <InviteCodeHandler inviteCode={inviteCode} />}
       <StoreImage />
       <StoreInfo store={store} />
