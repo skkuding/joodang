@@ -63,13 +63,8 @@ export default function ReservationManagementPage() {
 
     try {
       const filters = {
-        isConfirmed:
-          activeTab === "confirmed"
-            ? true
-            : activeTab === "waiting"
-              ? false
-              : undefined,
-        toBeConfirmed: activeTab === "waiting" ? true : undefined,
+        isConfirmed: activeTab === "confirmed" ? true : undefined,
+        isWalkIn: activeTab === "waiting" ? true : undefined,
       };
 
       const data = await getStoreReservations(filterData.storeId, filters);

@@ -417,6 +417,7 @@ export class ReservationService {
       include: {
         menus: true,
         store: true,
+        timeSlot: true,
       },
     })
 

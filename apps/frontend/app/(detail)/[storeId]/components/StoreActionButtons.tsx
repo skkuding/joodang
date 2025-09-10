@@ -10,6 +10,10 @@ interface StoreActionButtonsProps {
   store: Store;
 }
 
+interface StaffsResult {
+  user: User;
+}
+
 export function StoreActionButtons({ store }: StoreActionButtonsProps) {
   const [user, setUser] = useState<User | null>(null);
   const [staffIds, setStaffIds] = useState<number[]>([]);
@@ -18,15 +22,16 @@ export function StoreActionButtons({ store }: StoreActionButtonsProps) {
       try {
         const user: User = await safeFetcher.get("user/me").json();
         setUser(user);
+        console.log(user);
       } catch {}
     };
 
     const fetchStaffs = async () => {
       try {
-        const staffs: User[] = await safeFetcher
+        const staffs: StaffsResult[] = await safeFetcher
           .get(`store/${store.id}/staff`)
           .json();
-        setStaffIds(staffs.map(staff => staff.id));
+        setStaffIds(staffs.map(staff => staff.user.id));
         console.log(staffIds);
       } catch {}
     };
@@ -38,7 +43,7 @@ export function StoreActionButtons({ store }: StoreActionButtonsProps) {
   // TODO: staff계정으로 로그인시 버튼이 잘 나오는지 확인
   return (
     <div className="w-full">
-      {user && (store.ownerId === user.id || staffIds.includes(user.id)) ? (
+      {user && staffIds.includes(user.id) ? (
         <div className="flex flex-col gap-[6px]">
           {store.ownerId === user.id && (
             <Link href={"" + store.id + "/staff"}>
@@ -46,7 +51,10 @@ export function StoreActionButtons({ store }: StoreActionButtonsProps) {
             </Link>
           )}
           <Link href={`/edit-store/${store.id}`}>
-            <Button className="w-full" variant={"outline"}>
+            <Button
+              className="w-full"
+              variant={store.ownerId === user.id ? "outline" : undefined}
+            >
               내용 수정하기
             </Button>
           </Link>
