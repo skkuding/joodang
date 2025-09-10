@@ -2,7 +2,11 @@
 
 import { Store } from "@/app/type";
 import { useEffect, useRef, useState } from "react";
-import type { NaverMapInstance, NaverMarkerInstance } from "@/types/naver";
+import type {
+  NaverLatLng,
+  NaverMapInstance,
+  NaverMarkerInstance,
+} from "@/types/naver";
 import { loadNaverMaps } from "@/lib/naverMapsLoader";
 
 interface StoreMapProps {
@@ -18,11 +22,11 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
   const STYLE_ID = "56e070b5-b8ce-4f3f-90a7-fc9e602ba64c";
 
   // 마커를 화면 중앙보다 약간 아래에 보이도록 중심 좌표를 위로 보정해서 이동
-  const panToWithMarkerOffset = (pos: any, markerHeightPx: number) => {
+  const panToWithMarkerOffset = (pos: NaverLatLng, markerHeightPx: number) => {
     const map = mapInstanceRef.current;
     if (!map) return;
-    const { naver } = window as any;
-    const proj = map.getProjection?.();
+    const { naver } = window;
+    const proj = map.getProjection();
     if (!proj) {
       try {
         map.panTo(pos);
