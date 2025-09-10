@@ -97,6 +97,7 @@ async function main() {
       endTime: new Date('2026-01-04T23:00:00.000Z'),
       reservationFee: 10000,
       college: '성균관대학교',
+      redirectCode: 'a1b2c3',
       staffs: {
         create: {
           userId: user1.id,

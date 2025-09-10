@@ -210,6 +210,14 @@ export class StoreService {
     }
   }
 
+  async getStoreByQrCode(code: string) {
+    const store = await this.prisma.store.findUniqueOrThrow({
+      where: { redirectCode: code },
+      select: { id: true },
+    })
+    return store
+  }
+
   async createStore(userId: number, createStoreDto: CreateStoreDto) {
     const { timeSlots, ...storeData } = createStoreDto
 

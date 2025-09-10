@@ -1,0 +1,33 @@
+meta {
+  name: Get Store By QR Code
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/store/qr?code=a1b2c3
+  body: none
+  auth: none
+}
+
+params:query {
+  code: a1b2c3
+}
+
+docs {
+  ## Get Store by QR Code
+  
+  QR 코드에 해당하는 고유 문자열을 받아 해당 주점의 상세 정보 페이지(`/store/:id`)로 리디렉션합니다.
+  
+  서버는 `302 Found`와 함께 `Location` 헤더에 리디렉션할 주소(`{{baseUrl}}/store/:id`)를 담아 응답합니다.
+  
+  ### Query
+  
+  | 이름 | 타입 | 설명 |
+  |-----|-----|-----|
+  |code|String|주점(Store)에 부여된 고유 QR 코드 문자열|
+  
+  ### Response
+  
+  이 요청은 JSON 본문을 반환하지 않고, 주점 상세 정보 API로 리디렉션됩니다.
+}

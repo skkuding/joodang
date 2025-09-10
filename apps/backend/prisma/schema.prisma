@@ -50,6 +50,8 @@ model Store {
   festival   Festival @relation(fields: [festivalId], references: [id], onDelete: Cascade)
   festivalId Int      @default(1) @map("festival_id")
 
+  redirectCode String?  @unique @map("redirect_code") // redirect code by QR
+
   menus           Menu[]
   timeSlots       TimeSlot[]
   Reservation     Reservation[]
