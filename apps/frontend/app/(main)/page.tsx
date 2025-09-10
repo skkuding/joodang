@@ -2,8 +2,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { safeFetcher } from "../../lib/utils";
 import { CarouselApi } from "../../ui/carousel";
-import { Store } from "../type";
+import { RoleEnum, Store } from "../type";
 import { Banner } from "./components/Banner";
+import { MyStoreList } from "./components/MyStoreList";
 import { Separator } from "./components/Separator";
 import { StoreList } from "./components/StoreList";
 import { StoreLocation } from "./components/StoreLocation";
@@ -40,13 +41,48 @@ export default function Home() {
     }
   }, []);
 
+  const [role, setRole] = useState<RoleEnum | null>(null);
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response: { role: string } = await safeFetcher
+          .get("user/me/role")
+          .json();
+        if (response.role === RoleEnum.USER) {
+          setRole(RoleEnum.USER);
+        } else if (response.role === RoleEnum.STAFF) {
+          setRole(RoleEnum.STAFF);
+        } else if (response.role === RoleEnum.OWNER) {
+          setRole(RoleEnum.OWNER);
+        } else if (response.role === RoleEnum.ADMIN) {
+          setRole(RoleEnum.ADMIN);
+        }
+      } catch {}
+    };
+
+    checkAuth();
+  }, []);
+
   return (
-    <div className="flex flex-col">
-      <Banner />
-      <Separator />
-      <StoreList />
-      <Separator />
-      <StoreLocation />
+    <div>
+      {role === RoleEnum.STAFF ||
+      role === RoleEnum.OWNER ||
+      role === RoleEnum.ADMIN ? ( // 근데 어드민도 여기 넣어야하나 ㅇㅅㅇ...
+        <div className="flex flex-col">
+          <Banner />
+          <Separator />
+          <MyStoreList />
+          <Separator />
+        </div>
+      ) : (
+        <div className="flex flex-col">
+          <Banner />
+          <Separator />
+          <StoreList />
+          <Separator />
+          <StoreLocation />
+        </div>
+      )}
     </div>
   );
 }
