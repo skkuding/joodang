@@ -50,7 +50,7 @@ model Store {
   festival   Festival @relation(fields: [festivalId], references: [id], onDelete: Cascade)
   festivalId Int      @default(1) @map("festival_id")
 
-  redirectCode String?  @unique @map("redirect_code") // redirect code by QR
+  redirectCode String? @unique @map("redirect_code") // redirect code by QR
 
   menus           Menu[]
   timeSlots       TimeSlot[]
@@ -224,8 +224,9 @@ model NotificationRecord {
 
 model PushSubscription {
   id         Int      @id @default(autoincrement())
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId     Int      @map("user_id")
+  user       User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     Int?     @map("user_id")
+  token      String?  @unique()
   endpoint   String
   p256dh     String
   auth       String
