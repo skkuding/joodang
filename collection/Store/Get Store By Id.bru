@@ -1,7 +1,7 @@
 meta {
   name: Get Store By Id
   type: http
-  seq: 1
+  seq: 2
 }
 
 get {
@@ -10,12 +10,12 @@ get {
   auth: inherit
 }
 
-headers {
-  Cookie: {{user1}}
-}
-
 params:path {
   storeId: 1
+}
+
+headers {
+  Cookie: {{user1}}
 }
 
 docs {
