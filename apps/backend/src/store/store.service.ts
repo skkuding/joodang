@@ -238,7 +238,7 @@ export class StoreService {
     )
     for (let i = 1; i < sortedSlots.length; i++) {
       if (sortedSlots[i - 1].endTime > sortedSlots[i].startTime) {
-        throw new BadRequestException('Timeslots must not overlap.');
+        throw new BadRequestException('Timeslots must not overlap.')
       }
     }
 
@@ -327,7 +327,7 @@ export class StoreService {
       )
       for (let i = 1; i < sortedSlots.length; i++) {
         if (sortedSlots[i - 1].endTime > sortedSlots[i].startTime) {
-          throw new BadRequestException('Timeslots must not overlap.');
+          throw new BadRequestException('Timeslots must not overlap.')
         }
       }
 
@@ -531,7 +531,9 @@ export class StoreService {
           userId,
           storeId,
         },
-        role: Role.OWNER,
+        role: {
+          in: [Role.ADMIN, Role.OWNER, Role.STAFF],
+        },
       },
     })
     if (!storeOwner) {
@@ -541,7 +543,6 @@ export class StoreService {
     return await this.prisma.storeStaff.findMany({
       where: {
         storeId,
-        role: Role.STAFF,
       },
       select: {
         user: {
