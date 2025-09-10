@@ -83,9 +83,9 @@ export class ReservationService {
         const dayEnd = new Date(timeSlot.startTime)
         dayEnd.setHours(23, 59, 59, 999)
 
-        const todayCount = await tx.reservation.count({
+        const todayMax = await tx.reservation.aggregate({
           where: {
-            storeId: rest.storeId,
+            storeId: createReservationDto.storeId,
             timeSlot: {
               startTime: {
                 gte: dayStart,
@@ -93,8 +93,11 @@ export class ReservationService {
               },
             },
           },
+          _max: {
+            reservationNum: true,
+          },
         })
-        const reservationNum = todayCount + 1
+        const reservationNum = todayMax._max.reservationNum ?? 0 + 1
 
         const processedReservation = await tx.reservation.create({
           data: {
@@ -202,7 +205,7 @@ export class ReservationService {
 
     const createdReservation = await this.prisma.$transaction(async (tx) => {
       // 해당 타임슬롯 날짜(당일) 기준으로 매장 내 예약 번호 산정
-      const todayCount = await tx.reservation.count({
+      const todayMax = await tx.reservation.aggregate({
         where: {
           storeId: createWalkInReservationDto.storeId,
           timeSlot: {
@@ -212,8 +215,11 @@ export class ReservationService {
             },
           },
         },
+        _max: {
+          reservationNum: true,
+        },
       })
-      const reservationNum = todayCount + 1
+      const reservationNum = todayMax._max.reservationNum ?? 0 + 1
 
       const timeSlotExist = await tx.timeSlot.findFirst({
         where: {
