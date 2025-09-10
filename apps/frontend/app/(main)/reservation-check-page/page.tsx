@@ -135,7 +135,7 @@ export default function ReservationCheckPage() {
     }
 
     return (
-      <div>
+      <div className="flex flex-col gap-2">
         {filteredList.length !== 0 ? (
           filteredList.map((reservation, idx) => {
             return <ReservationCard key={idx} data={reservation} />;
