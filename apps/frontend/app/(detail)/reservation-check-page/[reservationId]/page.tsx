@@ -16,6 +16,27 @@ import { useEffect, useState } from "react";
 import ReservationCancelModal from "./components/ReservationCancelModal";
 import { ReservationCheckPageStoreDetail } from "./components/ReservationCheckPageStoreDetail";
 
+function StatusBadge({ reservation }: { reservation: ReservationResponse }) {
+  const base = "rounded px-2 py-1 text-xs font-medium";
+  if (reservation.isConfirmed === true) {
+    return (
+      <span className={`${base} text-primary-normal bg-red-50`}>예약 확정</span>
+    );
+  }
+  if (reservation.isConfirmed === false) {
+    return (
+      <span className={`${base} bg-color-neutral-99 text-color-neutral-70`}>
+        예약 반려
+      </span>
+    );
+  }
+  return (
+    <span className={`${base} bg-color-neutral-99 text-color-neutral-70`}>
+      미정
+    </span>
+  );
+}
+
 export default function ReservationDetail() {
   const [store, setStore] = useState<Store>({
     id: 1,
@@ -132,9 +153,12 @@ export default function ReservationDetail() {
           <p className="justify-start text-xs font-normal leading-none text-red-500">
             {reservation?.store.college} | {reservation?.store.organizer}
           </p>
-          <p className="mb-3 h-7 w-64 justify-start text-xl font-medium leading-7 text-black">
-            {reservation?.store.name}
-          </p>
+          <div className="mb-3 flex h-6 justify-between">
+            <p className="h-7 w-64 justify-start text-xl font-medium leading-7 text-black">
+              {reservation?.store.name}
+            </p>
+            {reservation && <StatusBadge reservation={reservation} />}
+          </div>
         </div>
         <div className="text-color-neutral-40 flex flex-col justify-start gap-1 text-sm font-normal leading-tight">
           <div className="flex">
