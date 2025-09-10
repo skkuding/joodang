@@ -484,7 +484,7 @@ export class ReservationService {
         id,
         store: { staffs: { some: { userId } } },
       },
-      select: { id: true },
+      select: { id: true, userId: true, token: true },
     })
 
     if (!isStaff) {
@@ -497,6 +497,16 @@ export class ReservationService {
         isDone: true,
       },
     })
+
+    const pushSubscription = await this.prisma.pushSubscription.findFirst({
+      where: {
+        OR: [{ userId: isStaff.userId }, { token: isStaff.token }],
+      },
+    })
+
+    if (!pushSubscription) {
+      throw new ConflictException('User has no push subscription')
+    }
 
     this.eventEmitter.emit('come.to.store', {
       reservationId: reservation.id,
@@ -549,6 +559,17 @@ export class ReservationService {
     if (!tokensDto) {
       throw new BadRequestException('Please provide tokens')
     }
+    await this.prisma.pushSubscription.updateMany({
+      where: {
+        token: {
+          in: tokensDto.tokens,
+        },
+      },
+      data: {
+        userId,
+        token: null,
+      },
+    })
     return this.prisma.reservation.updateMany({
       where: {
         token: {
