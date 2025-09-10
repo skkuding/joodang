@@ -508,7 +508,6 @@ export class NotificationService {
       }
     } else {
       const createData = dto.tokens.map((token) => ({
-        userId,
         endpoint: dto.endpoint,
         p256dh: dto.keys.p256dh,
         auth: dto.keys.auth,
@@ -518,6 +517,7 @@ export class NotificationService {
 
       return await this.prisma.pushSubscription.createMany({
         data: createData,
+        skipDuplicates: true,
       })
     }
   }
