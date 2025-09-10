@@ -115,8 +115,8 @@ export function Footer() {
                     role === RoleEnum.STAFF ||
                     role === RoleEnum.OWNER ||
                     role === RoleEnum.ADMIN
-                      ? OrangeBeer
-                      : OrangeTent
+                      ? OrangeTent
+                      : OrangeBeer
                   }
                   alt="store"
                   width={34}
@@ -137,8 +137,8 @@ export function Footer() {
                     role === RoleEnum.STAFF ||
                     role === RoleEnum.OWNER ||
                     role === RoleEnum.ADMIN
-                      ? GrayBeer
-                      : GrayTent
+                      ? GrayTent
+                      : GrayBeer
                   }
                   alt="회색 맥주"
                   width={34}
