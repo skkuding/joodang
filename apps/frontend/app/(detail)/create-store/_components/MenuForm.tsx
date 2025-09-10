@@ -1,6 +1,5 @@
 "use client";
 
-import { FloatingBottomBar } from "@/app/components/FloatingBottomBar";
 import { useCreateStoreStore } from "@/app/stores/createStore";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -282,7 +281,7 @@ export default function MenuForm() {
   }, [currentItem.imagePreview, menuItems]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-20">
       <div className="text-primary-normal mb-[2px] text-xs">4단계</div>
       <div className="mb-1.5 text-xl font-medium">메뉴를 등록해주세요</div>
       <div className="text-color-neutral-50 mb-5 text-xs">
@@ -378,7 +377,7 @@ export default function MenuForm() {
                   "whitespace-nowrap rounded-full px-[14px] py-2 text-sm font-medium transition-colors",
                   currentItem.category === category
                     ? "bg-black text-white"
-                    : "border-color-neutral-70 text-color-neutral-70 border bg-white"
+                    : "border-color-line text-color-neutral-70 border bg-white"
                 )}
               >
                 {category}
@@ -484,22 +483,20 @@ export default function MenuForm() {
         </div>
       )}
 
-      <FloatingBottomBar>
-        <Button
-          type="button"
-          onClick={handleFinalSubmit}
-          disabled={isSubmitting}
-          className="bg-primary-normal w-full rounded-md px-4 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-gray-300"
-        >
-          {isEditMode
-            ? isSubmitting
-              ? `수정 중...`
-              : "수정 완료하기"
-            : isSubmitting
-              ? `등록 중...`
-              : "주점 등록하기"}
-        </Button>
-      </FloatingBottomBar>
+      <Button
+        type="button"
+        onClick={handleFinalSubmit}
+        disabled={isSubmitting}
+        className="bg-primary-normal w-full rounded-md px-4 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-gray-300"
+      >
+        {isEditMode
+          ? isSubmitting
+            ? `수정 중...`
+            : "수정 완료하기"
+          : isSubmitting
+            ? `등록 중...`
+            : "주점 등록하기"}
+      </Button>
     </div>
   );
 }
