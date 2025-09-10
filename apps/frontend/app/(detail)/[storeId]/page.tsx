@@ -1,6 +1,5 @@
 import { MenuList } from "@/app/(main)/components/MenuList";
 import { Separator } from "@/app/(main)/components/Separator";
-import { FloatingBottomBar } from "@/app/components/FloatingBottomBar";
 import Image from "next/image";
 import { safeFetcher } from "../../../lib/utils";
 import { StoreDetail } from "../../type";

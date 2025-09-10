@@ -1,5 +1,5 @@
 "use client";
-import { Store, User } from "@/app/type";
+import { StoreDetail, User } from "@/app/type";
 import { Button } from "@/components/ui/button";
 import { safeFetcher } from "@/lib/utils";
 import Link from "next/link";
@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { StandByButton } from "./StandByButton";
 
 interface StoreActionButtonsProps {
-  store: Store;
+  store: StoreDetail;
 }
 
 interface StaffsResult {
@@ -64,12 +64,17 @@ export function StoreActionButtons({ store }: StoreActionButtonsProps) {
         </div>
       ) : (
         <div className="flex gap-[6px]">
-          <Link href={`/${store.id}/reservation`} className="flex-1">
-            <Button className="w-full">예약하기</Button>
+          {/* <Link href={`/${store.id}/reservation`} className="flex-1" > */}
+          <Link href={`#`} className="flex-1">
+            <Button className="w-full" disabled>
+              예약 불가
+            </Button>
           </Link>
-          <div className="flex-1">
-            <StandByButton />
-          </div>
+          {store.redirectCode && (
+            <div className="flex-1">
+              <StandByButton />
+            </div>
+          )}
         </div>
       )}
     </div>
