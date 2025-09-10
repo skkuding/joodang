@@ -486,7 +486,10 @@ export class NotificationService {
   /**
    * Push subscription을 생성합니다
    */
-  async createPushSubscription(userId: number, dto: CreatePushSubscriptionDto) {
+  async createPushSubscription(
+    dto: CreatePushSubscriptionDto,
+    userId?: number,
+  ) {
     if (!dto.tokens?.length) {
       try {
         return await this.prisma.pushSubscription.create({

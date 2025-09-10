@@ -75,8 +75,7 @@ export class NotificationController {
     @Req() req: Request,
     @Body() dto: CreatePushSubscriptionDto,
   ) {
-    console.log(req.user.id)
-    return this.notificationService.createPushSubscription(req.user.id, dto)
+    return this.notificationService.createPushSubscription(dto, req.user?.id)
   }
 
   /**
