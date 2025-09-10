@@ -3,13 +3,7 @@ import StoreMap from "@/app/(main)/components/StoreMap";
 import CopyAccountModal from "@/app/components/CopyAccountModal";
 import { FloatingBottomBar } from "@/app/components/FloatingBottomBar";
 import { ReservationResponse, Store, StoreDetail } from "@/app/type";
-import {
-  cn,
-  formatDateWithDay,
-  formatToHHMM,
-  formatWithComma,
-  safeFetcher,
-} from "@/lib/utils";
+import { cn, formatToHHMM, formatWithComma, safeFetcher } from "@/lib/utils";
 import Arrow from "@/public/icons/icon_arrow.svg";
 import Location from "@/public/icons/icon_location.svg";
 import Money from "@/public/icons/orangeMoney.svg";
@@ -189,7 +183,7 @@ export default function ReservationDetail() {
           </div>
         </div>
 
-        <div className="bg-color-neutral-99 mt-2 justify-start space-y-[6px] rounded-md px-4 py-3 text-sm font-normal leading-tight text-zinc-700">
+        <div className="bg-color-neutral-99 mt-2 flex flex-col justify-start space-y-[6px] rounded-md px-4 py-3 text-sm font-normal leading-tight text-zinc-700">
           <div className="flex">
             <Image src={OrangeDot} alt="주황닷" width={6} height={6} />
             <div className="ml-2 flex w-full justify-between">
