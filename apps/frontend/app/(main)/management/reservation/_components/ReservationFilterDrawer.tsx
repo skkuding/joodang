@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
-import { getMyOwnedStores, getStoreTimeSlots } from "@/lib/api/store";
+import { getMyManagedStores, getStoreTimeSlots } from "@/lib/api/store";
 import { Store, TimeSlot } from "@/app/type";
 import {
   Drawer,
@@ -59,7 +59,7 @@ export default function ReservationFilterDrawer({
   const loadStores = async (preselectedStoreId?: number) => {
     setLoading(true);
     try {
-      const data = await getMyOwnedStores();
+      const data = await getMyManagedStores();
       setStores(data);
       // 각 스토어별 기간 라벨 선계산
       try {
