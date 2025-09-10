@@ -460,11 +460,17 @@ export default function TimeSlotForm() {
               onOpenAutoFocus={e => e.preventDefault()}
             >
               <DialogHeader>
-                <DialogTitle>자동 시간대 생성</DialogTitle>
+                <DialogTitle className="mb-2 text-left">
+                  자동 시간대 생성
+                </DialogTitle>
               </DialogHeader>
-              <div className="space-y-4">
+              <div className="space-y-5">
                 <div>
-                  <Label htmlFor="startTime" className="text-sm font-medium">
+                  <Label
+                    htmlFor="startTime"
+                    className="flex items-center gap-2 text-base font-medium"
+                  >
+                    <div className="bg-primary-normal h-1.5 w-1.5 rounded-full" />
                     시작 시간
                   </Label>
                   <Input
@@ -472,35 +478,47 @@ export default function TimeSlotForm() {
                     type="time"
                     value={autoStartTime}
                     onChange={e => setAutoStartTime(e.target.value)}
-                    className="mt-1"
+                    className="mt-2 h-[52px] p-4 text-sm"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="interval" className="text-sm font-medium">
+                  <Label
+                    htmlFor="interval"
+                    className="flex items-center gap-2 text-base font-medium"
+                  >
+                    <div className="bg-primary-normal h-1.5 w-1.5 rounded-full" />
                     간격
                   </Label>
                   <Select value={autoInterval} onValueChange={setAutoInterval}>
-                    <SelectTrigger className="mt-1">
+                    <SelectTrigger className="mt-1 h-[52px] p-4 text-sm">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="60">1시간 단위</SelectItem>
-                      <SelectItem value="90">1시간 30분 단위</SelectItem>
-                      <SelectItem value="120">2시간 단위</SelectItem>
+                      <SelectItem
+                        value="60"
+                        className="focus:bg-primary-normal/10 px-4 py-[14px] text-sm"
+                      >
+                        1시간 단위
+                      </SelectItem>
+                      <SelectItem
+                        value="90"
+                        className="focus:bg-primary-normal/10 px-4 py-[14px] text-sm"
+                      >
+                        1시간 30분 단위
+                      </SelectItem>
+                      <SelectItem
+                        value="120"
+                        className="focus:bg-primary-normal/10 px-4 py-[14px] text-sm"
+                      >
+                        2시간 단위
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="flex gap-2 pt-4">
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsAutoModalOpen(false)}
-                    className="flex-1"
-                  >
-                    취소
-                  </Button>
+                <div className="flex gap-2 pt-1">
                   <Button
                     onClick={handleAutoGenerate}
-                    className="bg-primary-normal hover:bg-primary-normal/90 flex-1"
+                    className="bg-primary-normal"
                   >
                     확인
                   </Button>
