@@ -5,6 +5,7 @@ import { CarouselApi } from "../../ui/carousel";
 import { RoleEnum, Store } from "../type";
 import { Banner } from "./components/Banner";
 import { MyStoreList } from "./components/MyStoreList";
+import { ReservationList } from "./components/ReservationList";
 import { Separator } from "./components/Separator";
 import { StoreList } from "./components/StoreList";
 import { StoreLocation } from "./components/StoreLocation";
@@ -73,6 +74,7 @@ export default function Home() {
           <Separator />
           <MyStoreList />
           <Separator />
+          <ReservationList />
         </div>
       ) : (
         <div className="flex flex-col">

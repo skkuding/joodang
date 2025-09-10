@@ -2,32 +2,36 @@
 
 import { ReservationResponse } from "@/app/type";
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useEffect, useState } from "react";
 
 export function ReservationList() {
   const [reservation, setReservation] = useState<ReservationResponse | null>(
     null
   );
-  useEffect(() => {}, []);
+  useEffect(() => {
+    async function getStoreReservations() {
+      // const
+    }
+  }, []);
 
   return (
     <div className="flex flex-col space-y-[14px] px-5 pt-[30px]">
       <div className="text-color-common-0 justify-start text-xl font-medium leading-7">
         우리 주점을 예약했어요
       </div>
-      <Accordion
-        type="single"
-        collapsible
-        className="border-color-neutral-50 w-full rounded-md border px-[14px] text-sm"
-      >
-        <AccordionItem value="item-1">
-          <AccordionTrigger className="flex h-[62px] items-center">
-            <div className="flex w-full flex-row justify-between">
+      <div className="w-full rounded-md text-sm">
+        <Select defaultValue="item-1">
+          <SelectTrigger className="flex h-[62px] w-full items-center">
+            <SelectValue placeholder="예약을 선택하세요" />
+          </SelectTrigger>
+          <SelectContent className="w-full">
+            <SelectItem value="item-1" className="py-2">
               <div className="flex flex-col">
                 <p className="text-color-common-0 justify-start text-sm font-normal leading-tight">
                   모태솔로지만 연애 마려웡
@@ -36,11 +40,10 @@ export function ReservationList() {
                   2025. 01. 01 ~ 2025. 01. 02
                 </p>
               </div>
-            </div>
-          </AccordionTrigger>
-          <AccordionContent>첫 번째 아코디언 내용입니다.</AccordionContent>
-        </AccordionItem>
-      </Accordion>
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
       <div>{/* <ReservationListItem /> */}</div>
     </div>
