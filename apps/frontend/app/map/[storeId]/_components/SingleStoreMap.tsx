@@ -1,169 +1,231 @@
 "use client";
 import type { StoreDetail } from "@/app/type";
-import Script from "next/script";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { IoIosArrowBack } from "react-icons/io";
 import { StoreDrawer } from "./StoreDrawer";
-import type { NaverMapInstance, NaverMarkerInstance } from "@/types/naver";
+import type {
+  NaverLatLng,
+  NaverMapInstance,
+  NaverMarkerInstance,
+} from "@/types/naver";
+import { loadNaverMaps } from "@/lib/naverMapsLoader";
+
 interface SingleStoreMapProps {
   store: StoreDetail;
 }
 
 export default function SingleStoreMap({ store }: SingleStoreMapProps) {
-  const mapRef = useRef<NaverMapInstance | null>(null);
-  const myMarkerRef = useRef<NaverMarkerInstance | null>(null);
+  const STYLE_ID = "56e070b5-b8ce-4f3f-90a7-fc9e602ba64c";
   const router = useRouter();
 
-  useEffect(() => {
-    if (!window.naver) return;
+  const markerHeightRef = useRef<number>(0);
+  const mapDivRef = useRef<HTMLDivElement | null>(null);
+  const mapRef = useRef<NaverMapInstance | null>(null);
+  const storeMarkerRef = useRef<NaverMarkerInstance | null>(null);
+  const myMarkerRef = useRef<NaverMarkerInstance | null>(null);
+  const geoWatchIdRef = useRef<number | null>(null);
+  const [sdkLoaded, setSdkLoaded] = useState(false);
 
-    // 지도 생성
-    const map = new window.naver.maps.Map("map", {
-      gl: true,
-      center: new window.naver.maps.LatLng(store.latitude, store.longitude),
-      zoom: 16,
-      customStyleId: "56e070b5-b8ce-4f3f-90a7-fc9e602ba64c",
-    });
-    mapRef.current = map;
-
-    // 가게 위치 마커
-    function buildIconHTML(name: string) {
-      return `
-        <div class="store-marker" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:8px;color:white;pointer-events:none;">
-          <span style="background-color:rgba(255,255,255,0.1);padding:4px 12px;font-size:14px;font-weight:600;white-space:nowrap;">
-            ${name}
-          </span>
-          <img src="/icons/icon_location.svg" alt="pin" width="35" height="35" style="display:block;" />
-        </div>`;
-    }
-
-    function measureHTML(html: string) {
-      const wrapper = document.createElement("div");
-      wrapper.style.position = "absolute";
-      wrapper.style.left = "-9999px";
-      wrapper.style.top = "0";
-      wrapper.innerHTML = html;
-      document.body.appendChild(wrapper);
-
-      const el = wrapper.firstElementChild as HTMLElement;
-      const rect = el.getBoundingClientRect();
-      const width = Math.round(rect.width);
-      const height = Math.round(rect.height);
-
-      document.body.removeChild(wrapper);
-
-      return { html, width, height };
-    }
-
-    // storeMarker 생성 부분 대체
-    const iconHtml = buildIconHTML(store.name);
-    const measured = measureHTML(iconHtml);
-
-    const storeMarker = new window.naver.maps.Marker({
-      position: new window.naver.maps.LatLng(store.latitude, store.longitude),
-      map,
-      icon: {
-        content: measured.html,
-        // 하단 중앙이 좌표에 오도록 설정
-        anchor: new window.naver.maps.Point(
-          Math.round(measured.width / 2),
-          measured.height
-        ),
-      },
-    });
-    window.naver.maps.Event.addListener(storeMarker, "click", () => {
-      map.setZoom(16);
-      map.setCenter(
-        new window.naver.maps.LatLng(store.latitude, store.longitude)
-      );
-    });
-    const storeLatLng = new window.naver.maps.LatLng(
-      store.latitude,
-      store.longitude
+  const computeCenterFor = (
+    pos: NaverLatLng,
+    map: NaverMapInstance
+  ): NaverLatLng => {
+    const { naver } = window;
+    const proj = map.getProjection();
+    if (!proj) return pos;
+    const mapSize = map.getSize();
+    const mapEl = mapDivRef.current;
+    const drawer = document.querySelector<HTMLElement>(
+      "[data-map-overlay-height]"
     );
-    window.naver.maps.Event.once(map, "idle", () => {
-      const projection = map.getProjection();
-      if (projection) {
-        const point = projection.fromCoordToOffset(storeLatLng);
-        const mapSize = map.getSize();
+    let overlapPx = 0;
+    if (drawer && mapEl) {
+      const mapRect = mapEl.getBoundingClientRect();
+      const drawerRect = drawer.getBoundingClientRect();
+      overlapPx = Math.max(0, mapRect.bottom - drawerRect.top);
+      overlapPx = Math.min(overlapPx, mapSize.height * 0.9);
+    }
+    const pt = proj.fromCoordToOffset(pos);
+    const markerShift = markerHeightRef.current * 0.35;
+    const desiredOffsetY = -overlapPx / 2 + markerShift;
+    const deltaPoint = new naver.maps.Point(pt.x, pt.y - desiredOffsetY);
+    return proj.fromOffsetToCoord(deltaPoint);
+  };
 
-        // 화면 높이의 1/3 만큼 y 좌표를 아래로 내려줌
-        const newPoint = new window.naver.maps.Point(
-          point.x,
-          point.y + mapSize.height / 3
-        );
+  const panToAdjustedCenter = (pos: NaverLatLng) => {
+    if (!mapRef.current) return;
+    const adjusted = computeCenterFor(pos, mapRef.current);
+    try {
+      mapRef.current.panTo(adjusted);
+    } catch {
+      mapRef.current.setCenter(adjusted);
+    }
+  };
 
-        const newCenter = projection.fromOffsetToCoord(newPoint);
-        map.setCenter(newCenter);
-      }
-    });
+  useEffect(() => {
+    let active = true;
+    loadNaverMaps()
+      .then(() => active && setSdkLoaded(true))
+      .catch(e => console.warn("Failed to load Naver Maps", e));
+    return () => {
+      active = false;
+    };
+  }, []);
 
-    if (navigator.geolocation) {
-      // 위치 변화 감지
-      const watchId = navigator.geolocation.watchPosition(
-        position => {
-          const { latitude, longitude } = position.coords;
-          const myLatLng = new window.naver.maps.LatLng(latitude, longitude);
+  useEffect(() => {
+    if (!sdkLoaded || !mapDivRef.current) return;
+    const { naver } = window;
+    if (!naver?.maps) return;
 
-          const currentMarker = myMarkerRef.current;
-          if (!currentMarker) {
-            // 처음에는 새 마커 생성
-            const newMarker = new window.naver.maps.Marker({
-              position: myLatLng,
-              map,
+    const center = new naver.maps.LatLng(store.latitude, store.longitude);
+
+    if (!mapRef.current) {
+      mapRef.current = new naver.maps.Map(mapDivRef.current, {
+        center,
+        zoom: 16,
+        customStyleId: STYLE_ID,
+        gl: true,
+      });
+    }
+
+    const buildMarkerHTML = (name: string) => `
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:8px;color:white;pointer-events:none;">
+        <span style=\"background:rgba(255,255,255,0.1);padding:4px 12px;font-size:14px;font-weight:600;white-space:nowrap;\">${name}</span>
+        <img src=\"/icons/icon_location.svg\" alt=\"pin\" width=\"35\" height=\"35\" />
+      </div>`;
+    const measure = (html: string) => {
+      const wrap = document.createElement("div");
+      wrap.style.cssText = "position:absolute;left:-9999px;top:0;";
+      wrap.innerHTML = html;
+      document.body.appendChild(wrap);
+      const rect = wrap.firstElementChild!.getBoundingClientRect();
+      document.body.removeChild(wrap);
+      return { html, w: Math.round(rect.width), h: Math.round(rect.height) };
+    };
+
+    if (!storeMarkerRef.current) {
+      const m = measure(buildMarkerHTML(store.name));
+      markerHeightRef.current = m.h;
+      const bottomPadding = 8;
+      storeMarkerRef.current = new naver.maps.Marker({
+        position: center,
+        map: mapRef.current!,
+        icon: {
+          content: m.html,
+          anchor: new naver.maps.Point(
+            Math.round(m.w / 2),
+            Math.max(0, m.h - bottomPadding)
+          ),
+        },
+      });
+      naver.maps.Event.once(mapRef.current!, "idle", () => {
+        panToAdjustedCenter(center);
+      });
+    }
+
+    // 내 위치 마커
+    if (navigator.geolocation && geoWatchIdRef.current === null) {
+      geoWatchIdRef.current = navigator.geolocation.watchPosition(
+        pos => {
+          const myPos = new naver.maps.LatLng(
+            pos.coords.latitude,
+            pos.coords.longitude
+          );
+          if (!myMarkerRef.current) {
+            const size = 20;
+            myMarkerRef.current = new naver.maps.Marker({
+              position: myPos,
+              map: mapRef.current!,
               icon: {
                 content:
-                  '<div style="width:20px;height:20px;background:red;border-radius:50%;border:2px solid white;"></div>',
+                  '<div style="width:20px;height:20px;background:#ff3b30;border-radius:50%;border:2px solid white;"></div>',
+                anchor: new naver.maps.Point(size / 2, size / 2),
               },
             });
-            myMarkerRef.current = newMarker;
           } else {
-            // 이후에는 위치만 갱신
-            currentMarker.setPosition(myLatLng);
+            myMarkerRef.current.setPosition(myPos);
           }
         },
-        error => {
-          console.error("위치 추적 오류:", error);
-        },
-        {
-          enableHighAccuracy: true, // GPS 정확도 우선
-          maximumAge: 0,
-          timeout: 5000,
-        }
+        err => console.warn("geo watch error", err),
+        { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
       );
-
-      // cleanup (컴포넌트 언마운트 시 위치 추적 중단)
-      return () => navigator.geolocation.clearWatch(watchId);
     }
+
+    return () => {
+      if (geoWatchIdRef.current !== null)
+        navigator.geolocation.clearWatch(geoWatchIdRef.current);
+    };
+  }, [sdkLoaded, store.latitude, store.longitude, store.name]);
+
+  useEffect(() => {
+    if (!mapRef.current || !storeMarkerRef.current) return;
+    const { naver } = window;
+    const pos = new naver.maps.LatLng(store.latitude, store.longitude);
+
+    const html = `
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:8px;color:white;pointer-events:none;">
+        <span style=\"background:rgba(255,255,255,0.1);padding:4px 12px;font-size:14px;font-weight:600;white-space:nowrap;\">${store.name}</span>
+        <img src=\"/icons/icon_location.svg\" alt=\"pin\" width=\"35\" height=\"35\" />
+      </div>`;
+    const wrap = document.createElement("div");
+    wrap.style.cssText = "position:absolute;left:-9999px;top:0;";
+    wrap.innerHTML = html;
+    document.body.appendChild(wrap);
+    const r = wrap.firstElementChild!.getBoundingClientRect();
+    document.body.removeChild(wrap);
+
+    const bottomPadding = 8;
+    storeMarkerRef.current.setIcon({
+      content: html,
+      anchor: new naver.maps.Point(
+        Math.round(r.width / 2),
+        Math.max(0, r.height - bottomPadding)
+      ),
+    });
+    markerHeightRef.current = r.height;
+    storeMarkerRef.current.setPosition(pos);
+
+    panToAdjustedCenter(pos);
   }, [store.latitude, store.longitude, store.name]);
 
-  // 버튼 클릭 시 내 위치로 이동
   const moveToMyLocation = () => {
-    if (mapRef.current && myMarkerRef.current) {
-      mapRef.current.setCenter(myMarkerRef.current.getPosition());
+    if (!mapRef.current || !myMarkerRef.current) return;
+    const { naver } = window;
+    const pos = myMarkerRef.current.getPosition();
+    const proj = mapRef.current.getProjection();
+    if (!proj) return;
+    const mapEl = mapDivRef.current;
+    const drawer = document.querySelector<HTMLElement>(
+      "[data-map-overlay-height]"
+    );
+    let overlapPx = 0;
+    if (drawer && mapEl) {
+      const mapRect = mapEl.getBoundingClientRect();
+      const drawerRect = drawer.getBoundingClientRect();
+      overlapPx = Math.max(0, mapRect.bottom - drawerRect.top);
+      overlapPx = Math.min(overlapPx, mapRef.current.getSize().height * 0.9);
+    }
+    const pt = proj.fromCoordToOffset(pos);
+    const desiredOffsetY = -overlapPx / 2;
+    const adj = proj.fromOffsetToCoord(
+      new naver.maps.Point(pt.x, pt.y - desiredOffsetY)
+    );
+    try {
+      mapRef.current.panTo(adj);
+    } catch {
+      mapRef.current.setCenter(adj);
     }
   };
 
   return (
-    <>
-      <Script
-        type="text/javascript"
-        src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${process.env.NEXT_PUBLIC_NAVER_ID}&submodules=gl`}
-        strategy="beforeInteractive"
+    <div className="relative mb-[-100px] mt-[-88px] h-dvh w-screen">
+      <div ref={mapDivRef} className="h-full w-full" />
+      <IoIosArrowBack
+        className="absolute left-5 top-11 h-6 w-6 text-white"
+        onClick={() => router.back()}
       />
-      <div className="relative mb-[-100px] mt-[-88px] h-dvh w-screen">
-        {/* 지도 */}
-        <div className="h-full w-full" id="map" />
-        <IoIosArrowBack
-          className="absolute left-5 top-11 h-6 w-6 text-white"
-          onClick={() => {
-            router.back();
-          }}
-        />
-
-        <StoreDrawer store={store} mylocationfunc={moveToMyLocation} />
-      </div>
-    </>
+      <StoreDrawer store={store} mylocationfunc={moveToMyLocation} />
+    </div>
   );
 }

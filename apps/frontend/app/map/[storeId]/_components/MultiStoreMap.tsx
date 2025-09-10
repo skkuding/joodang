@@ -114,12 +114,16 @@ export default function MultiStoreMap({ stores }: MultiStoreMapProps) {
       const { naver } = window;
       const m = measure(buildMarkerHTML(initialStore.name));
       markerHeightRef.current = m.h;
+      const bottomPadding = 8;
       storeMarkerRef.current = new naver.maps.Marker({
         position: center,
         map: mapRef.current!,
         icon: {
           content: m.html,
-          anchor: new naver.maps.Point(Math.round(m.w / 2), m.h),
+          anchor: new naver.maps.Point(
+            Math.round(m.w / 2),
+            Math.max(0, m.h - bottomPadding)
+          ),
         },
       });
       naver.maps.Event.once(mapRef.current!, "idle", () => {
@@ -175,9 +179,13 @@ export default function MultiStoreMap({ stores }: MultiStoreMapProps) {
     document.body.appendChild(wrap);
     const r = wrap.firstElementChild!.getBoundingClientRect();
     document.body.removeChild(wrap);
+    const bottomPadding = 8;
     storeMarkerRef.current.setIcon({
       content: html,
-      anchor: new naver.maps.Point(Math.round(r.width / 2), r.height),
+      anchor: new naver.maps.Point(
+        Math.round(r.width / 2),
+        Math.max(0, r.height - bottomPadding)
+      ),
     });
     markerHeightRef.current = r.height;
     storeMarkerRef.current.setPosition(pos);
