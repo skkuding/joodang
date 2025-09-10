@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import ReservationFilterDrawer from "./_components/ReservationFilterDrawer";
 import ReservationListItem from "./_components/ReservationListItem";
 import { getStoreReservations } from "@/lib/api/reservation";
+import { getMyOwnedStores } from "@/lib/api/store";
+import { formatDateWithDay } from "@/lib/utils";
 
 import Checkbox from "@/public/icons/orangeCheckbox.svg";
 import Image from "next/image";
@@ -23,11 +25,34 @@ export default function ReservationManagementPage() {
   const [filterData, setFilterData] = useState<FilterData>({
     storeId: 0,
     storeName: "주점을 선택해주세요",
-    date: "0000.00.00",
+    date: "날짜를 선택해주세요",
   });
   const [reservations, setReservations] = useState<ReservationResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        if (filterData.storeId) return;
+        const stores = await getMyOwnedStores();
+        if (cancelled) return;
+        if (stores && stores.length > 0) {
+          const first = stores[0];
+          const today = new Date();
+          setFilterData({
+            storeId: first.id,
+            storeName: first.name,
+            date: formatDateWithDay(today),
+          });
+        }
+      } catch (e) {}
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // 예약 목록 로드
   const loadReservations = async () => {
