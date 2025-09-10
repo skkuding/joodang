@@ -62,19 +62,6 @@ export default function BarPage() {
             <div className="text-color-common-0 mt-1 font-sans text-xl font-medium leading-[140%] tracking-[-0.6px]">
               주점을 찾아볼까요?
             </div>
-            <Link href={`/map/1`}>
-              <button className="justify-item item-center rounded-1 flex h-[25px] w-[95px] flex-row bg-[#FF594014] px-2 py-1">
-                <Image
-                  src={locationIcon}
-                  alt="지도버튼"
-                  width={12}
-                  height={12}
-                />
-                <p className="text-primary-normal font-sans text-xs font-normal leading-[140%] tracking-[-0.36px]">
-                  지도에서 찾기
-                </p>
-              </button>
-            </Link>
           </div>
 
           <div className="text-color-neutral-40 mb-5 mt-3 font-sans text-[14px] font-normal leading-[150%] tracking-[-0.42px]">
