@@ -46,11 +46,14 @@ export function StoreActionButtons({ store }: StoreActionButtonsProps) {
       {user && staffIds.includes(user.id) ? (
         <div className="flex gap-[6px]">
           {store.ownerId === user.id && (
-            <Link href={"" + store.id + "/staff"}>
+            <Link href={"" + store.id + "/staff"} className="flex-1">
               <Button className="w-full">스탭 관리하기</Button>
             </Link>
           )}
-          <Link href={`/edit-store/${store.id}`}>
+          <Link
+            href={`/edit-store/${store.id}`}
+            className={store.ownerId === user.id ? "flex-1" : "w-full"}
+          >
             <Button
               className="w-full"
               variant={store.ownerId === user.id ? "outline" : undefined}
