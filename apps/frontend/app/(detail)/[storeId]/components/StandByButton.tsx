@@ -16,7 +16,7 @@ import { valibotResolver } from "@hookform/resolvers/valibot";
 import { HTTPError } from "ky";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   FormProvider,
   SubmitHandler,
@@ -52,8 +52,15 @@ function StandByButtonForm({
     },
   });
 
+  const doubleClickBlocker = useRef(false);
   const onSubmit: SubmitHandler<CreateStandByInput> = async data => {
     try {
+      if (doubleClickBlocker.current) {
+        console.log("막음 ㅋㅋ");
+        return;
+      }
+      doubleClickBlocker.current = true;
+
       function readTokensFromLocalStorage(): string[] {
         if (typeof window === "undefined") return [];
         try {
