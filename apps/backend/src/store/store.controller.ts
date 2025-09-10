@@ -46,15 +46,12 @@ export class StoreController {
   }
 
   @Get('qr')
-  async getStoreByQrCode(
-    @Query('code') code: string,
-    @Res() res: Response,
-  ) {
+  async getStoreByQrCode(@Query('code') code: string, @Res() res: Response) {
     if (!code) {
       throw new BadRequestException('redirectCode required.')
     }
     const { id } = await this.storeService.getStoreByQrCode(code)
-    return res.redirect(`/store/${id}`)
+    return res.redirect(`https://joodang.com/${id}`)
   }
 
   @Get(':id')
