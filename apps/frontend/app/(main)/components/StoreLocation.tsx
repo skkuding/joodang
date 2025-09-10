@@ -62,7 +62,7 @@ export function StoreLocation() {
                   endTime={new Date(store.endTime)}
                   size="medium"
                   location={store.location}
-                  disabled
+                  disabled={false}
                 />
               </CarouselItem>
             ))}
