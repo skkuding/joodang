@@ -126,6 +126,7 @@ export default function MenuForm() {
         storeId = storeResponse.id;
         setCreatedStoreId(storeId);
       }
+
       const imageUploadPromises = [];
       const imageUrls: Record<string, string> = {};
 
@@ -144,7 +145,12 @@ export default function MenuForm() {
         imageUploadPromises.push(storeImagePromise);
       }
 
-      menuItems.forEach((menuItem, index) => {
+      // 새로운 메뉴만 필터링 (기존 메뉴는 숫자 ID, 새 메뉴는 'menu_' 접두사)
+      const newMenuItems = menuItems.filter(
+        menuItem => menuItem.id.startsWith("menu_") // 새로 추가된 메뉴만
+      );
+
+      newMenuItems.forEach((menuItem, index) => {
         if (menuItem.image) {
           const menuImagePromise = (async () => {
             const presignedData = (await getMenuImagePresignedUrl({
@@ -165,14 +171,12 @@ export default function MenuForm() {
 
       await Promise.all(imageUploadPromises);
 
-      if (menuItems.length > 0) {
+      if (newMenuItems.length > 0) {
         const menuData = transformMenuItemsToMenuData(
-          menuItems,
+          newMenuItems,
           storeId,
           imageUrls
         );
-        // 수정 모드에서는 기존 메뉴 유지/갱신 전략이 필요하지만,
-        // 현재 간소화: 새로 추가된 항목만 생성 호출 (id 없는 것 위주)
         const menuPromises = menuData.map(menu => createMenu(menu));
         await Promise.all(menuPromises);
       }
