@@ -319,8 +319,8 @@ export class ReservationService {
         ...(isWalkIn === undefined
           ? {} // 조건 없음
           : isWalkIn
-            ? { timeSlot: { totalCapacity: -1, availableSeats: 0 } } // walk-in
-            : { NOT: { timeSlot: { totalCapacity: -1, availableSeats: 0 } } }), // walk-in이 아님
+            ? { timeSlot: { totalCapacity: -1 } } // walk-in
+            : { NOT: { timeSlot: { totalCapacity: -1 } } }), // walk-in이 아님
       },
       include: {
         menus: true,
