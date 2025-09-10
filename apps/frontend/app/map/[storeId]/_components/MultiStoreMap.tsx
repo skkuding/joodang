@@ -54,6 +54,16 @@ export default function MultiStoreMap({ stores }: MultiStoreMapProps) {
   const [sdkLoaded, setSdkLoaded] = useState(false);
   const router = useRouter();
 
+  const panToAdjustedCenter = (pos: NaverLatLng) => {
+    if (!mapRef.current) return;
+    const adjusted = computeCenterFor(pos, mapRef.current);
+    try {
+      mapRef.current.panTo(adjusted);
+    } catch {
+      mapRef.current.setCenter(adjusted);
+    }
+  };
+
   useEffect(() => {
     let active = true;
     loadNaverMaps()
@@ -113,12 +123,7 @@ export default function MultiStoreMap({ stores }: MultiStoreMapProps) {
         },
       });
       naver.maps.Event.once(mapRef.current!, "idle", () => {
-        const adjusted = computeCenterFor(center, mapRef.current!);
-        try {
-          mapRef.current!.panTo(adjusted);
-        } catch {
-          mapRef.current!.setCenter(adjusted);
-        }
+        panToAdjustedCenter(center);
       });
     }
 
@@ -177,12 +182,7 @@ export default function MultiStoreMap({ stores }: MultiStoreMapProps) {
     markerHeightRef.current = r.height;
     storeMarkerRef.current.setPosition(pos);
 
-    const targetCenter = computeCenterFor(pos, mapRef.current);
-    try {
-      mapRef.current.panTo(targetCenter);
-    } catch {
-      mapRef.current.setCenter(targetCenter);
-    }
+    panToAdjustedCenter(pos);
   }, [selectedStoreId, stores]);
 
   const moveToMyLocation = () => {
