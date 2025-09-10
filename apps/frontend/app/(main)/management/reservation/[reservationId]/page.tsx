@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/drawer";
 import Link from "next/link";
 import { toast } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
 
 function StatusBadge({ reservation }: { reservation: ReservationResponse }) {
   const base = "rounded px-2 py-1 text-xs font-medium";
@@ -53,7 +54,6 @@ export default function ReservationDetailPage() {
   const [isAmountDrawerOpen, setIsAmountDrawerOpen] = useState(false);
   const [confirmAmount, setConfirmAmount] = useState<string>("");
   const [isRejectDrawerOpen, setIsRejectDrawerOpen] = useState(false);
-
   const loadDetail = async () => {
     if (!reservationId) return;
     setLoading(true);
@@ -94,7 +94,7 @@ export default function ReservationDetailPage() {
     if (!reservation) return;
     try {
       await callReservation(reservation.id);
-      toast.success("푸시 알림을 전송하는데 성공하였습니다!");
+      toast.success("푸시 알림을 전송하였습니다!");
     } catch {}
   };
 
@@ -119,10 +119,13 @@ export default function ReservationDetailPage() {
   const date = new Date(reservation.timeSlot.startTime);
   const dateLabel = formatDateWithDay(date);
   const timeLabel = `${String(new Date(reservation.timeSlot.startTime).getHours()).padStart(2, "0")}:${String(new Date(reservation.timeSlot.startTime).getMinutes()).padStart(2, "0")} ~ ${String(new Date(reservation.timeSlot.endTime).getHours()).padStart(2, "0")}:${String(new Date(reservation.timeSlot.endTime).getMinutes()).padStart(2, "0")}`;
-
   return (
     <div className="flex flex-col">
       <DetailHeader />
+      <Toaster
+        position="bottom-center"
+        className="!bottom-25 !left-0 !right-0 !z-[9999] !flex !w-screen !transform-none !justify-center"
+      />
       <div className="flex items-center justify-between p-5">
         <div>
           <div className="text-primary-normal text-xs">
@@ -197,7 +200,6 @@ export default function ReservationDetailPage() {
           </div>
         </div>
       </div>
-
       {/* 하단 버튼 영역 */}
       {(reservation.isConfirmed === true ||
         reservation.isConfirmed === null) && (
@@ -239,7 +241,6 @@ export default function ReservationDetailPage() {
           )}
         </div>
       )}
-
       {/* 금액 확인 드로어 */}
       <Drawer open={isAmountDrawerOpen} onOpenChange={setIsAmountDrawerOpen}>
         <DrawerContent className="h-[50vh]">
@@ -284,7 +285,6 @@ export default function ReservationDetailPage() {
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
-
       {/* 예약 반려 확인 드로어 */}
       <Drawer open={isRejectDrawerOpen} onOpenChange={setIsRejectDrawerOpen}>
         <DrawerContent className="h-[40vh]">
