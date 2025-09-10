@@ -3,6 +3,7 @@ import StoreMap from "@/app/(main)/components/StoreMap";
 import CopyAccountModal from "@/app/components/CopyAccountModal";
 import { FloatingBottomBar } from "@/app/components/FloatingBottomBar";
 import { ReservationResponse, Store, StoreDetail } from "@/app/type";
+import { BankCodes } from "@/constant";
 import { cn, formatToHHMM, formatWithComma, safeFetcher } from "@/lib/utils";
 import Arrow from "@/public/icons/icon_arrow.svg";
 import Location from "@/public/icons/icon_location.svg";
@@ -15,6 +16,8 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import ReservationCancelModal from "./components/ReservationCancelModal";
 import { ReservationCheckPageStoreDetail } from "./components/ReservationCheckPageStoreDetail";
+import { Button } from "@/ui/button";
+import arrowIcon from "@/public/icons/icon_arrow.svg";
 
 function StatusBadge({ reservation }: { reservation: ReservationResponse }) {
   const base = "rounded px-2 py-1 text-xs font-medium";
@@ -73,6 +76,75 @@ export default function ReservationDetail() {
   const [reservation, setReservation] = useState<ReservationResponse | null>(
     null
   );
+  const [amount, setAmount] = useState<number | null>(null);
+  const [bankName, setBankName] = useState<string | null>(null);
+
+  // 예약 정보 기반 송금 금액/은행명 계산
+  useEffect(() => {
+    if (reservation?.store.reservationFee && reservation?.headcount) {
+      setAmount(reservation.store.reservationFee * reservation.headcount);
+      setBankName(BankCodes[reservation.store.bankCode] ?? null);
+    }
+  }, [reservation]);
+
+  // 계좌번호 복사 (은행명 포함)
+  const copyAccountToClipboard = async () => {
+    const text =
+      `${bankName ?? ""} ${reservation?.store.accountNumber ?? ""}`.trim();
+    if (!text) return;
+
+    try {
+      await navigator.clipboard.writeText(text);
+      // toast.success("계좌번호가 복사되었습니다");
+    } catch {
+      // Fallback (일부 iOS/Safari/PWA)
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.top = "-1000px";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        document.execCommand("copy");
+        // toast.success("계좌번호가 복사되었습니다");
+      } catch {
+        // toast.error("복사에 실패했습니다");
+      } finally {
+        document.body.removeChild(ta);
+      }
+    }
+  };
+
+  // 송금 핸들러들
+  const handleTossPayment = async () => {
+    const tossAppUrl = `supertoss://send?bank=${bankName ?? ""}&accountNo=${reservation?.store.accountNumber ?? ""}`;
+    const tossWebUrl = "https://toss.me";
+    await copyAccountToClipboard();
+    if (
+      /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      )
+    ) {
+      window.location.href = tossAppUrl;
+    } else {
+      window.open(tossWebUrl, "_blank");
+    }
+  };
+
+  const handleKakaoPayment = async () => {
+    const kakaoPayUrl = `https://link.kakaopay.com/t/money/to/bank?bank_code=${reservation?.store.bankCode ?? ""}&bank_account_number=${reservation?.store.accountNumber ?? ""}`;
+    await copyAccountToClipboard();
+    if (
+      /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      )
+    ) {
+      window.location.href = kakaoPayUrl;
+    } else {
+      window.open(kakaoPayUrl, "_blank");
+    }
+  };
 
   useEffect(() => {
     async function checkLogin(): Promise<boolean> {
@@ -84,6 +156,8 @@ export default function ReservationDetail() {
         return false;
       }
     }
+
+    // (이전 내부 SendMoneyButton 정의 제거)
 
     function readTokensFromLocalStorage(): string[] {
       if (typeof window === "undefined") return [];
@@ -160,7 +234,7 @@ export default function ReservationDetail() {
             {reservation && <StatusBadge reservation={reservation} />}
           </div>
         </div>
-        <div className="text-color-neutral-40 flex flex-col justify-start gap-1 text-sm font-normal leading-tight">
+        <div className="text-color-neutral-40 flex flex-col justify-start gap-1 py-5 text-sm font-normal leading-tight">
           <div className="flex">
             <Image
               src={Location}
@@ -207,23 +281,55 @@ export default function ReservationDetail() {
           </div>
         </div>
 
-        <div className="bg-color-neutral-99 mt-2 flex flex-col justify-start space-y-[6px] rounded-md px-4 py-3 text-sm font-normal leading-tight text-zinc-700">
-          <div className="flex">
-            <Image src={OrangeDot} alt="주황닷" width={6} height={6} />
-            <div className="ml-2 flex w-full justify-between">
-              <p>주점 연락처</p>
-              <p className="text-color-neutral-20">
-                {reservation?.store.contactInfo}
-              </p>
+        <div className="flex w-full flex-col rounded-md px-2 py-3 text-sm shadow-[0px_0px_20px_0px_rgba(0,0,0,0.08)]">
+          <div className="bg-color-neutral-99 rounded-md px-3 py-2">
+            <div className="flex w-full flex-col justify-between">
+              <div className="flex">
+                <Image src={OrangeDot} alt="주황닷" width={6} height={6} />
+                <div className="ml-2 flex w-full justify-between">
+                  <p>주점 연락처</p>
+                  <p className="text-color-neutral-20">
+                    {reservation?.store.contactInfo}
+                  </p>
+                </div>
+              </div>
+              <div className="flex justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="bg-primary-normal h-1.5 w-1.5 rounded-full" />
+                  <span>입금 계좌</span>
+                </div>
+                {<CopyAccountModal store={store} />}
+              </div>
             </div>
           </div>
-          <div className="flex">
-            <Image src={OrangeDot} alt="주황닷" width={6} height={6} />
-            <div className="ml-2 flex w-full justify-between">
-              <p>입금 계좌</p>
-              <CopyAccountModal store={store} />
+          <Button
+            variant={"ghost"}
+            className="flex !h-14 justify-between !px-0"
+            onClick={handleTossPayment}
+          >
+            <div className="flex gap-2">
+              <object data="/icons/icon_toss.png" width={61} height={24} />
+              <span>토스로 송금하기</span>
             </div>
-          </div>
+            <Image src={arrowIcon} alt="arrow" />
+          </Button>
+          <Button
+            variant={"ghost"}
+            className="flex !h-5 justify-between !px-0"
+            onClick={handleKakaoPayment}
+          >
+            <div className="flex gap-2">
+              <div className="w-[61px]">
+                <object
+                  data="/icons/icon_kakao_pay.png"
+                  width={61}
+                  height={24}
+                />
+              </div>
+              <span>카카오페이로 송금하기</span>
+            </div>
+            <Image src={arrowIcon} alt="arrow" />
+          </Button>
         </div>
       </div>
 
