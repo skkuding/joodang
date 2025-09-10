@@ -34,7 +34,9 @@ export function DeleteStaffButton({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="h-[29px] w-[68px] px-[10px] py-1">삭제하기</Button>
+        <Button className="h-[29px] w-[68px] rounded-[3px] px-[10px] py-1">
+          삭제하기
+        </Button>
       </DialogTrigger>
       <DialogContent className="py-6">
         <DialogTitle />
