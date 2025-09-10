@@ -101,7 +101,9 @@ export default function MenuForm() {
   };
 
   // 메뉴 아이템 삭제
-  const handleRemoveMenuItem = (id: string) => {
+  const handleRemoveMenuItem = async (id: string) => {
+    const { deleteMenu } = await import("@/lib/api/menu");
+    await deleteMenu(id);
     const updatedItems = menuItems.filter(item => item.id !== id);
     setMenuItems(updatedItems);
     setFormData({ ...formData, menuItems: updatedItems });
