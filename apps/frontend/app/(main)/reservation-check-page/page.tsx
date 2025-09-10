@@ -104,6 +104,51 @@ export default function ReservationCheckPage() {
     };
   }, []);
 
+  interface sectionProps {
+    reservations: ReservationResponse[];
+    tabValue: string;
+  }
+  function ReservationCards(props: sectionProps) {
+    if (props.reservations.length === 0) {
+      return (
+        <div className="py-[38px]">
+          <EmptyRecord description="현재 예약된 내역이 없어요" />
+        </div>
+      );
+    }
+
+    const filteredList: ReservationResponse[] = [];
+    if (props.tabValue === "preReservation") {
+      for (const reservation of props.reservations) {
+        if (reservation.timeSlot.totalCapacity === -1) {
+          continue;
+        }
+        filteredList.push(reservation);
+      }
+    } else {
+      for (const reservation of props.reservations) {
+        if (reservation.timeSlot.totalCapacity !== -1) {
+          continue;
+        }
+        filteredList.push(reservation);
+      }
+    }
+
+    return (
+      <div>
+        {filteredList.length !== 0 ? (
+          filteredList.map((reservation, idx) => {
+            return <ReservationCard key={idx} data={reservation} />;
+          })
+        ) : (
+          <div className="py-[38px]">
+            <EmptyRecord description="현재 예약된 내역이 없어요" />
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="mt-[60px] px-5">
       {showAuthSheet && <AuthSheet />}
@@ -148,16 +193,12 @@ export default function ReservationCheckPage() {
           ))}
         </div>
         <div className="item-center flex flex-col justify-center gap-3">
-          {!loading &&
-            (reservations.length !== 0 ? (
-              reservations.map((reservation, idx) => (
-                <ReservationCard key={idx} data={reservation} />
-              ))
-            ) : (
-              <div className="py-[38px]">
-                <EmptyRecord description="현재 예약된 내역이 없어요" />
-              </div>
-            ))}
+          {!loading && (
+            <ReservationCards
+              reservations={reservations}
+              tabValue={activeTab}
+            />
+          )}
         </div>
       </section>
       <div className="h-7" />

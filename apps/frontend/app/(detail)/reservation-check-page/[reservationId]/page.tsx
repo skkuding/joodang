@@ -20,6 +20,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import ReservationCancelModal from "./components/ReservationCancelModal";
+import { ReservationCheckPageStoreDetail } from "./components/ReservationCheckPageStoreDetail";
 
 export default function ReservationDetail() {
   const [store, setStore] = useState<Store>({
@@ -118,6 +119,7 @@ export default function ReservationDetail() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+  console.log("reservation", reservation);
 
   return (
     <div className="bg-color-neutral-99 flex min-h-screen flex-col tracking-[-0.03em]">
@@ -209,43 +211,7 @@ export default function ReservationDetail() {
 
       {/* 아랫 부분 */}
       <div className="bg-color-common-100 flex flex-1 flex-col justify-start gap-6 px-5 pt-5 text-base font-normal leading-normal text-zinc-700">
-        <div className="flex">
-          <Image src={OrangeDot} alt="주황닷" width={6} height={6} />
-          <div className="ml-2 flex w-full justify-between">
-            <p>날짜</p>
-            <p className="text-color-common-0">
-              {formatDateWithDay(
-                reservation ? reservation.timeSlot.startTime : ""
-              )}
-            </p>
-          </div>
-        </div>
-        <div className="flex">
-          <Image src={OrangeDot} alt="주황닷" width={6} height={6} />
-          <div className="ml-2 flex w-full justify-between">
-            <p>시간대</p>
-            <p className="text-color-common-0">
-              {formatToHHMM(reservation ? reservation.timeSlot.startTime : "")}{" "}
-              ~ {formatToHHMM(reservation ? reservation.timeSlot.endTime : "")}
-            </p>
-          </div>
-        </div>
-        <div className="flex">
-          <Image src={OrangeDot} alt="주황닷" width={6} height={6} />
-          <div className="ml-2 flex w-full justify-between">
-            <p>총 인원</p>
-            <p className="text-color-common-0">{reservation?.headcount}명</p>
-          </div>
-        </div>
-        <div className="flex">
-          <Image src={OrangeDot} alt="주황닷" width={6} height={6} />
-          <div className="ml-2 flex w-full justify-between">
-            <p>예약 번호</p>
-            <p className="text-color-common-0">
-              {reservation?.reservationNum}번
-            </p>
-          </div>
-        </div>
+        <ReservationCheckPageStoreDetail reservation={reservation} />
         <div className="flex flex-col">
           <div className="flex">
             <Image src={OrangeDot} alt="주황닷" width={6} height={6} />
@@ -279,7 +245,9 @@ export default function ReservationDetail() {
               setIsModalVisible(true);
             }}
           >
-            예약 취소
+            {reservation?.timeSlot.totalCapacity === -1
+              ? "현장 대기 취소"
+              : "예약 취소"}
           </button>
         </FloatingBottomBar>
       </div>
