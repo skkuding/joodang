@@ -4,10 +4,12 @@ import GrayBeer from "@/public/icons/icon_gray_beer.svg";
 import GrayHouse from "@/public/icons/icon_gray_house.svg";
 import GrayMypage from "@/public/icons/icon_gray_mypage.svg";
 import GrayReservation from "@/public/icons/icon_gray_reservation.svg";
+import GrayTent from "@/public/icons/icon_gray_tent.svg";
 import OrangeBeer from "@/public/icons/icon_orange_beer.svg";
 import OrangeHouse from "@/public/icons/icon_orange_house.svg";
 import OrangeMypage from "@/public/icons/icon_orange_mypage.svg";
 import OrangeReservation from "@/public/icons/icon_orange_reservation.svg";
+import OrangeTent from "@/public/icons/icon_orange_tent.svg";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -109,8 +111,14 @@ export function Footer() {
             {curPos === "/find" || curPos === "/management/store" ? (
               <>
                 <Image
-                  src={OrangeBeer}
-                  alt="오렌지 맥주"
+                  src={
+                    role === RoleEnum.STAFF ||
+                    role === RoleEnum.OWNER ||
+                    role === RoleEnum.ADMIN
+                      ? OrangeBeer
+                      : OrangeTent
+                  }
+                  alt="store"
                   width={34}
                   height={34}
                 />
@@ -124,7 +132,18 @@ export function Footer() {
               </>
             ) : (
               <>
-                <Image src={GrayBeer} alt="회색 맥주" width={34} height={34} />
+                <Image
+                  src={
+                    role === RoleEnum.STAFF ||
+                    role === RoleEnum.OWNER ||
+                    role === RoleEnum.ADMIN
+                      ? GrayBeer
+                      : GrayTent
+                  }
+                  alt="회색 맥주"
+                  width={34}
+                  height={34}
+                />
                 <p className="select-none text-xs text-[#9B9B9B]">
                   {role === RoleEnum.STAFF ||
                   role === RoleEnum.OWNER ||
