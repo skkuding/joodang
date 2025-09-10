@@ -80,7 +80,9 @@ export async function requestPermissionAndSubscribe() {
       }),
       credentials: "include",
     });
-    window.dispatchEvent(new CustomEvent("push:subscribed"));
+    if (!existing) {
+      window.dispatchEvent(new CustomEvent("push:subscribed"));
+    }
   } catch (e) {
     console.warn("서버 구독 저장 실패:", e);
     // window.dispatchEvent(new CustomEvent("push:error"));
