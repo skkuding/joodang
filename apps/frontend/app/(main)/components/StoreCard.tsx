@@ -71,7 +71,7 @@ export function StoreCard({
         >
           <div className="flex justify-end">{getCategoryIcon(icon)}</div>
           <div>
-            <p className="text-primary-normal text-[13px] font-medium">
+            <p className="text-primary-normal truncate text-[13px] font-medium">
               {clubName}
             </p>
             <p className="truncate text-base font-medium">{storeName}</p>
