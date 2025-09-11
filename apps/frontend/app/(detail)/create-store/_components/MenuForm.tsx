@@ -69,7 +69,7 @@ export default function MenuForm() {
       return;
     }
 
-    if (currentItem.price <= 0) {
+    if (currentItem.price < 0) {
       alert("가격을 입력해주세요.");
       return;
     }
@@ -413,7 +413,7 @@ export default function MenuForm() {
           </div>
           <input
             type="number"
-            value={currentItem.price || ""}
+            value={currentItem.price ?? ""}
             onChange={e =>
               setCurrentItem({ ...currentItem, price: Number(e.target.value) })
             }
