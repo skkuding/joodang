@@ -32,7 +32,7 @@ export default async function Page({ params, searchParams }: PageProps) {
 
   function StoreDescription() {
     return (
-      <div className="text-color-neutral-30 p-5 text-sm font-normal">
+      <div className="text-color-neutral-30 p-5 text-sm font-normal whitespace-pre-wrap">
         {store.description}
       </div>
     );
