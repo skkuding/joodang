@@ -32,21 +32,8 @@ export function MultiStoreDrawer({ stores, mylocationfunc }: StoreDrawerProps) {
 
   return (
     <motion.div
-      className="fixed bottom-[-390px] left-0 right-0 z-[9999] mx-auto w-full rounded-t-2xl border bg-white shadow-lg"
+      className="fixed bottom-[-390px] left-0 right-0 z-[9999] mx-auto w-full rounded-t-2xl border bg-white"
       style={{ height: `${height * 100}vh`, touchAction: "none" }}
-      data-map-overlay-height={height}
-      drag="y"
-      dragConstraints={{ top: 0, bottom: 0 }}
-      onDragEnd={(_, info) => {
-        // 드래그 방향만 체크 - 위로 드래그했으면 확장, 아래로 드래그했으면 축소
-        if (info.offset.y < 0) {
-          // 위로 드래그
-          setHeight(expanded);
-        } else {
-          // 아래로 드래그
-          setHeight(collapsed);
-        }
-      }}
       animate={{ height: `${height * 100}vh` }}
       transition={{
         duration: 0.3, // 애니메이션 시간 (0.4초)
@@ -68,20 +55,36 @@ export function MultiStoreDrawer({ stores, mylocationfunc }: StoreDrawerProps) {
         />
       </button>
       {/* 핸들 */}
-      <div className="mx-auto mb-[30px] mt-4 h-1 w-[100px] cursor-pointer rounded-full bg-gray-300" />
+      <motion.div
+        className="mb-4 mt-3 flex h-2 w-full cursor-pointer items-center justify-center"
+        drag="y"
+        dragConstraints={{ top: 0, bottom: 0 }}
+        dragElastic={0.03}
+        onDragEnd={(_, info) => {
+          if (info.offset.y < 0) {
+            setHeight(expanded);
+          } else {
+            setHeight(collapsed);
+          }
+        }}
+      >
+        <div>
+          <div className="mx-auto h-1 w-[100px] cursor-pointer rounded-full bg-gray-300" />
+        </div>
+      </motion.div>
 
       {/* 콘텐츠 */}
 
       <div
-        className="overflow-auto p-4"
+        className="overflow-auto"
         onTouchStart={e => e.stopPropagation()}
         onTouchMove={e => e.stopPropagation()}
       >
-        <ScrollArea className="overflow-auto" style={{ maxHeight: "35vh" }}>
+        <ScrollArea className="overflow-auto" style={{ maxHeight: "30vh" }}>
           {stores.map(store => (
             <div
               key={store.id}
-              className="mb-2 cursor-pointer rounded-xl p-3 shadow-md hover:bg-gray-100"
+              className="mx-5 mb-2 cursor-pointer rounded-xl p-3 shadow-lg hover:bg-gray-100"
               onClick={() => setSelectedStoreId(store.id)}
             >
               <h3 className="text-primary-normal text-[13px] font-medium">
