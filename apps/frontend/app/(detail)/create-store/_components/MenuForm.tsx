@@ -413,7 +413,7 @@ export default function MenuForm() {
           </div>
           <input
             type="number"
-            value={currentItem.price ?? ""}
+            value={currentItem.price || ""}
             onChange={e =>
               setCurrentItem({ ...currentItem, price: Number(e.target.value) })
             }
