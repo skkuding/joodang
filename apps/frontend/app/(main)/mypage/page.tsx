@@ -38,11 +38,13 @@ export default async function Page() {
   const roleText =
     user?.role === "ADMIN"
       ? "관리자"
-      : user?.role === "OWNER" || user?.role == "STAFF"
+      : user?.role === "OWNER"
         ? "주점 운영자"
-        : user?.role === "USER"
-          ? "일반 사용자"
-          : "비회원";
+        : user?.role === "STAFF"
+          ? "주점 스태프"
+          : user?.role === "USER"
+            ? "일반 사용자"
+            : "비회원";
 
   return (
     <div className="flex flex-col">

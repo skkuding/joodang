@@ -199,10 +199,10 @@ export default function StoreInfoForm() {
               className="placeholder-color-neutral-90 h-[118px] w-full resize-none rounded-md border px-4 py-[14px] text-sm"
               placeholder="상세 설명을 입력하세요"
               {...register("description")}
-              maxLength={200}
+              maxLength={2000}
             />
             <div className="text-color-neutral-60 absolute bottom-[14px] right-4 text-xs">
-              {watch("description")?.length || 0}/200
+              {watch("description")?.length || 0}/2000
             </div>
             {errors.description && (
               <p className="mt-1 text-xs text-red-500">
