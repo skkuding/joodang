@@ -69,7 +69,7 @@ export default function MenuForm() {
       return;
     }
 
-    if (currentItem.price <= 0) {
+    if (currentItem.price < 0) {
       alert("가격을 입력해주세요.");
       return;
     }
@@ -134,7 +134,7 @@ export default function MenuForm() {
       if (formData.representativeImage) {
         const storeImagePromise = (async () => {
           const presignedData = (await getStoreImagePresignedUrl(storeId, {
-            fileIdx: "main_image",
+            fileIdx: `main_image_${Date.now()}`,
             contentType: formData.representativeImage!.type,
           })) as {
             fields: Record<string, string>;
@@ -156,7 +156,7 @@ export default function MenuForm() {
           const menuImagePromise = (async () => {
             const presignedData = (await getMenuImagePresignedUrl({
               storeId,
-              fileIdx: index.toString(),
+              fileIdx: `${index}_${Date.now()}`,
               contentType: menuItem.image!.type,
             })) as {
               fields: Record<string, string>;
@@ -413,7 +413,7 @@ export default function MenuForm() {
           </div>
           <input
             type="number"
-            value={currentItem.price || ""}
+            value={currentItem.price ?? ""}
             onChange={e =>
               setCurrentItem({ ...currentItem, price: Number(e.target.value) })
             }

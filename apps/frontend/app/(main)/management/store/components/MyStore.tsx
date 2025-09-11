@@ -11,10 +11,8 @@ export function MyStore() {
   const [stores, setStores] = useState<Store[] | null>(null);
   useEffect(() => {
     const fetchStore = async () => {
-      const user: User = await safeFetcher.get("user/me").json();
-
-      const stores: Store[] = await safeFetcher.get("store").json();
-      setStores(stores.filter(store => store.ownerId === user.id));
+      const myStores: Store[] = await safeFetcher.get("store?sort=my").json();
+      setStores(myStores);
     };
 
     fetchStore();

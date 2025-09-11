@@ -6,6 +6,8 @@ import { BankCodes } from "@/constant";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { toast } from "sonner";
 import { Store } from "../type";
+import Image from "next/image";
+import cautionIcon from "@/public/icons/icon_caution.svg";
 
 interface CopyAccountModalProps {
   store: Store;
@@ -39,6 +41,12 @@ export default function CopyAccountModal({ store }: CopyAccountModalProps) {
               {BankCodes[store.bankCode]} {store.accountNumber}
             </p>
             <p>예금주 {store.accountHolder}</p>
+          </div>
+          <div className="mb-6 flex w-full justify-center gap-[2px]">
+            <Image src={cautionIcon} alt="caution" width={14} />
+            <span className="text-primary-normal text-xs font-normal">
+              입금 시 예약 번호를 함께 작성해주세요
+            </span>
           </div>
           <Button
             className="mb-1 w-full cursor-pointer"

@@ -42,25 +42,30 @@ export class NotificationService {
           },
         },
         userId: true,
+        token: true,
       },
     })
 
     if (!reservationInfo) return
-    if (!reservationInfo.userId) return
+    if (!reservationInfo.userId && !reservationInfo.token) return
 
-    const receivers = reservationInfo ? [reservationInfo.userId] : []
+    const receivers = reservationInfo.userId
+      ? [reservationInfo.userId]
+      : [reservationInfo.token!]
 
     const title = reservationInfo.store.name ?? 'Reservation'
     const message = `오래 기다리셨습니다. 지금 방문해주세요!`
 
-    await this.saveNotification({
-      userIds: receivers,
-      title,
-      message,
-      storeId: reservationInfo.store.id,
-      type: 'ReservationReminder',
-      url: `/reservation-check-page/${reservationId}`,
-    })
+    if (reservationInfo.userId) {
+      await this.saveNotification({
+        userIds: receivers as number[],
+        title,
+        message,
+        storeId: reservationInfo.store.id,
+        type: 'ReservationReminder',
+        url: `/reservation-check-page/${reservationId}`,
+      })
+    }
 
     await this.sendPushNotification(
       receivers,
@@ -110,19 +115,22 @@ export class NotificationService {
   }
 
   private async sendPushNotification(
-    userIds: number[],
+    receivers: number[] | string[],
     title: string,
     message: string,
     url?: string,
   ) {
-    if (userIds.length === 0) {
+    if (receivers.length === 0) {
       return
     }
 
+    const pushWhere =
+      typeof receivers[0] === 'number'
+        ? { userId: { in: receivers as number[] } }
+        : { token: { in: receivers as string[] } }
+
     const subscriptions = await this.prisma.pushSubscription.findMany({
-      where: {
-        userId: { in: userIds },
-      },
+      where: pushWhere,
     })
 
     const payload = JSON.stringify({
@@ -382,27 +390,33 @@ export class NotificationService {
       select: {
         id: true,
         userId: true,
+        token: true,
         store: { select: { id: true, name: true } },
       },
     })
 
     if (!reservation) return
-    if (!reservation.userId) return
+    if (!reservation.userId && !reservation.token) return
 
     const title = reservation.store.name ?? '예약 취소 알림'
     const message = `예약이 취소되었습니다.`
+    const receiver = reservation.userId
+      ? [reservation.userId]
+      : [reservation.token!]
 
-    await this.saveNotification({
-      userIds: [reservation.userId],
-      title,
-      message,
-      storeId: reservation.store.id,
-      type: 'Reservation',
-      url: `/reservation-check-page/${reservationId}`,
-    })
+    if (reservation.userId) {
+      await this.saveNotification({
+        userIds: [reservation.userId],
+        title,
+        message,
+        storeId: reservation.store.id,
+        type: 'Reservation',
+        url: `/reservation-check-page/${reservationId}`,
+      })
+    }
 
     await this.sendPushNotification(
-      [reservation.userId],
+      receiver,
       title,
       message,
       `/reservation-check-page/${reservationId}`,
@@ -472,24 +486,42 @@ export class NotificationService {
   /**
    * Push subscription을 생성합니다
    */
-  async createPushSubscription(userId: number, dto: CreatePushSubscriptionDto) {
-    try {
-      return await this.prisma.pushSubscription.create({
-        data: {
-          userId,
-          endpoint: dto.endpoint,
-          p256dh: dto.keys.p256dh,
-          auth: dto.keys.auth,
-          userAgent: dto.userAgent,
-        },
-      })
-    } catch (error) {
-      if (error.code === 'P2002') {
-        throw new UnprocessableEntityException(
-          'Push subscription already exists',
-        )
+  async createPushSubscription(
+    dto: CreatePushSubscriptionDto,
+    userId?: number,
+  ) {
+    if (!dto.tokens?.length) {
+      try {
+        return await this.prisma.pushSubscription.create({
+          data: {
+            userId,
+            endpoint: dto.endpoint,
+            p256dh: dto.keys.p256dh,
+            auth: dto.keys.auth,
+            userAgent: dto.userAgent,
+          },
+        })
+      } catch (error) {
+        if (error.code === 'P2002') {
+          throw new UnprocessableEntityException(
+            'Push subscription already exists',
+          )
+        }
+        throw error
       }
-      throw error
+    } else {
+      const createData = dto.tokens.map((token) => ({
+        endpoint: dto.endpoint,
+        p256dh: dto.keys.p256dh,
+        auth: dto.keys.auth,
+        userAgent: dto.userAgent,
+        token,
+      }))
+
+      return await this.prisma.pushSubscription.createMany({
+        data: createData,
+        skipDuplicates: true,
+      })
     }
   }
 

@@ -1,5 +1,5 @@
 "use client";
-import { Store, User } from "@/app/type";
+import { StoreDetail, User } from "@/app/type";
 import { Button } from "@/components/ui/button";
 import { safeFetcher } from "@/lib/utils";
 import Link from "next/link";
@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { StandByButton } from "./StandByButton";
 
 interface StoreActionButtonsProps {
-  store: Store;
+  store: StoreDetail;
 }
 
 interface StaffsResult {
@@ -42,15 +42,18 @@ export function StoreActionButtons({ store }: StoreActionButtonsProps) {
 
   // TODO: staff계정으로 로그인시 버튼이 잘 나오는지 확인
   return (
-    <div className="w-full">
+    <div className="mt-[-18px] w-full px-5 pb-[22px]">
       {user && staffIds.includes(user.id) ? (
-        <div className="flex flex-col gap-[6px]">
+        <div className="flex gap-[6px]">
           {store.ownerId === user.id && (
-            <Link href={"" + store.id + "/staff"}>
+            <Link href={"" + store.id + "/staff"} className="flex-1">
               <Button className="w-full">스탭 관리하기</Button>
             </Link>
           )}
-          <Link href={`/edit-store/${store.id}`}>
+          <Link
+            href={`/edit-store/${store.id}`}
+            className={store.ownerId === user.id ? "flex-1" : "w-full"}
+          >
             <Button
               className="w-full"
               variant={store.ownerId === user.id ? "outline" : undefined}
@@ -60,11 +63,18 @@ export function StoreActionButtons({ store }: StoreActionButtonsProps) {
           </Link>
         </div>
       ) : (
-        <div className="flex flex-col gap-[6px]">
-          <Link href={`/${store.id}/reservation`}>
-            <Button className="w-full">예약하기</Button>
+        <div className="flex gap-[6px]">
+          {/* <Link href={`/${store.id}/reservation`} className="flex-1" > */}
+          <Link href={`#`} className="flex-1">
+            <Button className="w-full" disabled>
+              예약 불가
+            </Button>
           </Link>
-          <StandByButton />
+          {store.redirectCode && (
+            <div className="flex-1">
+              <StandByButton />
+            </div>
+          )}
         </div>
       )}
     </div>

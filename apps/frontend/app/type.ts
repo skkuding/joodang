@@ -28,6 +28,7 @@ export interface StoreDetail extends Store {
   menus: Menu[];
   timeSlots: TimeSlot[];
   currentAvailableSeats: number | null;
+  redirectCode: string | null;
 }
 
 export enum RoleEnum {

@@ -3,6 +3,7 @@ import {
   IsNotEmpty,
   ValidateNested,
   IsOptional,
+  IsArray,
 } from 'class-validator'
 import { Type } from 'class-transformer'
 
@@ -28,4 +29,9 @@ export class CreatePushSubscriptionDto {
   @IsOptional()
   @IsString()
   userAgent?: string
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  tokens?: string[]
 }

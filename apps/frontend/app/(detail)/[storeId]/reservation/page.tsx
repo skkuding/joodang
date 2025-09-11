@@ -217,7 +217,8 @@ const SubmitButton = memo(() => {
   } = useFormContext();
   return (
     <FloatingBottomBar>
-      <Button className="w-full" type="submit" disabled={!isValid}>
+      {/* <Button className="w-full" type="submit" disabled={!isValid}> */}
+      <Button className="w-full" type="submit" disabled>
         예약하기
       </Button>
     </FloatingBottomBar>

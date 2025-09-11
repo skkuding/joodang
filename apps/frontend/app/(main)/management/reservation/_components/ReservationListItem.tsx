@@ -3,6 +3,7 @@ import Calendar from "@/public/icons/icon_gray_calendar.svg";
 import Clock from "@/public/icons/icon_gray_clock.svg";
 import Person from "@/public/icons/icon_gray_person.svg";
 import { ReservationResponse } from "@/app/type";
+import { memo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
@@ -13,7 +14,7 @@ interface ReservationListItemProps {
   compact?: boolean; // 현장 대기 등 간소 표시용
 }
 
-export default function ReservationListItem({
+function ReservationListItemCmp({
   reservation,
   compact = false,
 }: ReservationListItemProps) {
@@ -122,3 +123,5 @@ export default function ReservationListItem({
     </div>
   );
 }
+
+export default memo(ReservationListItemCmp);

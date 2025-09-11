@@ -162,7 +162,7 @@ export default function StoreInfoForm() {
               className="placeholder-color-neutral-90 w-full rounded-md border px-4 py-[14px] text-sm"
               placeholder="주점명을 입력하세요"
               {...register("name")}
-              maxLength={20}
+              maxLength={28}
             />
             {errors.name && (
               <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>
@@ -180,7 +180,7 @@ export default function StoreInfoForm() {
               className="placeholder-color-neutral-90 w-full rounded-md border px-4 py-[14px] text-sm"
               placeholder="동아리 등 단체명을 입력하세요"
               {...register("organizer")}
-              maxLength={20}
+              maxLength={28}
             />
             {errors.organizer && (
               <p className="mt-1 text-xs text-red-500">

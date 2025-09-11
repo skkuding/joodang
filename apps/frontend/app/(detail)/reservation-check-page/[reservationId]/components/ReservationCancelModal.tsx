@@ -63,19 +63,37 @@ export default function ReservationCancelModal({
       const tokens = readTokensFromLocalStorage();
       const isLogin = await checkLogin();
       try {
+        let res;
         if (isLogin) {
-          await safeFetcher.delete(`reservation/${reservationId}`);
+          res = await safeFetcher.delete(`reservation/${reservationId}`);
         } else {
-          await safeFetcher.delete(`reservation/${reservationId}`, {
+          res = await safeFetcher.delete(`reservation/${reservationId}`, {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ tokens }),
           });
         }
+        if (!res.ok) {
+          if (res.status === 409) {
+            toast.error("이미 확정된 예약은 취소할 수 없습니다.");
+            return;
+          }
+          throw new Error(`예약 취소 실패 (status ${res.status})`);
+        }
         router.push("/reservation-cancel");
         onClose();
       } catch (e) {
-        console.error("Error: ", e);
-        toast.error("예약 취소에 실패했습니다. 다시 시도해주세요.");
+        if (e instanceof HTTPError) {
+          const status = e.response.status;
+          if (status === 409) {
+            toast.error("이미 확정된 예약은 취소할 수 없습니다.");
+            return;
+          }
+          console.error("HTTP error:", e);
+          toast.error("예약 취소에 실패했습니다. 다시 시도해주세요.");
+        } else {
+          console.error("Unexpected error:", e);
+          toast.error("알 수 없는 오류가 발생했습니다.");
+        }
       }
     }
 
