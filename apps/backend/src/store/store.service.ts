@@ -586,8 +586,8 @@ export class StoreService {
   }
 
   /**
-   * User의 Store 관련 role(OWNER, STAFF)이 변경되었을 때, User 모델의 role을 재조정합니다.
-   * ADMIN 유저라면 role을 변경하지 않습니다.
+   * User의 Store 관련 role(STAFF만)이 변경되었을 때, User 모델의 role을 재조정합니다.
+   * ADMIN, OWNER 유저라면 role을 변경하지 않습니다. (OWNER의 경우 임시로 변경 X, 추후 수정)
    * @param userId 역할을 재조정할 유저의 ID
    */
   private async updateUserRoleAfterRemove(userId: number) {
@@ -596,7 +596,7 @@ export class StoreService {
       select: { role: true },
     })
 
-    if (!user || user.role === Role.ADMIN) {
+    if (!user || user.role === Role.ADMIN || user.role === Role.OWNER) {
       return
     }
 
@@ -605,7 +605,7 @@ export class StoreService {
     })
 
     let newRole: Role = Role.USER
-    console.log(remainingStaffRoles + '+++' + remainingStaffRoles.length)
+
     if (remainingStaffRoles.length > 0) {
       if (remainingStaffRoles.some((r) => r.role === Role.OWNER)) {
         newRole = Role.OWNER
