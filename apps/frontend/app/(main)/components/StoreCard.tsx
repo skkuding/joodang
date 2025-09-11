@@ -86,7 +86,7 @@ export function StoreCard({
           className={`} flex h-[103px] w-[220px] flex-col justify-between rounded-md p-[14px] shadow-[0px_0px_20px_0px_rgba(0,0,0,0.12)]`}
         >
           <div>
-            <h3 className="text-primary-normal text-[13px] font-semibold">
+            <h3 className="text-primary-normal truncate text-[13px] font-semibold">
               {clubName}
             </h3>
             <h3 className="mb-1 truncate text-base font-semibold">
