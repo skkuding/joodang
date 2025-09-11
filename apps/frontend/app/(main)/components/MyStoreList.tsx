@@ -44,6 +44,7 @@ export function MyStoreList() {
                     startTime={new Date(store.startTime)}
                     endTime={new Date(store.endTime)}
                     size={"large"}
+                    icon={store.icon}
                   />
                 </CarouselItem>
               ))}

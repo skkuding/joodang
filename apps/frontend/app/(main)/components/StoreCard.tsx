@@ -1,8 +1,16 @@
+import {
+  BagIcon,
+  DumbbellIcon,
+  HeartIcon,
+  HospitalIcon,
+  HouseIcon,
+  KeyIcon,
+  LeafIcon,
+  MonitorIcon,
+  NoodleIcon,
+  PawIcon,
+} from "@/app/components/StoreIcons";
 import { dateFormatter } from "@/lib/utils";
-import animalIcon from "@/public/icons/icon_aninal.svg";
-import foodIcon from "@/public/icons/icon_food.svg";
-import heartIcon from "@/public/icons/icon_heart.svg";
-import Image from "next/image";
 import Link from "next/link";
 import { FaLocationDot } from "react-icons/fa6";
 interface StoreCardProps {
@@ -14,6 +22,7 @@ interface StoreCardProps {
   endTime: Date;
   size: "medium" | "large";
   disabled?: boolean;
+  icon?: number;
 }
 
 export function StoreCard({
@@ -25,22 +34,42 @@ export function StoreCard({
   endTime,
   size = "large",
   disabled,
+  icon,
 }: StoreCardProps) {
+  function getCategoryIcon(icon: number | undefined) {
+    switch (icon) {
+      case 1:
+        return <PawIcon strokeColor="#FF5940" width={40} height={40} />;
+      case 2:
+        return <HeartIcon strokeColor="#FF5940" width={40} height={40} />; // Replace with actual icon
+      case 3:
+        return <NoodleIcon strokeColor="#FF5940" width={40} height={40} />; // Replace with actual icon
+      case 4:
+        return <LeafIcon strokeColor="#FF5940" width={40} height={40} />; // Replace with actual icon
+      case 5:
+        return <DumbbellIcon strokeColor="#FF5940" width={40} height={40} />; // Replace with actual icon
+      case 6:
+        return <BagIcon strokeColor="#FF5940" width={40} height={40} />; // Replace with actual icon
+      case 7:
+        return <MonitorIcon strokeColor="#FF5940" width={40} height={40} />; // Replace with actual icon
+      case 8:
+        return <HospitalIcon strokeColor="#FF5940" width={40} height={40} />; // Replace with actual icon
+      case 9:
+        return <HouseIcon strokeColor="#FF5940" width={40} height={40} />; // Replace with actual icon
+      case 10:
+        return <KeyIcon strokeColor="#FF5940" width={40} height={40} />; // Replace with actual icon
+      default:
+        return <PawIcon strokeColor="#FF5940" width={40} height={40} />; // Default icon
+    }
+  }
+
   const CardContent = () => (
     <>
       {size === "large" ? (
         <div
           className={`} flex h-[178px] w-[170px] flex-col justify-between rounded-md p-5 shadow-[0px_0px_20px_0px_rgba(0,0,0,0.10)]`}
         >
-          <div className="flex justify-end">
-            <Image
-              src={
-                id % 3 === 0 ? animalIcon : id % 3 === 1 ? heartIcon : foodIcon
-              }
-              alt={`index-${id}`}
-              className="h-[40.50px] w-[48.60px]"
-            />
-          </div>
+          <div className="flex justify-end">{getCategoryIcon(icon)}</div>
           <div>
             <p className="text-primary-normal text-[13px] font-medium">
               {clubName}
