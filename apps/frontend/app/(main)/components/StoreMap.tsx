@@ -20,6 +20,8 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
   const markerRef = useRef<NaverMarkerInstance | null>(null);
   const [sdkLoaded, setSdkLoaded] = useState(false);
   const timeoutsRef = useRef<number[]>([]);
+  const pannedOnceRef = useRef(false);
+  const didInitialCenterRef = useRef(false);
   const STYLE_ID = "56e070b5-b8ce-4f3f-90a7-fc9e602ba64c";
 
   // 마커를 화면 중앙보다 약간 아래에 보이도록 중심 좌표를 위로 보정해서 이동
@@ -72,6 +74,135 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
       panToWithOffsetWhenReady(pos, markerHeightPx, retries - 1, delayMs);
     }, delayMs);
     timeoutsRef.current.push(id);
+  };
+
+  const ensureReadyAndPan = (
+    pos: NaverLatLng,
+    markerHeightPx: number,
+    maxWaitMs = 800,
+    pollMs = 80
+  ) => {
+    const map = mapInstanceRef.current;
+    if (!map) return;
+    const start = Date.now();
+
+    const tick = () => {
+      if (pannedOnceRef.current) return;
+      const proj = map.getProjection?.();
+      const size: any = (map as any).getSize?.();
+      const w = size?.width ?? size?.x ?? 0;
+      const h = size?.height ?? size?.y ?? 0;
+      const ready = !!proj && w > 0 && h > 0;
+
+      if (ready) {
+        const { naver } = window as any;
+        const run = () => {
+          if (pannedOnceRef.current) return;
+          pannedOnceRef.current = true;
+          try {
+            const pt =
+              (map.getProjection as any)?.call(map)?.fromCoordToOffset(pos) ??
+              null;
+            const adjusted = pt
+              ? (map.getProjection as any)
+                  ?.call(map)
+                  ?.fromOffsetToCoord(
+                    new naver.maps.Point(
+                      pt.x,
+                      pt.y - Math.round(markerHeightPx * 0.3)
+                    )
+                  )
+              : pos;
+            const cur = (map as any).getCenter?.();
+            const curLat =
+              cur?.y ?? cur?.lat?.() ?? cur?.getLat?.() ?? cur?.lat;
+            const curLng =
+              cur?.x ?? cur?.lng?.() ?? cur?.getLng?.() ?? cur?.lng;
+            const tgtLat =
+              (adjusted as any)?.y ??
+              (adjusted as any)?.lat?.() ??
+              (adjusted as any)?.getLat?.() ??
+              (adjusted as any)?.lat;
+            const tgtLng =
+              (adjusted as any)?.x ??
+              (adjusted as any)?.lng?.() ??
+              (adjusted as any)?.getLng?.() ??
+              (adjusted as any)?.lng;
+            const nearlyEqual =
+              typeof curLat === "number" &&
+              typeof curLng === "number" &&
+              typeof tgtLat === "number" &&
+              typeof tgtLng === "number" &&
+              Math.abs(curLat - tgtLat) < 1e-7 &&
+              Math.abs(curLng - tgtLng) < 1e-7;
+
+            if (nearlyEqual) {
+              try {
+                (map as any).setCenter(
+                  new naver.maps.LatLng(tgtLat + 1e-6, tgtLng)
+                );
+              } catch {}
+              if (typeof requestAnimationFrame === "function") {
+                requestAnimationFrame(() => {
+                  try {
+                    (map as any).panTo(adjusted);
+                  } catch {
+                    try {
+                      (map as any).setCenter(adjusted);
+                    } catch {}
+                  }
+                });
+              } else {
+                try {
+                  (map as any).panTo(adjusted);
+                } catch {
+                  try {
+                    (map as any).setCenter(adjusted);
+                  } catch {}
+                }
+              }
+            } else {
+              try {
+                (map as any).panTo(adjusted);
+              } catch {
+                try {
+                  (map as any).setCenter(adjusted);
+                } catch {}
+              }
+            }
+          } catch {
+            try {
+              (map as any).panTo(pos);
+            } catch {
+              try {
+                (map as any).setCenter(pos);
+              } catch {}
+            }
+          }
+        };
+        try {
+          naver?.maps?.Event?.once?.(map, "idle", () => {
+            requestAnimationFrame(run);
+          });
+        } catch {}
+        const id2 = window.setTimeout(run, 60);
+        timeoutsRef.current.push(id2);
+        return;
+      }
+      if (Date.now() - start >= maxWaitMs) {
+        pannedOnceRef.current = true;
+        try {
+          map.panTo(pos);
+        } catch {
+          map.setCenter(pos);
+        }
+        return;
+      }
+      const id = window.setTimeout(tick, pollMs);
+      timeoutsRef.current.push(id);
+    };
+
+    tick();
   };
 
   useEffect(() => {
@@ -163,17 +294,14 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
         });
       }
 
-      // 지도 중심을 마커 높이의 절반만큼 위로 보정해 이동
-      if (justCreated) {
-        naver.maps.Event.once(mapInstanceRef.current, "idle", () => {
-          const id = window.setTimeout(() => {
-            panToWithOffsetWhenReady(pos, markerDef.h);
-          }, 0);
-          timeoutsRef.current.push(id);
-        });
-      } else {
-        panToWithOffsetWhenReady(pos, markerDef.h);
+      if (!didInitialCenterRef.current) {
+        try {
+          mapInstanceRef.current.setCenter(pos);
+          didInitialCenterRef.current = true;
+        } catch {}
       }
+      pannedOnceRef.current = false;
+      ensureReadyAndPan(pos, markerDef.h);
     }
   }, [sdkLoaded, stores, current]);
 
