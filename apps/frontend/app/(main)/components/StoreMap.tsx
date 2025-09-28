@@ -19,6 +19,7 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
   const mapInstanceRef = useRef<NaverMapInstance | null>(null);
   const markerRef = useRef<NaverMarkerInstance | null>(null);
   const [sdkLoaded, setSdkLoaded] = useState(false);
+  const timeoutsRef = useRef<number[]>([]);
   const STYLE_ID = "56e070b5-b8ce-4f3f-90a7-fc9e602ba64c";
 
   // 마커를 화면 중앙보다 약간 아래에 보이도록 중심 좌표를 위로 보정해서 이동
@@ -46,6 +47,33 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
     }
   };
 
+  const panToWithOffsetWhenReady = (
+    pos: NaverLatLng,
+    markerHeightPx: number,
+    retries = 10,
+    delayMs = 100
+  ) => {
+    const map = mapInstanceRef.current;
+    if (!map) return;
+    const proj = map.getProjection?.();
+    if (proj) {
+      panToWithMarkerOffset(pos, markerHeightPx);
+      return;
+    }
+    if (retries <= 0) {
+      try {
+        map.panTo(pos);
+      } catch {
+        map.setCenter(pos);
+      }
+      return;
+    }
+    const id = window.setTimeout(() => {
+      panToWithOffsetWhenReady(pos, markerHeightPx, retries - 1, delayMs);
+    }, delayMs);
+    timeoutsRef.current.push(id);
+  };
+
   useEffect(() => {
     let mounted = true;
     loadNaverMaps()
@@ -60,6 +88,11 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
     if (!sdkLoaded || !mapRef.current) return;
     const { naver } = window;
     if (!naver?.maps) return;
+
+    if (timeoutsRef.current.length) {
+      for (const id of timeoutsRef.current) window.clearTimeout(id);
+      timeoutsRef.current = [];
+    }
 
     const initialStore = stores[0];
     const initialCenter = initialStore
@@ -133,16 +166,23 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
       // 지도 중심을 마커 높이의 절반만큼 위로 보정해 이동
       if (justCreated) {
         naver.maps.Event.once(mapInstanceRef.current, "idle", () => {
-          panToWithMarkerOffset(pos, markerDef.h);
+          const id = window.setTimeout(() => {
+            panToWithOffsetWhenReady(pos, markerDef.h);
+          }, 0);
+          timeoutsRef.current.push(id);
         });
       } else {
-        panToWithMarkerOffset(pos, markerDef.h);
+        panToWithOffsetWhenReady(pos, markerDef.h);
       }
     }
   }, [sdkLoaded, stores, current]);
 
   useEffect(
     () => () => {
+      for (const id of timeoutsRef.current) {
+        window.clearTimeout(id);
+      }
+      timeoutsRef.current = [];
       if (markerRef.current)
         try {
           markerRef.current.setMap(null);
