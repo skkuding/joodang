@@ -20,176 +20,76 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
   const markerRef = useRef<NaverMarkerInstance | null>(null);
   const [sdkLoaded, setSdkLoaded] = useState(false);
   const timeoutsRef = useRef<number[]>([]);
-  const pannedOnceRef = useRef(false);
   const didInitialCenterRef = useRef(false);
+  const pannedOnceRef = useRef(false);
   const STYLE_ID = "56e070b5-b8ce-4f3f-90a7-fc9e602ba64c";
 
-  // 마커를 화면 중앙보다 약간 아래에 보이도록 중심 좌표를 위로 보정해서 이동
-  const panToWithMarkerOffset = (pos: NaverLatLng, markerHeightPx: number) => {
-    const map = mapInstanceRef.current;
-    if (!map) return;
+  const getAdjustedPos = (
+    map: NaverMapInstance,
+    pos: NaverLatLng,
+    markerHeightPx: number
+  ): NaverLatLng => {
     const { naver } = window;
     const proj = map.getProjection();
-    if (!proj) {
-      try {
-        map.panTo(pos);
-      } catch {
-        map.setCenter(pos);
-      }
-      return;
-    }
-    try {
-      const pt = proj.fromCoordToOffset(pos);
-      const adjusted = proj.fromOffsetToCoord(
-        new naver.maps.Point(pt.x, pt.y - markerHeightPx * 0.3)
-      );
-      map.panTo(adjusted);
-    } catch {
-      map.setCenter(pos);
-    }
+    if (!proj) return pos;
+    const pt = proj.fromCoordToOffset(pos);
+    const adjustedPt = new naver.maps.Point(
+      pt.x,
+      pt.y - Math.round(markerHeightPx * 0.3)
+    );
+    return proj.fromOffsetToCoord(adjustedPt);
   };
 
-  const panToWithOffsetWhenReady = (
-    pos: NaverLatLng,
-    markerHeightPx: number,
-    retries = 10,
-    delayMs = 100
-  ) => {
-    const map = mapInstanceRef.current;
-    if (!map) return;
-    const proj = map.getProjection?.();
-    if (proj) {
-      panToWithMarkerOffset(pos, markerHeightPx);
-      return;
-    }
-    if (retries <= 0) {
+  const panWithNudge = (map: NaverMapInstance, target: NaverLatLng) => {
+    const { naver } = window;
+    const cur = map.getCenter();
+    const nearlyEqual =
+      Math.abs(cur.lat() - target.lat()) < 1e-7 &&
+      Math.abs(cur.lng() - target.lng()) < 1e-7;
+    if (nearlyEqual) {
+      map.setCenter(new naver.maps.LatLng(target.lat() + 1e-6, target.lng()));
+      requestAnimationFrame(() => {
+        try {
+          map.panTo(target);
+        } catch {
+          map.setCenter(target);
+        }
+      });
+    } else {
       try {
-        map.panTo(pos);
+        map.panTo(target);
       } catch {
-        map.setCenter(pos);
+        map.setCenter(target);
       }
-      return;
     }
-    const id = window.setTimeout(() => {
-      panToWithOffsetWhenReady(pos, markerHeightPx, retries - 1, delayMs);
-    }, delayMs);
-    timeoutsRef.current.push(id);
   };
 
   const ensureReadyAndPan = (
+    map: NaverMapInstance,
     pos: NaverLatLng,
     markerHeightPx: number,
     maxWaitMs = 800,
     pollMs = 80
   ) => {
-    const map = mapInstanceRef.current;
-    if (!map) return;
-    const start = Date.now();
-
-    const tick = () => {
+    const startedAt = Date.now();
+    const tryOnce = () => {
       if (pannedOnceRef.current) return;
-      const proj = map.getProjection?.();
-      const size: any = (map as any).getSize?.();
-      const w = size?.width ?? size?.x ?? 0;
-      const h = size?.height ?? size?.y ?? 0;
-      const ready = !!proj && w > 0 && h > 0;
-
+      const proj = map.getProjection();
+      const size = map.getSize();
+      const ready = !!proj && size.width > 0 && size.height > 0;
       if (ready) {
-        const { naver } = window as any;
+        const adjusted = getAdjustedPos(map, pos, markerHeightPx);
         const run = () => {
           if (pannedOnceRef.current) return;
           pannedOnceRef.current = true;
-          try {
-            const pt =
-              (map.getProjection as any)?.call(map)?.fromCoordToOffset(pos) ??
-              null;
-            const adjusted = pt
-              ? (map.getProjection as any)
-                  ?.call(map)
-                  ?.fromOffsetToCoord(
-                    new naver.maps.Point(
-                      pt.x,
-                      pt.y - Math.round(markerHeightPx * 0.3)
-                    )
-                  )
-              : pos;
-            const cur = (map as any).getCenter?.();
-            const curLat =
-              cur?.y ?? cur?.lat?.() ?? cur?.getLat?.() ?? cur?.lat;
-            const curLng =
-              cur?.x ?? cur?.lng?.() ?? cur?.getLng?.() ?? cur?.lng;
-            const tgtLat =
-              (adjusted as any)?.y ??
-              (adjusted as any)?.lat?.() ??
-              (adjusted as any)?.getLat?.() ??
-              (adjusted as any)?.lat;
-            const tgtLng =
-              (adjusted as any)?.x ??
-              (adjusted as any)?.lng?.() ??
-              (adjusted as any)?.getLng?.() ??
-              (adjusted as any)?.lng;
-            const nearlyEqual =
-              typeof curLat === "number" &&
-              typeof curLng === "number" &&
-              typeof tgtLat === "number" &&
-              typeof tgtLng === "number" &&
-              Math.abs(curLat - tgtLat) < 1e-7 &&
-              Math.abs(curLng - tgtLng) < 1e-7;
-
-            if (nearlyEqual) {
-              try {
-                (map as any).setCenter(
-                  new naver.maps.LatLng(tgtLat + 1e-6, tgtLng)
-                );
-              } catch {}
-              if (typeof requestAnimationFrame === "function") {
-                requestAnimationFrame(() => {
-                  try {
-                    (map as any).panTo(adjusted);
-                  } catch {
-                    try {
-                      (map as any).setCenter(adjusted);
-                    } catch {}
-                  }
-                });
-              } else {
-                try {
-                  (map as any).panTo(adjusted);
-                } catch {
-                  try {
-                    (map as any).setCenter(adjusted);
-                  } catch {}
-                }
-              }
-            } else {
-              try {
-                (map as any).panTo(adjusted);
-              } catch {
-                try {
-                  (map as any).setCenter(adjusted);
-                } catch {}
-              }
-            }
-          } catch {
-            try {
-              (map as any).panTo(pos);
-            } catch {
-              try {
-                (map as any).setCenter(pos);
-              } catch {}
-            }
-          }
+          panWithNudge(map, adjusted);
         };
-        try {
-          naver?.maps?.Event?.once?.(map, "idle", () => {
-            requestAnimationFrame(run);
-          });
-        } catch {}
-        const id2 = window.setTimeout(run, 60);
-        timeoutsRef.current.push(id2);
+        requestAnimationFrame(run);
+        const id = window.setTimeout(run, 60);
+        timeoutsRef.current.push(id);
         return;
       }
-      if (Date.now() - start >= maxWaitMs) {
+      if (Date.now() - startedAt >= maxWaitMs) {
         pannedOnceRef.current = true;
         try {
           map.panTo(pos);
@@ -198,11 +98,10 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
         }
         return;
       }
-      const id = window.setTimeout(tick, pollMs);
+      const id = window.setTimeout(tryOnce, pollMs);
       timeoutsRef.current.push(id);
     };
-
-    tick();
+    tryOnce();
   };
 
   useEffect(() => {
@@ -230,7 +129,6 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
       ? new naver.maps.LatLng(initialStore.latitude, initialStore.longitude)
       : new naver.maps.LatLng(37.2945623, 126.9710853);
 
-    let justCreated = false;
     if (!mapInstanceRef.current) {
       mapInstanceRef.current = new naver.maps.Map(mapRef.current, {
         center: initialCenter,
@@ -238,10 +136,9 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
         customStyleId: STYLE_ID,
         gl: true,
       });
-      justCreated = true;
+      didInitialCenterRef.current = false; // 새 맵 생성 시 초기 센터 처리 초기화
     }
 
-    // 선택된 스토어(없으면 첫 번째)로 마커/센터 갱신
     const selectedIndex = stores.length
       ? Math.max(
           0,
@@ -249,72 +146,70 @@ export default function StoreMap({ stores, current }: StoreMapProps) {
         )
       : 0;
     const selectedStore = stores[selectedIndex] ?? initialStore;
-    if (selectedStore && mapInstanceRef.current) {
-      const buildMarkerHTML = (name: string) =>
-        `<div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px;border-radius:6px;color:white;pointer-events:none;">\n  <span style=\"background:rgba(0,0,0,0.35);padding:4px 10px;font-size:13px;font-weight:600;border-radius:4px;white-space:nowrap;\">${selectedStore.name}</span>\n  <img src=\"/icons/icon_location.svg\" alt=\"pin\" width=\"35\" height=\"35\" />\n</div>`;
-      const measure = (html: string) => {
-        const wrap = document.createElement("div");
-        wrap.style.cssText = "position:absolute;left:-9999px;top:0;";
-        wrap.innerHTML = html;
-        document.body.appendChild(wrap);
-        const rect = wrap.firstElementChild!.getBoundingClientRect();
-        document.body.removeChild(wrap);
-        return { html, w: Math.round(rect.width), h: Math.round(rect.height) };
-      };
+    const map = mapInstanceRef.current;
+    if (!map || !selectedStore) return;
 
-      const { naver } = window;
-      const markerDef = measure(buildMarkerHTML(selectedStore.name));
-      const pos = new naver.maps.LatLng(
-        selectedStore.latitude,
-        selectedStore.longitude
-      );
+    const buildMarkerHTML = (name: string) =>
+      `<div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px;border-radius:6px;color:white;pointer-events:none;">\n  <span style=\"background:rgba(0,0,0,0.35);padding:4px 10px;font-size:13px;font-weight:600;border-radius:4px;white-space:nowrap;\">${name}</span>\n  <img src=\"/icons/icon_location.svg\" alt=\"pin\" width=\"35\" height=\"35\" />\n</div>`;
+    const measure = (html: string) => {
+      const wrap = document.createElement("div");
+      wrap.style.cssText = "position:absolute;left:-9999px;top:0;";
+      wrap.innerHTML = html;
+      document.body.appendChild(wrap);
+      const rect = (
+        wrap.firstElementChild as HTMLElement
+      ).getBoundingClientRect();
+      document.body.removeChild(wrap);
+      return { html, w: Math.round(rect.width), h: Math.round(rect.height) };
+    };
 
-      if (markerRef.current) {
-        markerRef.current.setPosition(pos);
-        markerRef.current.setIcon({
+    const markerDef = measure(buildMarkerHTML(selectedStore.name));
+    const pos = new naver.maps.LatLng(
+      selectedStore.latitude,
+      selectedStore.longitude
+    );
+
+    if (markerRef.current) {
+      markerRef.current.setPosition(pos);
+      markerRef.current.setIcon({
+        content: markerDef.html,
+        anchor: new naver.maps.Point(Math.round(markerDef.w / 2), markerDef.h),
+      });
+      if (!markerRef.current.getMap()) markerRef.current.setMap(map);
+    } else {
+      markerRef.current = new naver.maps.Marker({
+        position: pos,
+        map,
+        icon: {
           content: markerDef.html,
           anchor: new naver.maps.Point(
             Math.round(markerDef.w / 2),
             markerDef.h
           ),
-        });
-        if (!markerRef.current.getMap())
-          markerRef.current.setMap(mapInstanceRef.current);
-      } else {
-        markerRef.current = new naver.maps.Marker({
-          position: pos,
-          map: mapInstanceRef.current,
-          icon: {
-            content: markerDef.html,
-            anchor: new naver.maps.Point(
-              Math.round(markerDef.w / 2),
-              markerDef.h
-            ),
-          },
-        });
-      }
-
-      if (!didInitialCenterRef.current) {
-        try {
-          mapInstanceRef.current.setCenter(pos);
-          didInitialCenterRef.current = true;
-        } catch {}
-      }
-      pannedOnceRef.current = false;
-      ensureReadyAndPan(pos, markerDef.h);
+        },
+      });
     }
+
+    if (!didInitialCenterRef.current) {
+      try {
+        map.setCenter(pos);
+      } catch {}
+      didInitialCenterRef.current = true;
+    }
+
+    pannedOnceRef.current = false;
+    ensureReadyAndPan(map, pos, markerDef.h);
   }, [sdkLoaded, stores, current]);
 
   useEffect(
     () => () => {
-      for (const id of timeoutsRef.current) {
-        window.clearTimeout(id);
-      }
+      for (const id of timeoutsRef.current) window.clearTimeout(id);
       timeoutsRef.current = [];
-      if (markerRef.current)
+      if (markerRef.current) {
         try {
           markerRef.current.setMap(null);
         } catch {}
+      }
     },
     []
   );
